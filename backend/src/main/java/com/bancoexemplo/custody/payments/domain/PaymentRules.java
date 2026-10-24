@@ -6,7 +6,7 @@ import java.text.DecimalFormatSymbols;
 import java.time.LocalDate;
 import java.util.Locale;
 
-/** What makes an on-time payment acceptable. */
+/** What makes a payment acceptable. */
 public final class PaymentRules {
 
     private PaymentRules() {}
@@ -18,20 +18,20 @@ public final class PaymentRules {
         }
     }
 
-    /** The amount paid is exactly the installment amount. */
-    public static void exactAmount(BigDecimal paid, BigDecimal due) {
-        if (paid.compareTo(due) != 0) {
-            throw new InvalidPaymentException("Valor deve ser igual ao da parcela: R$ " + reais(due));
+    /** The amount paid is exactly what is due on the payment date. */
+    public static void exactAmount(BigDecimal paid, LateCharges due) {
+        if (paid.compareTo(due.total()) != 0) {
+            throw new InvalidPaymentException((due.late()
+                            ? "Valor deve ser igual ao da parcela com multa e juros de mora: R$ "
+                            : "Valor deve ser igual ao da parcela: R$ ")
+                    + reais(due.total()));
         }
     }
 
-    /** Paid between the release and today, and not after the due date. */
-    public static void onTime(LocalDate paidOn, LocalDate releaseDate, LocalDate today, LocalDate dueDate) {
+    /** Paid between the release and today. */
+    public static void withinRange(LocalDate paidOn, LocalDate releaseDate, LocalDate today) {
         if (paidOn.isBefore(releaseDate) || paidOn.isAfter(today)) {
             throw new InvalidPaymentException("Data do pagamento deve ficar entre a liberação e hoje");
-        }
-        if (paidOn.isAfter(dueDate)) {
-            throw new InvalidPaymentException("Pagamento depois do vencimento ainda não pode ser registrado");
         }
     }
 

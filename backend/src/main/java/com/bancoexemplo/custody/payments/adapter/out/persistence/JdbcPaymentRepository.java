@@ -32,15 +32,18 @@ class JdbcPaymentRepository implements PaymentRepository {
     public void save(Payment payment) {
         try {
             jdbc.sql("""
-                            INSERT INTO payment (id, contract_id, installment_number, paid_on, amount, registered_by,
-                                registered_at)
-                            VALUES (:id, :contractId, :installmentNumber, :paidOn, :amount, :registeredBy, :registeredAt)
+                            INSERT INTO payment (id, contract_id, installment_number, paid_on, amount, late_fee,
+                                default_interest, registered_by, registered_at)
+                            VALUES (:id, :contractId, :installmentNumber, :paidOn, :amount, :lateFee,
+                                :defaultInterest, :registeredBy, :registeredAt)
                             """)
                     .param("id", payment.id())
                     .param("contractId", payment.contractId())
                     .param("installmentNumber", payment.installmentNumber())
                     .param("paidOn", payment.paidOn())
                     .param("amount", payment.amount())
+                    .param("lateFee", payment.lateFee())
+                    .param("defaultInterest", payment.defaultInterest())
                     .param("registeredBy", payment.registeredBy())
                     .param("registeredAt", Timestamp.from(payment.registeredAt()))
                     .update();

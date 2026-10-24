@@ -7,6 +7,7 @@ import com.bancoexemplo.custody.payments.application.port.PaymentEvents;
 import com.bancoexemplo.custody.payments.application.port.PaymentRepository;
 import com.bancoexemplo.custody.payments.domain.ContractNotFoundForPaymentException;
 import com.bancoexemplo.custody.payments.domain.InstallmentAlreadyPaidException;
+import com.bancoexemplo.custody.payments.domain.LateCharges;
 import com.bancoexemplo.custody.payments.domain.Payment;
 import com.bancoexemplo.custody.payments.domain.PaymentRules;
 import java.time.Clock;
@@ -38,30 +39,49 @@ public class RegisterPaymentService {
 
     @Transactional
     public Payment register(RegisterPaymentCommand command) {
-        ContractTerms terms =
-                contracts.find(command.contractId()).orElseThrow(ContractNotFoundForPaymentException::new);
-        Set<Integer> paid = payments.paidInstallments(command.contractId());
-        if (paid.contains(command.installmentNumber())) {
-            throw new InstallmentAlreadyPaidException();
-        }
-        InstallmentTerms oldestUnpaid = terms.installments().stream()
-                .filter(installment -> !paid.contains(installment.number()))
-                .findFirst()
-                .orElseThrow(InstallmentAlreadyPaidException::new);
-        PaymentRules.oldestUnpaid(command.installmentNumber(), oldestUnpaid.number());
-        PaymentRules.exactAmount(command.amount(), oldestUnpaid.amount());
-        PaymentRules.onTime(
-                command.paidOn(), terms.releaseDate(), LocalDate.now(clock.withZone(BRASILIA)), oldestUnpaid.dueDate());
+        InstallmentTerms installment = payable(command.contractId(), command.installmentNumber(), command.paidOn());
+        LateCharges due = LateCharges.of(installment.amount(), installment.dueDate(), command.paidOn());
+        PaymentRules.exactAmount(command.amount(), due);
         Payment payment = new Payment(
                 UUID.randomUUID(),
                 command.contractId(),
                 command.installmentNumber(),
                 command.paidOn(),
                 command.amount(),
+                due.lateFee(),
+                due.defaultInterest(),
                 command.registeredBy(),
                 Instant.now(clock));
         payments.save(payment);
         events.paymentRegistered(payment);
         return payment;
+    }
+
+    /** The amount due for the installment on the date, with the same refusals as registering it. */
+    public PaymentQuote quote(UUID contractId, int installmentNumber, LocalDate paidOn) {
+        InstallmentTerms installment = payable(contractId, installmentNumber, paidOn);
+        LateCharges due = LateCharges.of(installment.amount(), installment.dueDate(), paidOn);
+        return new PaymentQuote(
+                installmentNumber,
+                installment.amount(),
+                due.daysLate(),
+                due.lateFee(),
+                due.defaultInterest(),
+                due.total());
+    }
+
+    private InstallmentTerms payable(UUID contractId, int installmentNumber, LocalDate paidOn) {
+        ContractTerms terms = contracts.find(contractId).orElseThrow(ContractNotFoundForPaymentException::new);
+        Set<Integer> paid = payments.paidInstallments(contractId);
+        if (paid.contains(installmentNumber)) {
+            throw new InstallmentAlreadyPaidException();
+        }
+        InstallmentTerms oldestUnpaid = terms.installments().stream()
+                .filter(installment -> !paid.contains(installment.number()))
+                .findFirst()
+                .orElseThrow(InstallmentAlreadyPaidException::new);
+        PaymentRules.oldestUnpaid(installmentNumber, oldestUnpaid.number());
+        PaymentRules.withinRange(paidOn, terms.releaseDate(), LocalDate.now(clock.withZone(BRASILIA)));
+        return oldestUnpaid;
     }
 }

@@ -18,16 +18,17 @@ Spec: [Multa e juros de mora](../spec.md) · Depende de: nenhuma
 | `.../payments/adapter/out/persistence/JdbcPaymentRepository` | alterado | Grava `late_fee` e `default_interest`. |
 | `.../payments/adapter/in/web/PaymentController` | alterado | `GET /api/contracts/{contractId}/payments/quote`. |
 | `backend/src/main/resources/db/migration/V5__add_payment_charges.sql` | novo | Colunas `late_fee` e `default_interest`. |
+| `backend/src/test/java/.../payments/application/PaymentFakes` | alterado | Segundo contrato, com a parcela 1 vencida em 10/10/2026. |
 | `backend/src/test/java/.../payments/application/RegisterPaymentServiceTest` | alterado | O 0007/CT-5 passa a provar o pagamento atrasado aceito com multa e juros de mora, porque a recusa foi revogada. |
 
 ## Testes desta task
-- [ ] Unitário de domínio `LateChargesTest`: CT-1 a CT-4.
-- [ ] Unitário de caso de uso `RegisterPaymentServiceTest`: CT-5 a CT-7.
-- [ ] API `PaymentApiTest`: CT-8 a CT-10.
+- [x] Unitário de domínio `LateChargesTest`: CT-1 a CT-4.
+- [x] Unitário de caso de uso `RegisterPaymentServiceTest`: CT-5 a CT-7.
+- [x] API `PaymentApiTest`: CT-8 a CT-10.
 
 ## Cenários cobertos
 CT-1, CT-2, CT-3, CT-4, CT-5, CT-6, CT-7, CT-8, CT-9, CT-10
 
 ## Checklist
-- [ ] Testes de domínio e de caso de uso antes do código.
-- [ ] `./gradlew build` e `./gradlew pitest` verdes, mutação acima de 80%.
+- [x] Testes de domínio e de caso de uso antes do código.
+- [x] `./gradlew build` e `./gradlew pitest` verdes, mutação acima de 80%.
