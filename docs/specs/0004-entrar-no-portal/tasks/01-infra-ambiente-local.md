@@ -22,12 +22,12 @@ Spec: [Entrar no portal](../spec.md) · Depende de: nenhuma
 | `docs/runbooks/0001-rodar-localmente.md` | novo | Como subir, usar e derrubar o ambiente local sem apagar o volume. |
 
 ## Testes desta task
-- [ ] `./gradlew bootRun` sobe o PostgreSQL e a aplicação responde em `http://localhost:8080`.
-- [ ] `cd e2e && npm test` sobe backend e portal e passa (sem teste novo ainda).
+- [x] `./gradlew bootRun` sobe o PostgreSQL e a aplicação responde em `http://localhost:8080`.
+- [x] `cd e2e && npm test` sobe backend e portal e o teste de fumaça que já existe passa no CI (aqui o Chromium não abre, ver registro do mandato).
 
 ## Cenários cobertos
 Nenhum: a task prepara o ambiente dos cenários de ponta a ponta da task 04.
 
 ## Checklist
-- [ ] Ambiente local sobe e desce sem apagar volume.
-- [ ] CI verde com o job `e2e` subindo o backend.
+- [x] Ambiente local sobe e desce sem apagar volume.
+- [x] CI verde com o job `e2e` subindo o backend.

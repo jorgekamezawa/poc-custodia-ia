@@ -11,11 +11,21 @@ export default defineConfig({
     trace: 'retain-on-failure',
   },
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
-  webServer: {
-    command: 'npm start',
-    cwd: '../frontend',
-    url: 'http://localhost:4200',
-    reuseExistingServer: !process.env['CI'],
-    timeout: 120_000,
-  },
+  // The backend starts PostgreSQL itself through compose.yaml; the portal proxies /api to it.
+  webServer: [
+    {
+      command: './gradlew bootRun',
+      cwd: '../backend',
+      port: 8080,
+      reuseExistingServer: !process.env['CI'],
+      timeout: 240_000,
+    },
+    {
+      command: 'npm start',
+      cwd: '../frontend',
+      url: 'http://localhost:4200',
+      reuseExistingServer: !process.env['CI'],
+      timeout: 120_000,
+    },
+  ],
 });
