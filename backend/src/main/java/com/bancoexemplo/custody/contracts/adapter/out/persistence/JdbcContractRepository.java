@@ -1,5 +1,6 @@
 package com.bancoexemplo.custody.contracts.adapter.out.persistence;
 
+import com.bancoexemplo.custody.contracts.application.ContractSummary;
 import com.bancoexemplo.custody.contracts.application.port.ContractRepository;
 import com.bancoexemplo.custody.contracts.domain.AmortizationSystem;
 import com.bancoexemplo.custody.contracts.domain.ChassisNumber;
@@ -14,8 +15,10 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.regex.Pattern;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
@@ -23,6 +26,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 class JdbcContractRepository implements ContractRepository {
+
+    private static final String SUMMARY =
+            "SELECT id, number, customer_name, customer_cpf, principal, registered_at FROM contract";
+    // A typed % or _ is part of the number being searched, not a wildcard.
+    private static final Pattern LIKE_SPECIAL = Pattern.compile("[\\\\%_]");
 
     private final JdbcClient jdbc;
 
@@ -108,6 +116,44 @@ class JdbcContractRepository implements ContractRepository {
                 .param("id", id)
                 .query((row, index) -> contract(row, installments))
                 .optional();
+    }
+
+    @Override
+    public List<ContractSummary> findLatest(int limit) {
+        return jdbc.sql(SUMMARY + " ORDER BY registered_at DESC LIMIT :limit")
+                .param("limit", limit)
+                .query(JdbcContractRepository::summary)
+                .list();
+    }
+
+    @Override
+    public List<ContractSummary> findByCpf(String digits, int limit) {
+        return jdbc.sql(SUMMARY + " WHERE customer_cpf = :cpf ORDER BY registered_at DESC LIMIT :limit")
+                .param("cpf", digits)
+                .param("limit", limit)
+                .query(JdbcContractRepository::summary)
+                .list();
+    }
+
+    @Override
+    public List<ContractSummary> findByNumberPrefix(String prefix, int limit) {
+        String pattern = LIKE_SPECIAL.matcher(prefix.toUpperCase(Locale.ROOT)).replaceAll("\\\\$0") + "%";
+        return jdbc.sql(SUMMARY
+                        + " WHERE upper(number) LIKE :pattern ESCAPE '\\' ORDER BY registered_at DESC LIMIT :limit")
+                .param("pattern", pattern)
+                .param("limit", limit)
+                .query(JdbcContractRepository::summary)
+                .list();
+    }
+
+    private static ContractSummary summary(ResultSet row, int index) throws SQLException {
+        return new ContractSummary(
+                row.getObject("id", UUID.class),
+                row.getString("number"),
+                row.getString("customer_name"),
+                row.getString("customer_cpf"),
+                row.getBigDecimal("principal"),
+                row.getTimestamp("registered_at").toInstant());
     }
 
     private static Contract contract(ResultSet row, List<ContractInstallment> installments) throws SQLException {

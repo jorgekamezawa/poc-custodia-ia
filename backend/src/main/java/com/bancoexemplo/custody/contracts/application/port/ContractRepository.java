@@ -1,7 +1,9 @@
 package com.bancoexemplo.custody.contracts.application.port;
 
+import com.bancoexemplo.custody.contracts.application.ContractSummary;
 import com.bancoexemplo.custody.contracts.domain.Contract;
 import com.bancoexemplo.custody.contracts.domain.ContractNumber;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -18,4 +20,13 @@ public interface ContractRepository {
     void save(Contract contract);
 
     Optional<Contract> findById(UUID id);
+
+    /** The most recently registered contracts, newest first. */
+    List<ContractSummary> findLatest(int limit);
+
+    /** Contracts of the customer with this CPF, newest first. */
+    List<ContractSummary> findByCpf(String digits, int limit);
+
+    /** Contracts whose number starts with the prefix, ignoring case, newest first. */
+    List<ContractSummary> findByNumberPrefix(String prefix, int limit);
 }
