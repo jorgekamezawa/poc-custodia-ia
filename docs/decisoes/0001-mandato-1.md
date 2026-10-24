@@ -54,6 +54,8 @@ descricao: Decisões do mandato 1 de autonomia, sobre escopo, cálculo, arquitet
 
 - **`csrf.spa()` não entrega o cookie na primeira resposta:** o Spring Security só grava o `XSRF-TOKEN` quando alguém lê o token, e o portal precisa dele antes do login. Um filtro carrega o token em toda resposta (task 02 da spec 0004). O `csrf().asHeader()` do spring-security-test usa outro nome de cabeçalho; os testes fazem o caminho do portal (lê o cookie, devolve no cabeçalho).
 
+- **MockMvc não reproduz o repasse para a página de erro:** a recusa de CSRF chegava como 401 no servidor real e como 403 no MockMvc. Teste novo com servidor real (`AuthenticationServerTest`) e repasse de erro liberado (task 04 da spec 0004).
+
 ## Em aberto
 - **revisor-docs inconsistente entre specs:** na spec 0001 sugeriu escrever "juros remuneratórios (chamados só de juros nesta spec)"; na 0002 acusou esse mesmo apelido como violação da regra 8. Segui a leitura estrita (nome completo do glossário). Vale o padrão dizer se apelido local de termo é permitido.
 - **revisor-docs aceita e recusa o mesmo formato de cenário:** nas specs 0001 e 0002 aceitou cenários com dois casos numa linha (ex.: 0001/CT-8); na 0003 recusou. Separei um caso por cenário daqui em diante; as specs entregues ficam como estão.
@@ -61,3 +63,4 @@ descricao: Decisões do mandato 1 de autonomia, sobre escopo, cálculo, arquitet
 - **Ponta a ponta não roda nesta máquina:** o Chromium do Playwright não abre no WSL por falta de bibliotecas do sistema (pendência já conhecida); instalar exige `sudo apt`, fora do mandato. Aqui confiro que backend e portal sobem; o navegador roda só no CI.
 - **Playwright deixa o backend de pé quando falha localmente:** o `bootRun` abre um processo Java filho que sobrevive ao fim do Gradle; precisei derrubar à mão. No CI a máquina é descartada.
 - **pesquisador-contexto deixou passar arquivo de novo:** disse que `e2e/tests` não existia, mas `e2e/tests/smoke.spec.ts` existe (levantamento da #12), mesmo depois da regra do Glob exato.
+- **`e2e/` sem formatador nem lint:** o resto do projeto tem Prettier e lint no CI; os testes Playwright não. O `npx tsc` usado para conferir baixou um pacote `tsc` antigo para o cache do npx (não entrou no projeto).

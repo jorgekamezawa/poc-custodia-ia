@@ -1,5 +1,5 @@
 ---
-status: aprovada
+status: concluída
 atualizado: 2026-10-24
 descricao: Sobe o banco local por Docker Compose junto com o backend e faz o ponta a ponta subir backend e portal.
 ---

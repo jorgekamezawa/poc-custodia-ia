@@ -1,5 +1,5 @@
 ---
-status: aprovada
+status: concluída
 atualizado: 2026-10-24
 descricao: Protege a API com login por sessão, usuários fixos e perfis, e expõe login, sessão atual e saída.
 ---
