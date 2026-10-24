@@ -1,5 +1,8 @@
 <mat-toolbar>
-  <span>Custódia · Banco Exemplo</span>
+  <a class="brand" routerLink="/">Custódia · Banco Exemplo</a>
+  <nav aria-label="Menu">
+    <a mat-button routerLink="/contratos/novo" routerLinkActive="active">Cadastrar contrato</a>
+  </nav>
   <span class="spacer"></span>
   @if (user(); as current) {
     <span class="user">
