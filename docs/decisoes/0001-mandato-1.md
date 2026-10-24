@@ -55,6 +55,11 @@ descricao: Decisões do mandato 1 de autonomia, sobre escopo, cálculo, arquitet
 - **Fonte:** Spring Boot 4.1 conferido nos jars: o Kafka tem ligação automática no Testcontainers, mas não no Docker Compose.
 - **Regras:** PAG-01 a PAG-04 fictícias da POC; pagamento depois do vencimento fica recusado até a #16.
 
+### 8. Multa e juros de mora (2026-10-24)
+- **Escolha:** multa de 2% da parcela, uma vez (PAG-05), no limite do [CDC, art. 52, §1º](https://www.planalto.gov.br/ccivil_03/leis/l8078compilado.htm); juros de mora de 1% ao mês, simples, por dia corrido de atraso (PAG-06, fictícia); simulação do valor devido no backend, para o portal não calcular nada ([spec 0008](../specs/0008-multa-e-juros-de-mora/spec.md)).
+- **Fonte:** CDC lido no Planalto em 2026-10-24 (o WebFetch caiu; o texto veio por `curl`).
+- **Revogação parcial:** a recusa de pagamento depois do vencimento (PAG-03) sai; o teste 0007/CT-5 muda para provar o pagamento atrasado aceito.
+
 ## Corrigido no caminho
 - **INCIDENTE: merge com teste vermelho na `main` (PR #71).** Um teste de componente falhou localmente, mas o comando encadeado seguiu para commit, push e merge; o `gh pr checks --watch` respondeu "no checks reported" porque o CI ainda não tinha começado, e o merge saiu sem CI. Causa do teste vermelho: a troca no HTML não se aplicou (o arquivo tinha sido reformatado e a substituição não casou, sem conferência). A `main` ficou vermelha por cerca de 10 minutos; o PR #72 consertou. Correção no processo: `abrir-pr/scripts/merge_when_green.py` espera as checagens existirem e só mergeia com todas verdes, e a `abrir-pr` manda usá-lo. A skill `lote-autonomo` ainda diz `gh pr merge` direto; ela não pode ser mudada por mim (regra dela), então fica para a pessoa trocar.
 - **Título de task repetido no board:** "02 · qa · Validação" se repetiria em toda spec; as issues #31 e #32 ganharam o prefixo `0001 · `. O `board.md` passa a pedir o prefixo (PR de material do mandato 1).
