@@ -22,6 +22,7 @@ Spec: [Consulta de contrato](../spec.md) · Depende de: nenhuma
 | `.../contracts/adapter/in/web/ContractResponse`, `ContractSummaryResponse` | alterado / novo | Corpos com saldo, situação e o item da lista. |
 | `.../contracts/adapter/in/web/ContractErrorHandler` | alterado | 404 com `ProblemDetail`. |
 | `backend/src/main/resources/db/migration/V2__index_contract_search.sql` | novo | Índices de CPF, de data do cadastro e de número em maiúsculas para a busca. |
+| `backend/src/test/java/com/bancoexemplo/custody/contracts/application/InMemoryContractRepository` | alterado | Falso em memória com as três buscas. |
 | `backend/src/test/java/com/bancoexemplo/custody/contracts/ContractFixture` | novo | Contrato do exemplo da spec para os testes do módulo. |
 | `docs/specs/0006-consulta-de-contrato/spec.md` | alterado | Seção Dados: barras invertidas tiradas e o índice de número em maiúsculas. |
 

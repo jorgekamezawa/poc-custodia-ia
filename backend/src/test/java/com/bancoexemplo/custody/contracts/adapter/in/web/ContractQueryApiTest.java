@@ -74,7 +74,7 @@ class ContractQueryApiTest {
     }
 
     @Test
-    @DisplayName("CON-05 0006/CT-7: contrato que não existe responde 404")
+    @DisplayName("0006/CT-7: contrato que não existe responde 404")
     void unknownContractAnswers404() throws Exception {
         mvc.perform(get("/api/contracts/" + UUID.randomUUID()).session(operatorSession()))
                 .andExpect(status().isNotFound())
@@ -102,7 +102,7 @@ class ContractQueryApiTest {
     }
 
     @Test
-    @DisplayName("CON-05 0006/CT-9: busca pelo CPF com pontuação")
+    @DisplayName("0006/CT-9: busca pelo CPF com pontuação")
     void searchesByCpf() throws Exception {
         Contract contract = saved(prefix() + "-1", "52998224725", Instant.parse("2027-01-10T13:00:00Z"));
 
@@ -113,7 +113,7 @@ class ContractQueryApiTest {
     }
 
     @Test
-    @DisplayName("CON-05 0006/CT-10: busca sem resultado responde lista vazia")
+    @DisplayName("0006/CT-10: busca sem resultado responde lista vazia")
     void searchWithoutResult() throws Exception {
         mvc.perform(get("/api/contracts").param("q", "NAO-EXISTE").session(operatorSession()))
                 .andExpect(status().isOk())
@@ -121,7 +121,7 @@ class ContractQueryApiTest {
     }
 
     @Test
-    @DisplayName("CON-05 0006/CT-11: sem busca vêm os 50 mais recentes, do mais novo ao mais antigo")
+    @DisplayName("0006/CT-11: sem busca vêm os 50 mais recentes, do mais novo ao mais antigo")
     void latestFifty() throws Exception {
         String prefix = prefix();
         Instant base = Instant.parse("2099-01-01T00:00:00Z");
