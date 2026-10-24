@@ -1,0 +1,119 @@
+<h1>Cadastrar contrato</h1>
+
+@if (registered(); as contract) {
+  <section class="result" aria-live="polite">
+    <p class="success">Contrato {{ contract.number }} cadastrado.</p>
+    <p>CET: {{ contract.annualCetPercent | number: '1.2-2' }}% ao ano</p>
+    <table class="installments">
+      <thead>
+        <tr>
+          <th scope="col">Parcela</th>
+          <th scope="col">Vencimento</th>
+          <th scope="col">Valor</th>
+          <th scope="col">Juros remuneratórios</th>
+          <th scope="col">Amortização</th>
+          <th scope="col">Saldo devedor</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (installment of contract.installments; track installment.number) {
+          <tr class="installment">
+            <td>{{ installment.number }}</td>
+            <td>{{ installment.dueDate | date: 'dd/MM/yyyy' : 'UTC' }}</td>
+            <td>{{ installment.amount | currency: 'BRL' }}</td>
+            <td>{{ installment.interest | currency: 'BRL' }}</td>
+            <td>{{ installment.amortization | currency: 'BRL' }}</td>
+            <td>{{ installment.balanceAfter | currency: 'BRL' }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+    <button mat-flat-button type="button" (click)="registerAnother()">Cadastrar outro</button>
+  </section>
+} @else {
+  <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+    @if (error(); as message) {
+      <p class="error" role="alert">{{ message }}</p>
+    }
+
+    <fieldset>
+      <legend>Contrato</legend>
+      <mat-form-field>
+        <mat-label>Número do contrato</mat-label>
+        <input matInput formControlName="number" />
+        <mat-error>Campo obrigatório</mat-error>
+      </mat-form-field>
+    </fieldset>
+
+    <fieldset>
+      <legend>Cliente</legend>
+      <mat-form-field>
+        <mat-label>Nome</mat-label>
+        <input matInput formControlName="customerName" maxlength="120" />
+        <mat-error>Campo obrigatório</mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>CPF</mat-label>
+        <input matInput formControlName="customerCpf" inputmode="numeric" />
+        <mat-error>Campo obrigatório</mat-error>
+      </mat-form-field>
+    </fieldset>
+
+    <fieldset>
+      <legend>Veículo</legend>
+      <mat-form-field>
+        <mat-label>Chassi</mat-label>
+        <input matInput formControlName="chassisNumber" maxlength="17" />
+        <mat-error>Campo obrigatório</mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Descrição do veículo</mat-label>
+        <input matInput formControlName="vehicleDescription" maxlength="120" />
+        <mat-error>Campo obrigatório</mat-error>
+      </mat-form-field>
+    </fieldset>
+
+    <fieldset>
+      <legend>Financiamento</legend>
+      <mat-form-field>
+        <mat-label>Sistema</mat-label>
+        <mat-select formControlName="amortizationSystem">
+          <mat-option value="PRICE">Price</mat-option>
+          <mat-option value="SAC">SAC</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Valor financiado (R$)</mat-label>
+        <input matInput type="number" step="0.01" formControlName="principal" />
+        <mat-error>Campo obrigatório</mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Taxa ao mês (%)</mat-label>
+        <input matInput type="number" step="0.0001" formControlName="monthlyRatePercent" />
+        <mat-error>Campo obrigatório</mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Prazo (meses)</mat-label>
+        <input matInput type="number" step="1" formControlName="termMonths" />
+        <mat-error>Campo obrigatório</mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Data de liberação</mat-label>
+        <input matInput type="date" formControlName="releaseDate" />
+        <mat-error>Campo obrigatório</mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Primeiro vencimento</mat-label>
+        <input matInput type="date" formControlName="firstDueDate" />
+        <mat-error>Campo obrigatório</mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Custos pagos antecipadamente (R$)</mat-label>
+        <input matInput type="number" step="0.01" formControlName="upfrontCosts" />
+        <mat-error>Campo obrigatório</mat-error>
+      </mat-form-field>
+    </fieldset>
+
+    <button mat-flat-button type="submit" [disabled]="submitting()">Cadastrar</button>
+  </form>
+}

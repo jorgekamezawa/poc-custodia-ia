@@ -1,0 +1,49 @@
+form,
+.result {
+  display: grid;
+  gap: 16px;
+  max-width: 960px;
+}
+
+fieldset {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 0 16px;
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: 8px;
+  padding: 8px 16px;
+}
+
+legend {
+  padding: 0 4px;
+  font-weight: 500;
+}
+
+.error {
+  margin: 0;
+  color: var(--mat-sys-error);
+}
+
+.success {
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.installments {
+  border-collapse: collapse;
+  width: 100%;
+  overflow-x: auto;
+  display: block;
+}
+
+.installments th,
+.installments td {
+  padding: 6px 12px;
+  text-align: right;
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
+  white-space: nowrap;
+}
+
+button {
+  justify-self: start;
+}
