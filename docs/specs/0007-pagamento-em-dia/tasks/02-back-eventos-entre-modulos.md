@@ -1,5 +1,5 @@
 ---
-status: aprovada
+status: concluída
 atualizado: 2026-10-24
 descricao: Cria o módulo events, com a tabela de saída, o publicador que leva os eventos ao Kafka e o registro dos eventos já aplicados.
 ---

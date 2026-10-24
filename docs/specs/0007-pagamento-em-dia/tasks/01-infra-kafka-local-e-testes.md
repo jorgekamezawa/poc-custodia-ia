@@ -1,5 +1,5 @@
 ---
-status: aprovada
+status: concluída
 atualizado: 2026-10-24
 descricao: Sobe o Kafka no ambiente local junto com o PostgreSQL e nos testes de integração pelo Testcontainers.
 ---

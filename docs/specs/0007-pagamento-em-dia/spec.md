@@ -1,5 +1,5 @@
 ---
-status: aprovada
+status: entregue
 atualizado: 2026-10-24
 descricao: Registro do pagamento em dia de uma parcela pelo portal, com a parcela marcada como paga e o saldo devedor atualizado no contrato por evento.
 ---
