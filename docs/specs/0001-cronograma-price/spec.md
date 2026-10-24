@@ -1,5 +1,5 @@
 ---
-status: aprovada
+status: entregue
 atualizado: 2026-10-24
 descricao: Cálculo do cronograma de parcelas pela tabela Price (parcelas de mesmo valor), a partir de valor financiado, taxa mensal, prazo e primeiro vencimento.
 ---
