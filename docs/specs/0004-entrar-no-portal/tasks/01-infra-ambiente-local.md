@@ -17,6 +17,7 @@ Spec: [Entrar no portal](../spec.md) · Depende de: nenhuma
 |---|---|---|
 | `compose.yaml` | novo | PostgreSQL local, com volume nomeado e porta só em localhost. |
 | `backend/build.gradle.kts` | alterado | Dependência de desenvolvimento do suporte a Docker Compose. |
+| `backend/src/main/resources/application.properties` | alterado | Aponta o suporte a Docker Compose para o `compose.yaml` da raiz. |
 | `e2e/playwright.config.ts` | alterado | Sobe o backend (`bootRun`) e o portal, esperando os dois responderem. |
 | `.github/workflows/ci.yml` | alterado | Job `e2e` com o Java do backend para o `bootRun`. |
 | `docs/runbooks/0001-rodar-localmente.md` | novo | Como subir, usar e derrubar o ambiente local sem apagar o volume. |
