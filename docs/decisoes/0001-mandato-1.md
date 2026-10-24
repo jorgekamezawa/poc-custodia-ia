@@ -66,6 +66,10 @@ descricao: Decisões do mandato 1 de autonomia, sobre escopo, cálculo, arquitet
 
 - **Pacote inicial acima do orçamento:** os campos do Material levaram o pacote a 607,92 kB (limite 500 kB) e o build passou a avisar; as páginas viraram carregamento sob demanda (385,10 kB), task 02 da spec 0005.
 
+- **Cenário com dois casos, de novo (lapso meu):** a regra estava no padrão, mas não na `padrao-testes`, que eu leio na hora de escrever; agora está lá (PR de material do contrato).
+- **Revisor revisou às cegas sem o diff:** com a sessão no `custodia-docs`, o subagente herdou o diretório e não leu o diff; ele passa a parar e dizer "Revisão impossível" (PR de material do contrato).
+- **Derrubar o ambiente local:** `pkill -f` matava o próprio terminal e o `bootRun` deixava um Java filho; o runbook ensina a parar pela porta (PR de material do contrato).
+
 ## Em aberto
 - **revisor-docs inconsistente entre specs:** na spec 0001 sugeriu escrever "juros remuneratórios (chamados só de juros nesta spec)"; na 0002 acusou esse mesmo apelido como violação da regra 8. Segui a leitura estrita (nome completo do glossário). Vale o padrão dizer se apelido local de termo é permitido.
 - **revisor-docs aceita e recusa o mesmo formato de cenário:** nas specs 0001 e 0002 aceitou cenários com dois casos numa linha (ex.: 0001/CT-8); na 0003 recusou. Separei um caso por cenário daqui em diante; as specs entregues ficam como estão.
@@ -73,6 +77,3 @@ descricao: Decisões do mandato 1 de autonomia, sobre escopo, cálculo, arquitet
 - **Playwright deixa o backend de pé quando falha localmente:** o `bootRun` abre um processo Java filho que sobrevive ao fim do Gradle; precisei derrubar à mão. No CI a máquina é descartada.
 - **pesquisador-contexto deixou passar arquivo de novo:** disse que `e2e/tests` não existia, mas `e2e/tests/smoke.spec.ts` existe (levantamento da #12), mesmo depois da regra do Glob exato.
 - **`npx tsc` baixou um pacote antigo:** `tsc` no npm não é o TypeScript; o comando baixou o pacote `tsc@2.0.4` para o cache do npx (não entrou no projeto). Usar `npx --package typescript tsc` ou o script do projeto.
-- **Lapso meu: cenários com dois casos de novo:** depois de anotar a regra na spec 0003, a spec 0005 voltou a juntar dois casos em CT-7 e CT-8; o revisor pegou. A regra está no padrão, mas não no template da spec nem na `padrao-testes`, onde eu a leria na hora de escrever.
-- **Derrubar o ambiente local é frágil:** `pkill -f` e `pgrep -f` acham o próprio shell e o matam (saída 144), e o `bootRun` deixa um Java filho. Vale um script de derrubada no runbook, que ache os processos pela porta.
-- **Subagente herda o diretório da sessão:** com a sessão parada no `custodia-docs`, o revisor-codigo não conseguiu rodar `git diff` no projeto (o hook só aceita git de leitura, sem `-C` nem `cd`) e revisou às cegas. Chamar o revisor sempre com a sessão no repositório da branch; vale o roteiro do subagente checar isso e avisar.

@@ -40,6 +40,7 @@ Use só as que o critério toca.
 
 ## Escrever um cenário
 Uma linha da tabela da spec: identificador, critério, camada, entrada com valores reais e resultado esperado verificável ("parcela 12 com R$ 1.034,57", não "valor correto").
+- **Um caso por linha.** Dois valores de entrada com o mesmo resultado (ex.: "0 e 73 meses") ou um recusado e um aceito são cenários separados; a linha pode dizer "recusado com a mensagem do CT-n".
 
 ## Ao implementar
 - Bug: primeiro o teste que reproduz, depois o conserto.
