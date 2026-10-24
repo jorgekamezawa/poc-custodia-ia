@@ -19,5 +19,8 @@ paths:
 - Todo componente com comportamento tem teste de componente (Vitest + TestBed), verificando o que o usuário vê e faz, não detalhes internos.
 - Teste ponta a ponta (Playwright) nasce na task de QA, não nas tasks de front.
 
+## Ferramenta
+- Formato é do Prettier e regra é do angular-eslint; rode `npm run format` e `npm run lint` antes de mostrar código. O commit é barrado se o formato estiver fora.
+
 ## Idioma
 - Identificadores e comentários em inglês; texto da tela em português.
