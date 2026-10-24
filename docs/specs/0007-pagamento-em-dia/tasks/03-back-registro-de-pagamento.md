@@ -16,7 +16,8 @@ Spec: [Pagamento de parcela em dia](../spec.md) · Depende de: 02
 | `.../contracts/adapter/in/messaging/PaymentRegisteredListener` | novo | Consome `custody.payment-registered` e aplica uma vez por evento (CA-7), na mesma transação do registro do evento aplicado. |
 | `.../contracts/domain/ContractInstallment`, `Contract`, `InstallmentSituation` | alterado | Data do pagamento, situação `PAID` (CON-05) e saldo depois da última paga (CON-06). |
 | `.../contracts/adapter/out/persistence/JdbcContractRepository` | alterado | Lê e grava `paid_on`. |
-| `.../payments/domain/Payment`, `PaymentRules`, `InvalidPaymentException`, `InstallmentAlreadyPaidException` | novo | Pagamento e a PAG-01 a PAG-04. |
+| `.../payments/domain/Payment`, `PaymentRules`, `InvalidPaymentException`, `InstallmentAlreadyPaidException`, `ContractNotFoundForPaymentException` | novo | Pagamento, a PAG-01 a PAG-04 e a recusa de contrato que não existe (CA-8). |
+| `.../contracts/application/ContractQueryService` | alterado | Usa a situação da parcela com `PAID`. |
 | `.../payments/application/RegisterPaymentService`, `RegisterPaymentCommand` | novo | Valida, guarda e publica o evento na mesma transação. |
 | `.../payments/application/port/PaymentRepository`, `ContractToPay`, `PaymentEvents` | novo | Portas de gravação, de leitura do contrato e de publicação do evento. |
 | `.../payments/adapter/out/persistence/JdbcPaymentRepository` | novo | Tabela `payment`. |
