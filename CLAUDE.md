@@ -21,7 +21,7 @@ Com `.claude/mandato.json` válido (escopo aprovado pela pessoa, data `ate` não
 | Teste de mutação do backend | `cd backend && ./gradlew pitest` (relatório em `build/reports/pitest`) |
 | Lint, formato e testes do frontend | `cd frontend && npm run lint && npm run format:check && npm test -- --watch=false` |
 | Formatar o frontend | `cd frontend && npm run format` |
-| Ponta a ponta (sobe o portal sozinho) | `cd e2e && npm test` |
+| Ponta a ponta (sobe backend, banco e portal sozinho) | `cd e2e && npm run format:check && npm test` |
 | Verificar documentos | `python3 ../custodia-docs/scripts/check_docs.py --root .` |
 
 ## Onde mora cada coisa

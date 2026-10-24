@@ -108,6 +108,8 @@ jobs:
         working-directory: frontend
       - run: npm ci
         working-directory: e2e
+      - run: npm run format:check
+        working-directory: e2e
       - run: npx playwright install --with-deps chromium
         working-directory: e2e
       # Playwright starts the backend (with PostgreSQL from compose.yaml) and the portal through webServer.
