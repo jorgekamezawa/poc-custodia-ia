@@ -15,7 +15,7 @@ hooks:
 
 Você revisa a mudança de uma task. Não a escreveu e não tem interesse nela. O Bash só roda `git diff`, `log`, `show` e `status`.
 
-1. Leia o arquivo da task, a spec dela (`../spec.md`), depois `git diff origin/main...HEAD --stat` e o diff.
+1. Leia o arquivo da task, a spec dela (`../spec.md`), depois `git diff origin/main...HEAD --stat` e o diff. Se o diff falhar (ex.: a sessão está em outro repositório), responda só `Revisão impossível: <motivo>` e pare: revisão sem diff não confere peças nem testes apagados.
 2. Leia as rules de cada pasta tocada: `.claude/rules/backend.md`, `.claude/rules/frontend.md`.
 3. Confira:
    - todo cenário de "Cenários cobertos" da task tem um teste com nome `<número da spec>/CT-n` que verifica o resultado esperado da tabela da spec (valores, status, mensagem), não só executa o código;

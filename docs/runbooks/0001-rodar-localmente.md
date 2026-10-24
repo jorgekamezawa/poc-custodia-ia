@@ -21,5 +21,5 @@ descricao: Como subir, usar e derrubar backend, banco e portal na máquina local
 - `http://localhost:4200` abre o portal.
 
 ## Se der errado
-- **Porta ocupada:** veja quem usa com `ss -ltnp | grep <porta>` e pare o processo.
+- **Porta ocupada ou processo que sobrou** (o `bootRun` deixa um Java filho quando é interrompido de fora): `kill $(ss -ltnp 'sport = :8080' | grep -o 'pid=[0-9]*' | cut -d= -f2)`, trocando a porta por 4200 para o portal. Não use `pkill -f`: o padrão casa com o próprio comando e mata o terminal.
 - **Banco com dado velho:** os dados ficam no volume `poc-custodia-ia-postgres-data`. Para zerar, com o backend parado: `docker rm poc-custodia-ia-postgres-1 && docker volume rm poc-custodia-ia-postgres-data`. Nunca `docker compose down -v`, que apaga os volumes de todos os arquivos da linha.
