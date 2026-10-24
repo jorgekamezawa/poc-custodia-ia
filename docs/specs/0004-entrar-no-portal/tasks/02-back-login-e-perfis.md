@@ -21,15 +21,18 @@ Spec: [Entrar no portal](../spec.md) · Depende de: 01
 | `.../access/adapter/in/ConfiguredUsers` | novo | Lê os usuários da configuração e os entrega ao Spring Security. |
 | `.../access/adapter/in/CurrentUserController` | novo | `GET /api/auth/me`. |
 | `.../access/adapter/in/CurrentUserResponse` | novo | Corpo de `/api/auth/me` e do login. |
+| `.../access/adapter/in/CurrentUsers` | novo | Monta a resposta do usuário logado com todos os perfis que a hierarquia dá. |
+| `.../access/adapter/in/CsrfCookieFilter` | novo | Carrega o token de CSRF em toda resposta, para o cookie chegar ao portal antes do login; o `csrf.spa()` sozinho só o grava quando alguém lê o token. |
+| `backend/src/test/java/com/bancoexemplo/custody/TestcontainersConfiguration` | alterado | Passa a público, para testes de outros pacotes usarem o PostgreSQL do Testcontainers. |
 | `backend/src/main/resources/application.properties` | alterado | Usuários de demonstração e expiração da sessão em 30 minutos (GER-05). |
 | `backend/src/test/java/com/bancoexemplo/custody/access/adapter/in/AuthenticationApiTest` | novo | Testes de API dos cenários CT-1 a CT-8. |
 
 ## Testes desta task
-- [ ] API `AuthenticationApiTest`: CT-1 a CT-8, com a aplicação inteira e PostgreSQL do Testcontainers.
+- [x] API `AuthenticationApiTest`: CT-1 a CT-8, com a aplicação inteira e PostgreSQL do Testcontainers.
 
 ## Cenários cobertos
 CT-1, CT-2, CT-3, CT-4, CT-5, CT-6, CT-7, CT-8
 
 ## Checklist
-- [ ] Testes escritos antes da configuração.
-- [ ] `./gradlew build` verde.
+- [x] Testes escritos antes da configuração.
+- [x] `./gradlew build` verde.
