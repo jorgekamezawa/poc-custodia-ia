@@ -39,6 +39,11 @@ descricao: Decisões do mandato 1 de autonomia, sobre escopo, cálculo, arquitet
 - **Escopo:** IOF e seguros entram como custos já somados; o cálculo do IOF fica fora.
 - **Mutantes equivalentes:** 3 de 54 sobrevivem no `TotalEffectiveCostRate`, todos trocando `>` por `>=` (ou `<` por `<=`) nos laços da bisseção; só mudariam algo num empate exato de ponto flutuante, e uma volta a mais não muda o resultado em 2 casas. Mutação em 94%, acima do limite; não foram excluídos da configuração.
 
+### 5. Login como história própria e regras de acesso como gerais (2026-10-24)
+- **Escolha:** épico novo "Acesso ao portal" (#46) com a história #47, antes do cadastro de contrato (#12); GER-03 a GER-05 nas regras gerais; sessão no servidor com cookie e CSRF ([ADR-0013](../adr/0013-sessao-com-cookie-e-csrf-no-portal.md)); telas com Angular Material ([ADR-0014](../adr/0014-componentes-do-portal-com-angular-material.md)).
+- **Motivo:** o login é base de toda tela e não cabia na spec do contrato; as regras de acesso valem para todos os módulos.
+- **Esboço:** sem Claude Design; a tela é descrita na spec e desenhada direto com Angular Material.
+
 ## Corrigido no caminho
 - **Título de task repetido no board:** "02 · qa · Validação" se repetiria em toda spec; as issues #31 e #32 ganharam o prefixo `0001 · `. O `board.md` passa a pedir o prefixo (PR de material do mandato 1).
 - **Link para o custodia-docs:** o `check_docs.py` agora acusa link relativo que sai do repositório e o padrão manda usar a URL do GitHub ([custodia-docs#6](https://github.com/jorgekamezawa/custodia-docs/pull/6)).
