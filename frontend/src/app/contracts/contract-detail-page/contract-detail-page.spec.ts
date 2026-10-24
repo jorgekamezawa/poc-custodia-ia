@@ -6,6 +6,7 @@ import { LOCALE_ID } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
+import { todayIso } from '../../payments/register-payment-form/register-payment-form';
 import { ContractDetail } from '../contract-api.service';
 import { ContractDetailPage } from './contract-detail-page';
 
@@ -118,6 +119,10 @@ describe('ContractDetailPage', () => {
       'app-register-payment-form input[type="number"]',
     ) as HTMLInputElement;
     expect(amount.value).toBe('5252.49');
+    const paidOn = harness.routeNativeElement!.querySelector(
+      'app-register-payment-form input[type="date"]',
+    ) as HTMLInputElement;
+    expect(paidOn.value).toBe(todayIso());
   });
 
   it('0007/CT-22: depois do pagamento registrado a consulta é feita de novo', async () => {
