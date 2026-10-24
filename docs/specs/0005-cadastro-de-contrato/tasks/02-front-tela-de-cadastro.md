@@ -1,5 +1,5 @@
 ---
-status: aprovada
+status: concluída
 atualizado: 2026-10-24
 descricao: Tela Cadastrar contrato no portal, com o resultado do cadastro, e o item no menu da moldura.
 ---

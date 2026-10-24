@@ -1,5 +1,5 @@
 ---
-status: aprovada
+status: concluída
 atualizado: 2026-10-24
 descricao: Cria o módulo contracts com o cadastro do contrato, o cálculo pelo módulo calculator, a gravação no PostgreSQL e o POST /api/contracts.
 ---
