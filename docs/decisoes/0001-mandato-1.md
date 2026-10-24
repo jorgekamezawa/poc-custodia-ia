@@ -77,3 +77,4 @@ descricao: Decisões do mandato 1 de autonomia, sobre escopo, cálculo, arquitet
 - **Playwright deixa o backend de pé quando falha localmente:** o `bootRun` abre um processo Java filho que sobrevive ao fim do Gradle; precisei derrubar à mão. No CI a máquina é descartada.
 - **pesquisador-contexto deixou passar arquivo de novo:** disse que `e2e/tests` não existia, mas `e2e/tests/smoke.spec.ts` existe (levantamento da #12), mesmo depois da regra do Glob exato.
 - **`npx tsc` baixou um pacote antigo:** `tsc` no npm não é o TypeScript; o comando baixou o pacote `tsc@2.0.4` para o cache do npx (não entrou no projeto). Usar `npx --package typescript tsc` ou o script do projeto.
+- **Barras invertidas na spec 0006 (lapso meu):** um texto com crases escapadas dentro de Python foi gravado como `\``; o `check_docs.py` não acusa e o revisor revisou antes do erro. Corrigido no PR da task 01 da spec 0006. Vale o `check_docs.py` acusar `\`` fora de bloco de código.
