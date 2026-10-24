@@ -52,6 +52,8 @@ descricao: Decisões do mandato 1 de autonomia, sobre escopo, cálculo, arquitet
 
 - **pesquisador-contexto deixou passar arquivo:** disse que não havia teste ArchUnit, mas o roteiro já apontava a pasta; o subagente passa a fazer Glob do caminho exato antes de declarar ausência (PR de material do mandato 1).
 
+- **`csrf.spa()` não entrega o cookie na primeira resposta:** o Spring Security só grava o `XSRF-TOKEN` quando alguém lê o token, e o portal precisa dele antes do login. Um filtro carrega o token em toda resposta (task 02 da spec 0004). O `csrf().asHeader()` do spring-security-test usa outro nome de cabeçalho; os testes fazem o caminho do portal (lê o cookie, devolve no cabeçalho).
+
 ## Em aberto
 - **revisor-docs inconsistente entre specs:** na spec 0001 sugeriu escrever "juros remuneratórios (chamados só de juros nesta spec)"; na 0002 acusou esse mesmo apelido como violação da regra 8. Segui a leitura estrita (nome completo do glossário). Vale o padrão dizer se apelido local de termo é permitido.
 - **revisor-docs aceita e recusa o mesmo formato de cenário:** nas specs 0001 e 0002 aceitou cenários com dois casos numa linha (ex.: 0001/CT-8); na 0003 recusou. Separei um caso por cenário daqui em diante; as specs entregues ficam como estão.
