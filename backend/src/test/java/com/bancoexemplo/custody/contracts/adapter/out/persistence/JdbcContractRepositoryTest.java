@@ -15,6 +15,7 @@ import com.bancoexemplo.custody.contracts.domain.DuplicateContractNumberExceptio
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
@@ -49,21 +50,22 @@ class JdbcContractRepositoryTest {
                 ContractStatus.ACTIVE,
                 "operador",
                 Instant.parse("2027-01-10T13:00:00Z"),
-                List.of(
-                        new ContractInstallment(
-                                1,
-                                LocalDate.of(2027, 2, 10),
-                                new BigDecimal("945.60"),
-                                new BigDecimal("200.00"),
-                                new BigDecimal("745.60"),
-                                new BigDecimal("9254.40")),
-                        new ContractInstallment(
-                                2,
-                                LocalDate.of(2027, 3, 10),
-                                new BigDecimal("945.60"),
-                                new BigDecimal("185.09"),
-                                new BigDecimal("760.51"),
-                                new BigDecimal("8493.89"))));
+                installmentsOfTheExample());
+    }
+
+    /** The 12 installments of the spec example: 11 of R$ 945.60 and the last of R$ 945.55. */
+    private static List<ContractInstallment> installmentsOfTheExample() {
+        List<ContractInstallment> installments = new ArrayList<>();
+        for (int number = 1; number <= 12; number++) {
+            installments.add(new ContractInstallment(
+                    number,
+                    LocalDate.of(2027, 2, 10).plusMonths(number - 1L),
+                    new BigDecimal(number == 12 ? "945.55" : "945.60"),
+                    new BigDecimal("10.00"),
+                    new BigDecimal("935.60"),
+                    new BigDecimal("100.00")));
+        }
+        return installments;
     }
 
     @Test
@@ -72,7 +74,14 @@ class JdbcContractRepositoryTest {
         Contract saved = contract("CTR-REPO-" + UUID.randomUUID().toString().substring(0, 8));
         repository.save(saved);
 
-        assertThat(repository.findById(saved.id())).contains(saved);
+        Contract loaded = repository.findById(saved.id()).orElseThrow();
+
+        assertThat(loaded).isEqualTo(saved);
+        assertThat(loaded.installments()).hasSize(12);
+        assertThat(loaded.installments().get(11).amount()).isEqualByComparingTo("945.55");
+        assertThat(loaded.installments())
+                .extracting(ContractInstallment::number)
+                .isSorted();
         assertThat(repository.existsByNumber(saved.number())).isTrue();
     }
 
