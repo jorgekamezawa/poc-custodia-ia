@@ -1,5 +1,5 @@
 ---
-status: aprovada
+status: entregue
 atualizado: 2026-10-24
 descricao: Cálculo do CET (custo efetivo total) de um contrato, ao ano, pela fórmula da Resolução CMN 4.881/2020, sobre o cronograma Price ou SAC.
 ---

@@ -1,5 +1,5 @@
 ---
-status: aprovada
+status: concluída
 atualizado: 2026-10-24
 descricao: Adiciona ao módulo calculator o cálculo do CET sobre o cronograma Price ou SAC, exposto na api do módulo.
 ---

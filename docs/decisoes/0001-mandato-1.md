@@ -50,3 +50,4 @@ descricao: Decisões do mandato 1 de autonomia, sobre escopo, cálculo, arquitet
 ## Em aberto
 - **revisor-docs inconsistente entre specs:** na spec 0001 sugeriu escrever "juros remuneratórios (chamados só de juros nesta spec)"; na 0002 acusou esse mesmo apelido como violação da regra 8. Segui a leitura estrita (nome completo do glossário). Vale o padrão dizer se apelido local de termo é permitido.
 - **revisor-docs aceita e recusa o mesmo formato de cenário:** nas specs 0001 e 0002 aceitou cenários com dois casos numa linha (ex.: 0001/CT-8); na 0003 recusou. Separei um caso por cenário daqui em diante; as specs entregues ficam como estão.
+- **revisor-codigo não conhece o registro do mandato:** acusou o `docs/decisoes/0001-mandato-1.md` como arquivo fora das peças da task (PR #44); recusei com motivo. Vale o subagente saber que, com mandato, o registro muda em todo PR.
