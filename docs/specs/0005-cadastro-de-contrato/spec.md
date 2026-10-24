@@ -1,5 +1,5 @@
 ---
-status: aprovada
+status: entregue
 atualizado: 2026-10-24
 descricao: Cadastro do contrato de financiamento de veículo já assinado, com cronograma e CET calculados e guardados, pelo portal.
 ---
