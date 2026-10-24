@@ -24,12 +24,10 @@ Spec: [Pagamento de parcela em dia](../spec.md) · Depende de: 01
 | `backend/src/main/resources/db/migration/V3__create_outbox_and_processed_event.sql` | novo | Tabelas `outbox_event` e `processed_event` da seção Dados. |
 
 ## Testes desta task
-- [ ] Integração `OutboxRelayTest`, com PostgreSQL e Kafka reais: CT-14.
-- [ ] Integração `JdbcEventPublisherTest`: CT-15 e o evento gravado com tópico, chave e corpo.
-- [ ] Integração `JdbcProcessedEventsTest`: primeira vez verdadeiro, segunda falso, por consumidor.
+- [x] Integração `EventsTest`, com PostgreSQL e Kafka reais: CT-14, CT-15, o evento gravado com tópico, chave e corpo, e o registro de evento aplicado por consumidor.
 
 ## Cenários cobertos
 CT-14, CT-15
 
 ## Checklist
-- [ ] `./gradlew build` e `./gradlew pitest` verdes.
+- [x] `./gradlew build` e `./gradlew pitest` verdes.
