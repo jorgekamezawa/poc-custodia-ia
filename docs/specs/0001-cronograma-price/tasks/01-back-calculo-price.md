@@ -25,6 +25,7 @@ Spec: [Cronograma pela tabela Price](../spec.md) · Depende de: nenhuma
 | `.../calculator/domain/PriceSchedule` | novo | Parcela fixa, juros, amortização, resíduo na última parcela (CAL-01) e vencimentos (CAL-02). |
 | `.../calculator/application/ScheduleCalculatorService` | novo | Implementa `ScheduleCalculator`: valida pelos limites e delega ao sistema pedido. Bean do Spring. |
 | `backend/src/test/java/com/bancoexemplo/custody/architecture/ArchitectureTest` | alterado | Regra nova: fora do próprio módulo, só a `api/` é acessível. |
+| `backend/src/test/java/com/bancoexemplo/custody/archfixture/ReachesIntoCalculatorDomain` | novo | Classe de teste que viola a fronteira de propósito, para o teste de arquitetura provar que a regra falha. |
 
 ## Testes desta task
 - [x] Unitário de domínio `PriceScheduleTest`: CT-1 a CT-7.
