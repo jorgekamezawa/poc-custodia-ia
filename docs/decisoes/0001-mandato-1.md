@@ -89,11 +89,11 @@ descricao: Decisões do mandato 1 de autonomia, sobre escopo, cálculo, arquitet
 - **Playwright deixa o backend de pé quando falha localmente:** o `bootRun` abre um processo Java filho que sobrevive ao fim do Gradle; precisei derrubar à mão. No CI a máquina é descartada.
 - **pesquisador-contexto deixou passar arquivo de novo:** disse que `e2e/tests` não existia, mas `e2e/tests/smoke.spec.ts` existe (levantamento da #12), mesmo depois da regra do Glob exato.
 - **`npx tsc` baixou um pacote antigo:** `tsc` no npm não é o TypeScript; o comando baixou o pacote `tsc@2.0.4` para o cache do npx (não entrou no projeto). Usar `npx --package typescript tsc` ou o script do projeto.
-- **Barras invertidas na spec 0006 (lapso meu):** um texto com crases escapadas dentro de Python foi gravado como `\``; o `check_docs.py` não acusa e o revisor revisou antes do erro. Corrigido no PR da task 01 da spec 0006. Vale o `check_docs.py` acusar `\`` fora de bloco de código.
+- **Barras invertidas na spec 0006 (lapso meu):** um texto com crases escapadas dentro de Python foi gravado como barra invertida antes de crase; o `check_docs.py` não acusa e o revisor revisou antes do erro. Corrigido no PR da task 01 da spec 0006. Vale o `check_docs.py` acusar barra invertida antes de crase fora de bloco de código.
 - **Nome de teste sem regra:** a rule do backend manda o `@DisplayName` começar pelo identificador da regra, mas não diz o que fazer quando o cenário não prova regra (ex.: 404, busca); pus uma regra errada e o revisor pegou. Vale a rule dizer: sem regra, começa pelo `<spec>/CT-n`.
 - **Para a pessoa decidir:**
   - Trocar na skill `lote-autonomo` o `gh pr merge` direto por `merge_when_green.py` (a regra da skill me impede de mudá-la).
   - Instalar as bibliotecas do Chromium no WSL (`sudo`), para o ponta a ponta rodar também localmente.
   - Dizer se o padrão permite apelido local de termo (o revisor-docs decidiu dos dois jeitos).
   - O hook `guard_git.py` só lê a data do mandato, não o escopo: quem respeitou o limite da #16 foi a skill.
-  - `check_docs.py` não acusa `\`` fora de bloco de código (barra invertida antes de crase), que escapou duas vezes.
+  - `check_docs.py` não acusa barra invertida antes de crase fora de bloco de código (barra invertida antes de crase), que escapou duas vezes.

@@ -38,6 +38,7 @@ Com `.claude/mandato.json` válido (escopo aprovado pela pessoa, data `ate` não
 Para achar contexto: leia o campo `descricao` do cabeçalho antes de abrir um documento inteiro.
 
 ## Padrões
+- A POC espelha um ambiente real de banco: ser POC nunca justifica simplificar nem complicar uma solução; a escolha se defende por custo, risco e valor.
 - Código, identificadores e comentários em inglês; documentos, specs, commits e PRs em português.
 - Toda feature passa pelo fluxo da spec descrito no padrão de documentação: spec aprovada, tasks por camada aprovadas, uma task por PR, task de QA no fim.
 - Regra de negócio nova ou alterada atualiza a página de regras do módulo no `custodia-docs`, no mesmo ciclo da feature.

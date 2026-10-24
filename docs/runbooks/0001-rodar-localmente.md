@@ -16,6 +16,12 @@ descricao: Como subir, usar e derrubar backend, banco e portal na máquina local
 2. Em outro terminal, `cd frontend && npm start`: o portal abre em `http://localhost:4200` e repassa `/api` ao backend.
 3. Para derrubar, `Ctrl+C` nos dois terminais: o backend para o contêiner do banco ao sair.
 
+## Ver os testes ponta a ponta rodando
+O Playwright sobe backend, banco e portal sozinho; com o WSLg, a janela do Chromium abre no Windows.
+- `cd e2e && npm run test:ui`: modo visual, com a lista de testes e cada passo para assistir e repetir.
+- `cd e2e && npm run test:headed`: roda tudo com a janela visível e meio segundo entre ações.
+- Pré-requisito, uma vez por máquina: `cd e2e && sudo env "PATH=$PATH" npx playwright install-deps chromium`.
+
 ## Como confirmar que deu certo
 - `docker ps` mostra `poc-custodia-ia-postgres-1` e `poc-custodia-ia-kafka-1` enquanto o backend roda, e nada depois de sair.
 - `http://localhost:4200` abre o portal.

@@ -9,6 +9,8 @@ export default defineConfig({
   use: {
     baseURL: 'http://localhost:4200',
     trace: 'retain-on-failure',
+    // npm run test:headed sets SLOWMO so a person can follow each step on screen.
+    launchOptions: { slowMo: Number(process.env['SLOWMO'] ?? 0) },
   },
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
   // The backend starts PostgreSQL itself through compose.yaml; the portal proxies /api to it.
