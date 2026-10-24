@@ -1,0 +1,40 @@
+---
+status: aprovada
+atualizado: 2026-10-24
+descricao: Cria o módulo payments com o registro do pagamento em dia e faz o contrato marcar a parcela paga ao receber o evento.
+---
+# 03 · back · Registro de pagamento
+
+Spec: [Pagamento de parcela em dia](../spec.md) · Depende de: 02
+
+## Peças
+| Caminho | Novo / alterado | Responsabilidade |
+|---|---|---|
+| `backend/src/main/java/com/bancoexemplo/custody/contracts/api/ContractInstallments` | novo | O que outro módulo pode ler do contrato: liberação e parcelas com vencimento, valor e se está paga. |
+| `.../contracts/application/ContractInstallmentsService` | novo | Implementa `ContractInstallments`. |
+| `.../contracts/application/MarkInstallmentPaidService` | novo | Marca a parcela paga uma vez por evento (CA-7), na mesma transação do registro do evento aplicado. |
+| `.../contracts/adapter/in/messaging/PaymentRegisteredListener` | novo | Consome `custody.payment-registered`. |
+| `.../contracts/domain/ContractInstallment`, `Contract`, `InstallmentSituation` | alterado | Data do pagamento, situação `PAID` (CON-05) e saldo depois da última paga (CON-06). |
+| `.../contracts/adapter/out/persistence/JdbcContractRepository` | alterado | Lê e grava `paid_on`. |
+| `.../payments/domain/Payment`, `PaymentRules`, `InvalidPaymentException`, `InstallmentAlreadyPaidException` | novo | Pagamento e a PAG-01 a PAG-04. |
+| `.../payments/application/RegisterPaymentService` | novo | Valida, guarda e publica o evento na mesma transação. |
+| `.../payments/application/port/PaymentRepository`, `ContractToPay`, `PaymentEvents` | novo | Portas de gravação, de leitura do contrato e de publicação do evento. |
+| `.../payments/adapter/out/persistence/JdbcPaymentRepository` | novo | Tabela `payment`. |
+| `.../payments/adapter/out/contracts/ContractsAdapter` | novo | Lê o contrato pela `api/` de contracts. |
+| `.../payments/adapter/out/events/PaymentEventsAdapter` | novo | Publica pelo `EventPublisher` do módulo events. |
+| `.../payments/adapter/in/web/PaymentController`, `PaymentErrorHandler` | novo | `POST /api/contracts/{contractId}/payments` e os erros. |
+| `backend/src/main/resources/db/migration/V4__create_payment_and_paid_on.sql` | novo | Tabela `payment` e a coluna `paid_on`. |
+
+## Testes desta task
+- [ ] Unitário de caso de uso `RegisterPaymentServiceTest`, com falsos em memória e relógio fixo: CT-1 a CT-10.
+- [ ] Unitário de caso de uso `MarkInstallmentPaidServiceTest`: CT-11.
+- [ ] Unitário de domínio: CT-13.
+- [ ] Integração `MarkInstallmentPaidIdempotencyTest`: CT-12.
+- [ ] API `PaymentApiTest`, com PostgreSQL e Kafka reais: CT-16 a CT-20.
+
+## Cenários cobertos
+CT-1, CT-2, CT-3, CT-4, CT-5, CT-6, CT-7, CT-8, CT-9, CT-10, CT-11, CT-12, CT-13, CT-16, CT-17, CT-18, CT-19, CT-20
+
+## Checklist
+- [ ] Testes de domínio e de caso de uso antes do código.
+- [ ] `./gradlew build` e `./gradlew pitest` verdes, mutação acima de 80%.

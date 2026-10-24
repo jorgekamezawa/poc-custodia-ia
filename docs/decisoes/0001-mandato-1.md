@@ -49,6 +49,12 @@ descricao: Decisões do mandato 1 de autonomia, sobre escopo, cálculo, arquitet
 - **Motivo:** cronograma guardado não muda se a regra de cálculo mudar depois; digitar evita a área vizinha antes da hora.
 - **Fonte das regras:** fictícias da POC, salvo o formato do chassi (17 caracteres sem I, O e Q), que segue o padrão VIN (ISO 3779).
 
+### 7. Mensageria entre módulos (2026-10-24)
+- **Escolha:** Kafka ([ADR-0016](../adr/0016-eventos-entre-modulos-pelo-kafka.md)) com tabela de saída e consumidor idempotente ([ADR-0017](../adr/0017-outbox-e-consumidor-idempotente.md)), estreando no pagamento (spec 0007): pagamentos publica, contratos marca a parcela paga.
+- **Motivo:** pagamentos lê o contrato; o contrato não pode chamar pagamentos de volta sem ciclo entre módulos. Kafka porque o histórico do contrato e os alertas vão reler eventos.
+- **Fonte:** Spring Boot 4.1 conferido nos jars: o Kafka tem ligação automática no Testcontainers, mas não no Docker Compose.
+- **Regras:** PAG-01 a PAG-04 fictícias da POC; pagamento depois do vencimento fica recusado até a #16.
+
 ## Corrigido no caminho
 - **INCIDENTE: merge com teste vermelho na `main` (PR #71).** Um teste de componente falhou localmente, mas o comando encadeado seguiu para commit, push e merge; o `gh pr checks --watch` respondeu "no checks reported" porque o CI ainda não tinha começado, e o merge saiu sem CI. Causa do teste vermelho: a troca no HTML não se aplicou (o arquivo tinha sido reformatado e a substituição não casou, sem conferência). A `main` ficou vermelha por cerca de 10 minutos; o PR #72 consertou. Correção no processo: `abrir-pr/scripts/merge_when_green.py` espera as checagens existirem e só mergeia com todas verdes, e a `abrir-pr` manda usá-lo. A skill `lote-autonomo` ainda diz `gh pr merge` direto; ela não pode ser mudada por mim (regra dela), então fica para a pessoa trocar.
 - **Título de task repetido no board:** "02 · qa · Validação" se repetiria em toda spec; as issues #31 e #32 ganharam o prefixo `0001 · `. O `board.md` passa a pedir o prefixo (PR de material do mandato 1).
