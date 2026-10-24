@@ -22,12 +22,12 @@ Spec: [Pagamento de parcela em dia](../spec.md) · Depende de: nenhuma
 | `docs/runbooks/0001-rodar-localmente.md` | alterado | Porta 19092 e o volume do Kafka. |
 
 ## Testes desta task
-- [ ] `./gradlew build` sobe o contexto com PostgreSQL e Kafka do Testcontainers.
-- [ ] `./gradlew bootRun` sobe PostgreSQL e Kafka do Compose e a aplicação conecta.
+- [x] `./gradlew build` sobe o contexto com PostgreSQL e Kafka do Testcontainers.
+- [x] `./gradlew bootRun` sobe PostgreSQL e Kafka do Compose e a aplicação conecta.
 
 ## Cenários cobertos
 Nenhum: a task prepara o Kafka dos cenários das tasks 02 e 03.
 
 ## Checklist
-- [ ] Ambiente local sobe e desce sem apagar volume.
-- [ ] CI verde.
+- [x] Ambiente local sobe e desce sem apagar volume.
+- [x] CI verde.
