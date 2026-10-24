@@ -115,6 +115,11 @@ class EventsTest {
         }
 
         assertThat(received.get(0).key()).isEqualTo("contract-9");
+        String stored = jdbc.sql("SELECT payload::text FROM outbox_event WHERE topic = :topic")
+                .param("topic", topic)
+                .query(String.class)
+                .single();
+        assertThat(json.readTree(received.get(0).value())).isEqualTo(json.readTree(stored));
         assertThat(json.readTree(received.get(0).value()).get("contractId").asString())
                 .isEqualTo("c-9");
         await().atMost(Duration.ofSeconds(10))
