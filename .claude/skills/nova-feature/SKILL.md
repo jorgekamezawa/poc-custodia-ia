@@ -27,6 +27,6 @@ Sem número da história em `$ARGUMENTS`, pergunte. Ao começar ou retomar, desc
 7. **QA:** a task `qa` (sobe o portal, Playwright, relatório). Derrube tudo ao terminar. No mesmo PR: task `concluída` e spec `entregue`. Depois, `product-owner` fluxo 5 (regras do módulo, PR no `custodia-docs`) e uma linha em `docs/diario-poc.md`.
 
 ## Regras
-- Nenhuma parada é pulada, nem em modo automático.
+- Nenhuma parada é pulada, nem em modo automático. Só um mandato válido as troca, pela skill `lote-autonomo`.
 - Pergunta que surge na implementação e muda a spec: pare e pergunte. Spec aprovada que muda volta à etapa 4, com linha no histórico.
 - Um PR aberto por vez em cada repositório.

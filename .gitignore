@@ -2,3 +2,5 @@
 *:Zone.Identifier
 .custodia-docs/
 __pycache__/
+# Mandato de autonomia: local, escrito só depois que a pessoa aprova o escopo.
+.claude/mandato.json
