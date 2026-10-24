@@ -33,6 +33,9 @@ describe('Shell', () => {
 
     expect(text).toContain('Custódia · Banco Exemplo');
     expect(text).toContain('Operador');
+    expect(fixture.nativeElement.querySelector('[data-testid="role"]').textContent).toBe(
+      'Operador',
+    );
     expect(
       await TestbedHarnessEnvironment.loader(fixture).getHarness(
         MatButtonHarness.with({ text: 'Sair' }),
