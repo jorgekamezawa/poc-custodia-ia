@@ -5,7 +5,7 @@ descricao: Decisões do mandato 1 de autonomia, sobre escopo, cálculo, arquitet
 ---
 # Registro-0001: Mandato 1 de autonomia
 
-**Cobre:** as decisões que iriam para a pessoa durante o mandato 1 (lote 1, mensageria, banco não relacional, alertas de gravame), de 2026-10-24 até o fim do mandato. Atualizado no PR de cada entrega enquanto o mandato vale; congelado no fim.
+**Cobre:** as decisões que iriam para a pessoa durante o mandato 1, de 2026-10-24 até o fim do mandato. Escopo original: lote 1, mensageria, banco não relacional e alertas de gravame; reduzido pela pessoa em 2026-10-24 para terminar na história #16, seguido da análise do desenvolvimento autônomo. Atualizado no PR de cada entrega enquanto o mandato vale; congelado no fim.
 
 ## Decisões
 
