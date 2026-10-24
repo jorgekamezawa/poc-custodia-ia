@@ -35,5 +35,10 @@ paths:
 - Comentário só para o porquê não óbvio, em uma linha. Nunca citar número de ADR nem de regra em comentário: a referência apodrece quando o documento muda.
 - Sem código comentado, histórico em comentário ou TODO sem issue.
 
+## Ferramenta
+- O formato é do formatador (Palantir: 4 espaços, 120 colunas), não do editor. Rode `spotlessApply` antes de mostrar código; o commit é barrado se o formato estiver fora.
+- Aviso de compilação quebra o build. Corrija a causa; supressão só com o motivo numa linha.
+- Teste de mutação abaixo de 80% em `domain` e `application` falha o CI: escreva o teste que mata o mutante, não afrouxe o limite.
+
 ## Configuração
 - Endereços e senhas vêm de variável de ambiente; o perfil `local` traz valores fixos para rodar sem preparar nada.

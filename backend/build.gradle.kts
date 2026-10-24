@@ -1,7 +1,12 @@
+import net.ltgt.gradle.errorprone.errorprone
+
 plugins {
 	java
 	id("org.springframework.boot") version "4.1.2"
 	id("io.spring.dependency-management") version "1.1.7"
+	id("com.diffplug.spotless") version "8.10.4"
+	id("net.ltgt.errorprone") version "5.1.1"
+	id("info.solidsoft.pitest") version "1.19.0"
 }
 
 group = "com.bancoexemplo"
@@ -18,6 +23,7 @@ repositories {
 }
 
 dependencies {
+	errorprone("com.google.errorprone:error_prone_core:2.51.0")
 	implementation("org.springframework.boot:spring-boot-starter-flyway")
 	implementation("org.springframework.boot:spring-boot-starter-webmvc")
 	implementation("org.flywaydb:flyway-database-postgresql")
@@ -33,4 +39,33 @@ dependencies {
 
 tasks.withType<Test> {
 	useJUnitPlatform()
+}
+
+spotless {
+	java {
+		palantirJavaFormat("2.102.0")
+	}
+}
+
+tasks.withType<JavaCompile> {
+	options.encoding = "UTF-8"
+	// A new compiler warning fails the build, so "no new warnings" needs no one to remember it.
+	options.compilerArgs.addAll(listOf("-Xlint:all", "-Werror"))
+	options.errorprone {
+		// Comparing or building money the wrong way changes an amount without failing anywhere.
+		error("BigDecimalEquals", "BigDecimalLiteralDouble")
+	}
+}
+
+pitest {
+	pitestVersion = "1.30.1"
+	junit5PluginVersion = "1.2.3"
+	// The plugin would add a JUnit 5 launcher, which breaks the JUnit 6 that Spring Boot brings.
+	addJUnitPlatformLauncher = false
+	targetClasses = setOf("com.bancoexemplo.custody.*.domain.*", "com.bancoexemplo.custody.*.application.*")
+	mutationThreshold = 80
+	// Passes while no business module exists yet; the threshold applies once there is code to mutate.
+	failWhenNoMutations = false
+	timestampedReports = false
+	outputFormats = setOf("HTML", "XML")
 }

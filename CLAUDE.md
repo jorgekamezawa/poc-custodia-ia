@@ -13,9 +13,12 @@ Sistema fictício de custódia de financiamentos (Banco Exemplo), usado numa POC
 ## Comandos
 | O quê | Comando |
 |---|---|
-| Build e testes do backend (precisa de Docker) | `cd backend && ./gradlew build` |
-| Testes do frontend | `cd frontend && npm test -- --watch=false` |
-| Build do frontend | `cd frontend && npm run build` |
+| Build, formato e testes do backend (precisa de Docker) | `cd backend && ./gradlew build` |
+| Formatar o backend | `cd backend && ./gradlew spotlessApply` |
+| Teste de mutação do backend | `cd backend && ./gradlew pitest` (relatório em `build/reports/pitest`) |
+| Lint, formato e testes do frontend | `cd frontend && npm run lint && npm run format:check && npm test -- --watch=false` |
+| Formatar o frontend | `cd frontend && npm run format` |
+| Ponta a ponta (sobe o portal sozinho) | `cd e2e && npm test` |
 | Verificar documentos | `python3 ../custodia-docs/scripts/check_docs.py --root .` |
 
 ## Onde mora cada coisa
