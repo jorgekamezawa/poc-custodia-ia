@@ -25,18 +25,19 @@ Spec: [Cronograma pela tabela Price](../spec.md) · Depende de: nenhuma
 | `.../calculator/domain/PriceSchedule` | novo | Parcela fixa, juros, amortização, resíduo na última parcela (CAL-01) e vencimentos (CAL-02). |
 | `.../calculator/application/ScheduleCalculatorService` | novo | Implementa `ScheduleCalculator`: valida pelos limites e delega ao sistema pedido. Bean do Spring. |
 | `backend/src/test/java/com/bancoexemplo/custody/architecture/ArchitectureTest` | alterado | Regra nova: fora do próprio módulo, só a `api/` é acessível. |
+| `backend/src/test/java/com/bancoexemplo/custody/archfixture/ReachesIntoCalculatorDomain` | novo | Classe de teste que viola a fronteira de propósito, para o teste de arquitetura provar que a regra falha. |
 
 ## Testes desta task
-- [ ] Unitário de domínio `PriceScheduleTest`: CT-1 a CT-7.
-- [ ] Unitário de domínio `ScheduleLimitsTest`: CT-8 a CT-11.
-- [ ] Unitário de caso de uso `ScheduleCalculatorServiceTest`: entrada inválida chega como `InvalidScheduleRequestException`; entrada válida devolve o cronograma Price.
-- [ ] Arquitetura: classe de outro módulo que importe `calculator.domain` falha a regra.
+- [x] Unitário de domínio `PriceScheduleTest`: CT-1 a CT-7.
+- [x] Unitário de domínio `ScheduleLimitsTest`: CT-8 a CT-11.
+- [x] Unitário de caso de uso `ScheduleCalculatorServiceTest`: entrada inválida chega como `InvalidScheduleRequestException`; entrada válida devolve o cronograma Price.
+- [x] Arquitetura: classe de outro módulo que importe `calculator.domain` falha a regra.
 
 ## Cenários cobertos
 CT-1, CT-2, CT-3, CT-4, CT-5, CT-6, CT-7, CT-8, CT-9, CT-10, CT-11
 
 ## Checklist
-- [ ] Testes de domínio escritos antes do código.
-- [ ] Módulo `calculator` com `api/`, `domain/` e `application/`.
-- [ ] Regra ArchUnit de acesso só pela `api/`.
-- [ ] `./gradlew build` e `./gradlew pitest` verdes, mutação acima de 80%.
+- [x] Testes de domínio escritos antes do código.
+- [x] Módulo `calculator` com `api/`, `domain/` e `application/`.
+- [x] Regra ArchUnit de acesso só pela `api/`.
+- [x] `./gradlew build` e `./gradlew pitest` verdes, mutação acima de 80%.
