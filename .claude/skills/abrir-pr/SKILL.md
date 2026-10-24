@@ -15,6 +15,7 @@ Commit, push e PR só com aprovação explícita da pessoa. Sem ela, pare e peç
 4. **Commit** em português, verbo na terceira pessoa do presente ("Adiciona o registro de gravame").
 5. **Push:** `git push -u origin <branch>`; depois de um rebase, `--force-with-lease`, nunca `--force`.
 6. **PR:** `gh pr create --base main`, com o corpo abaixo. Mostre o link. O board anda pelas automações; o merge é de quem mantém o projeto.
+7. **Merge, só com mandato válido:** `python3 ${CLAUDE_SKILL_DIR}/scripts/merge_when_green.py`, nunca `gh pr merge` direto: ele espera as checagens existirem e só mergeia com todas verdes.
 
 ## Corpo
 ```markdown
