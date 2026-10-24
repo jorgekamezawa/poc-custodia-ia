@@ -16,6 +16,14 @@ Você revisa um documento contra `../custodia-docs/padroes/documentacao.md`. Nã
    - todo identificador de regra citado existe em `../custodia-docs/regras/`;
    - toda task toca uma camada só, e a última é a task de QA.
 
+5. Casos de fronteira já decididos; julgue sempre do mesmo jeito:
+   - **Apelido local de termo é violação** da regra 8, mesmo explicado (ex.: "juros remuneratórios (chamados só de juros nesta spec)"): use sempre o nome do glossário.
+   - **Cenário de teste com dois casos de entrada é violação**, mesmo com o mesmo resultado (ex.: "prazo 0 e 73 meses"): um caso por linha.
+   - **Identificador de regra marcado como "adicionada"** na spec ainda não existe em `regras/`, e isso não é violação; "alterada" e regras só citadas precisam existir.
+   - **Nome de campo, coluna ou classe** diferente do "Nome no código" do glossário é violação da regra 8.
+   - **Link para o outro repositório** é a URL do GitHub; link relativo entre repositórios é violação.
+6. O que você não conseguiu conferir (arquivo que não abriu, regra que depende de outro documento) vai em "Não verificado", nunca vira aprovação nem violação.
+
 Aponte só violação do padrão, nunca preferência de estilo. Revisor que recebe a tarefa de achar problema tende a inventar; se o documento segue o padrão, diga isso.
 
 Responda em português:
@@ -26,4 +34,6 @@ Resultado: sem violações | N violação(ões)
 - Regra <n ou nome da seção>, linha <l>: "<trecho>"
   Problema: <uma frase>
   Sugestão: <texto reescrito ou "apagar">
+
+Não verificado: <o que ficou de fora e por quê, ou "nada">
 ```

@@ -13,8 +13,9 @@ short window in which the others don't ask again. The hook never learns the answ
 itself: PostToolUse only fires when the command succeeded, which means it was approved.
 
 A valid mandate (.claude/mandato.json, local and untracked, written only after the person
-approves its scope) delegates these approvals until its "ate" date. Force push to main is
-denied with or without one.
+approves its scope) delegates these approvals until its "ate" date. Some commands are denied
+with or without one: force push to main, a direct merge (merges go through
+merge_when_green.py, which waits for CI) and pkill by pattern (it matches its own shell).
 """
 
 import hashlib
@@ -36,18 +37,32 @@ GUARDED = [
     (re.compile(rf"\bgit\b{SEGMENT}\bcommit\b"), "commit"),
     (re.compile(rf"\bgit\b{SEGMENT}\bpush\b"), "push"),
     (re.compile(rf"\bgh\s+pr{SEGMENT}\bcreate\b"), "abertura de PR"),
-    (re.compile(rf"\bgh\s+pr{SEGMENT}\bmerge\b"), "merge de PR"),
 ]
 OTHERS = {
     "commit": "push e abrir PR",
     "push": "abrir PR",
     "abertura de PR": "push",
-    "merge de PR": "push",
 }
-FORCE_PUSH_MAIN = re.compile(
-    rf"\bgit\b{SEGMENT}\bpush\b(?={SEGMENT}(\s--force\S*|\s-f\b))(?={SEGMENT}\bmain\b)"
-    rf"|\bgit\b{SEGMENT}\bpush\b{SEGMENT}\s\+main\b"
-)
+COMMAND_START = r"(?:^|[;&|(]\s*)"
+DENIED = [
+    (
+        re.compile(
+            rf"\bgit\b{SEGMENT}\bpush\b(?={SEGMENT}(\s--force\S*|\s-f\b))(?={SEGMENT}\bmain\b)"
+            rf"|\bgit\b{SEGMENT}\bpush\b{SEGMENT}\s\+main\b"
+        ),
+        "Force push na main é proibido, com ou sem mandato.",
+    ),
+    # These two match only where a command starts, so naming them inside a commit message is allowed.
+    (
+        re.compile(rf"{COMMAND_START}gh\s+pr\s+merge\b"),
+        "Merge direto é proibido: com mandato, use .claude/skills/abrir-pr/scripts/merge_when_green.py, "
+        "que espera o CI existir e passar; sem mandato, o merge é de quem mantém o projeto.",
+    ),
+    (
+        re.compile(rf"{COMMAND_START}pkill\s+(-\S*\s+)*-\S*f"),
+        "pkill -f casa com o próprio comando e mata o terminal; pare o processo pela porta (runbook 0001).",
+    ),
+]
 
 
 def marker(session_id):
@@ -92,9 +107,11 @@ def guarded_action(payload):
 def run_pre(stdin=None, stdout=None):
     stdin, stdout = stdin or sys.stdin, stdout or sys.stdout
     payload = json.load(stdin)
-    if FORCE_PUSH_MAIN.search(payload.get("tool_input", {}).get("command", "")):
-        print(decision("deny", "Force push na main é proibido, com ou sem mandato."), file=stdout)
-        return 0
+    command = payload.get("tool_input", {}).get("command", "") if payload.get("tool_name") == "Bash" else ""
+    for pattern, reason in DENIED:
+        if pattern.search(command):
+            print(decision("deny", reason), file=stdout)
+            return 0
     action = guarded_action(payload)
     if not action or mandate_is_valid() or window_is_open(payload.get("session_id")):
         return 0

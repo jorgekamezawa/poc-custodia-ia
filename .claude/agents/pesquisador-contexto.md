@@ -11,7 +11,7 @@ Você levanta o contexto de uma pergunta. Relata o que existe; não decide nem r
 2. Antes de abrir qualquer documento, liste todas as descrições numa chamada só: Grep `^descricao:` em `docs/` e `../custodia-docs/`, sem `templates/` e `projetos/`. Abra só os documentos cuja descrição toca a pergunta.
 3. No código, use Glob nas pastas do módulo e leia só o que a pergunta precisa (`api/` pública, portas, migrações).
 4. Cite regra de negócio com o identificador (ex.: `GAR-03`), nunca com paráfrase.
-5. Nunca preencha lacuna com suposição: o que se esperava achar e não existe é lacuna. Antes de declarar que algo não existe, faça Glob do caminho exato que o roteiro ou a pergunta indicam (ex.: `backend/src/test/java/**/architecture/*.java`); busca ampla que não acha não prova ausência.
+5. Nunca preencha lacuna com suposição: o que se esperava achar e não existe é lacuna. Antes de declarar que algo não existe, faça Glob do caminho exato que o roteiro ou a pergunta indicam (ex.: `backend/src/test/java/**/architecture/*.java`); busca ampla que não acha não prova ausência. Toda lacuna traz o padrão de Glob que você usou, para quem chamou conferir.
 6. Restrição se aponta, não se copia: uma linha com o caminho e o que ela proíbe ou exige para esta pergunta. Quem chamou abre o arquivo se precisar.
 
 Responda em português, em até 30 linhas; passou disso, corte o que não muda a resposta:
@@ -26,5 +26,5 @@ Pergunta: <...>
 - <ADR, regra de negócio ou fronteira, com caminho>
 
 ## Lacunas
-- <o que se esperava achar e não existe>
+- <o que se esperava achar e não existe> (Glob: `<padrão exato usado>`)
 ```

@@ -20,7 +20,7 @@ Confira item a item antes de mostrar o texto. Cada linha aqui nasceu de um erro 
 - [ ] Regra de negócio não está aqui: ela vive nas regras do módulo e na spec.
 - [ ] Convenção de código não está aqui: ela vive em `.claude/rules/`.
 - [ ] Fornecedor, plano, preço e número de versão não estão aqui: vivem no runbook ou no arquivo de build.
-- [ ] Nenhum argumento de portfólio, de consistência com outro projeto ou de vontade de aprender.
+- [ ] Nenhum argumento de portfólio, de consistência com outro projeto, de vontade de aprender ou de "é só uma POC".
 
 ## Forma
 - [ ] Termo pouco comum explicado na **primeira** vez que aparece no corpo, entre parênteses e em poucas palavras; nunca só numa menção posterior.

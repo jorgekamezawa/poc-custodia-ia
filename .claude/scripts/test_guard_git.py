@@ -44,7 +44,7 @@ class GuardGitTest(unittest.TestCase):
         guard_git.MANDATE.write_text(json.dumps({"ate": until.isoformat(), "escopo": "x"}), encoding="utf-8")
 
     def test_commit_push_and_pr_ask_for_confirmation(self):
-        for command in ("git commit -m x", "git -C repo push", "gh pr create --title x", "gh pr merge 3 --squash"):
+        for command in ("git commit -m x", "git -C repo push", "gh pr create --title x"):
             self.assertEqual(decision(pre(command, self.session)), "ask", command)
 
     def test_other_commands_pass_silently(self):
@@ -68,7 +68,7 @@ class GuardGitTest(unittest.TestCase):
 
     def test_valid_mandate_lets_publishing_pass(self):
         self.mandate(date.today())
-        for command in ("git commit -m x", "git push -u origin x", "gh pr create --title x", "gh pr merge 3"):
+        for command in ("git commit -m x", "git push -u origin x", "gh pr create --title x"):
             self.assertEqual(pre(command, self.session), "", command)
 
     def test_expired_mandate_asks_again(self):
@@ -87,6 +87,32 @@ class GuardGitTest(unittest.TestCase):
     def test_force_push_to_a_task_branch_follows_the_mandate(self):
         self.mandate(date.today())
         self.assertEqual(pre("git push --force-with-lease origin 31-back-contrato", self.session), "")
+
+    def test_direct_merge_is_denied_with_or_without_mandate(self):
+        output = pre("gh pr merge 3 --squash --delete-branch", self.session)
+        self.assertEqual(decision(output), "deny")
+        self.assertIn("merge_when_green.py", json.loads(output)["hookSpecificOutput"]["permissionDecisionReason"])
+        self.mandate(date.today())
+        self.assertEqual(decision(pre("gh pr merge 3", self.session)), "deny")
+
+    def test_command_named_inside_a_message_is_not_blocked(self):
+        command = "git commit -q -F - <<'EOF'\nHook nega `gh pr merge` direto e pkill -f\nEOF"
+        self.assertNotEqual(decision(pre(command, self.session)), "deny")
+
+    def test_merge_chained_after_another_command_is_denied(self):
+        self.assertEqual(decision(pre("cd repo && gh pr merge 3", self.session)), "deny")
+
+    def test_merge_through_the_script_is_not_blocked(self):
+        self.mandate(date.today())
+        self.assertEqual(pre("python3 .claude/skills/abrir-pr/scripts/merge_when_green.py", self.session), "")
+
+    def test_pkill_by_pattern_is_denied(self):
+        output = pre("pkill -f CustodyApplication", self.session)
+        self.assertEqual(decision(output), "deny")
+        self.assertIn("porta", json.loads(output)["hookSpecificOutput"]["permissionDecisionReason"])
+
+    def test_kill_by_pid_is_not_blocked(self):
+        self.assertEqual(pre("kill 12345", self.session), "")
 
 
 if __name__ == "__main__":

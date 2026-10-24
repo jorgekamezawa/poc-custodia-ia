@@ -19,7 +19,7 @@ Cumpre o escopo do mandato em `.claude/mandato.json` (`escopo`, `ate`, `registro
    - **Parada humana** vira revisão: documento pelo `revisor-docs`, código pelo `revisor-codigo`, ambos chamados pelo nome. Corrija o que proceder.
    - **Pergunta à pessoa** vira decisão sua: escolha a opção que o `product-owner` ou o `tech-lead` recomendariam e registre.
    - **Esboço de tela:** desenhe a tela a partir da spec e dos componentes que existem; registre que o esboço não passou pelo Claude Design.
-   - **Abrir PR:** `abrir-pr` normal; com CI verde, `gh pr merge --squash --delete-branch` e siga para a próxima task.
+   - **Abrir PR:** `abrir-pr` normal; merge só por `python3 .claude/skills/abrir-pr/scripts/merge_when_green.py`, nunca `gh pr merge` direto, e siga para a próxima task.
 3. **Fim da história:** linha no `docs/diario-poc.md`, story fechada, próxima.
 4. **Fim do escopo ou do prazo:** feche o registro e entregue o relatório (abaixo). Não comece trabalho fora do escopo.
 
