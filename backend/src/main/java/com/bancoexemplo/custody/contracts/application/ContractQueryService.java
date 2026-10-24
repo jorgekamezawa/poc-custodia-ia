@@ -38,7 +38,7 @@ public class ContractQueryService {
                 contract.outstandingBalance(),
                 contract.installments().stream()
                         .map(installment -> new ContractView.InstallmentView(
-                                installment, InstallmentSituation.of(installment.dueDate(), today)))
+                                installment, InstallmentSituation.of(installment, today)))
                         .toList());
     }
 

@@ -3,6 +3,7 @@ package com.bancoexemplo.custody.contracts.application.port;
 import com.bancoexemplo.custody.contracts.application.ContractSummary;
 import com.bancoexemplo.custody.contracts.domain.Contract;
 import com.bancoexemplo.custody.contracts.domain.ContractNumber;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -29,4 +30,7 @@ public interface ContractRepository {
 
     /** Contracts whose number starts with the prefix, ignoring case, newest first. */
     List<ContractSummary> findByNumberPrefix(String prefix, int limit);
+
+    /** Records the payment date of the installment. */
+    void markInstallmentPaid(UUID contractId, int installmentNumber, LocalDate paidOn);
 }
