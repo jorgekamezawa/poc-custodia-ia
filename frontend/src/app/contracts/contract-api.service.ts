@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 
@@ -38,11 +38,55 @@ export interface ContractResponse {
   installments: ContractInstallment[];
 }
 
+export interface ContractSummary {
+  id: string;
+  number: string;
+  customerName: string;
+  customerCpf: string;
+  principal: number;
+  registeredAt: string;
+}
+
+export type InstallmentSituation = 'OPEN' | 'OVERDUE';
+
+export interface ContractDetail {
+  id: string;
+  number: string;
+  customerName: string;
+  customerCpf: string;
+  chassisNumber: string;
+  vehicleDescription: string;
+  amortizationSystem: AmortizationSystem;
+  principal: number;
+  monthlyRatePercent: number;
+  termMonths: number;
+  releaseDate: string;
+  firstDueDate: string;
+  upfrontCosts: number;
+  annualCetPercent: number;
+  status: string;
+  registeredBy: string;
+  registeredAt: string;
+  outstandingBalance: number;
+  installments: (ContractInstallment & { situation: InstallmentSituation })[];
+}
+
 @Injectable({ providedIn: 'root' })
 export class ContractApiService {
   private readonly http = inject(HttpClient);
 
   register(request: RegisterContractRequest): Promise<ContractResponse> {
     return firstValueFrom(this.http.post<ContractResponse>('/api/contracts', request));
+  }
+
+  search(query: string): Promise<ContractSummary[]> {
+    const params = query ? new HttpParams().set('q', query) : undefined;
+    return firstValueFrom(this.http.get<ContractSummary[]>('/api/contracts', { params }));
+  }
+
+  get(id: string): Promise<ContractDetail> {
+    return firstValueFrom(
+      this.http.get<ContractDetail>(`/api/contracts/${encodeURIComponent(id)}`),
+    );
   }
 }

@@ -82,8 +82,7 @@ class ContractQueryApiTest {
     }
 
     @Test
-    @DisplayName(
-            "CON-05 0006/CT-8: busca pelo começo do número, sem diferenciar maiúscula, do mais novo ao mais antigo")
+    @DisplayName("0006/CT-8: busca pelo começo do número, sem diferenciar maiúscula, do mais novo ao mais antigo")
     void searchesByNumberPrefix() throws Exception {
         String prefix = prefix();
         saved(prefix + "-1", "12345678909", Instant.parse("2030-01-01T10:00:00Z"));

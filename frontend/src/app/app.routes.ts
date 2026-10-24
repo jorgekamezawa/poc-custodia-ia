@@ -20,12 +20,28 @@ export const routes: Routes = [
         title: 'Início · Custódia',
       },
       {
+        path: 'contratos',
+        loadComponent: () =>
+          import('./contracts/contract-list-page/contract-list-page').then(
+            (m) => m.ContractListPage,
+          ),
+        title: 'Contratos · Custódia',
+      },
+      {
         path: 'contratos/novo',
         loadComponent: () =>
           import('./contracts/register-contract-page/register-contract-page').then(
             (m) => m.RegisterContractPage,
           ),
         title: 'Cadastrar contrato · Custódia',
+      },
+      {
+        path: 'contratos/:id',
+        loadComponent: () =>
+          import('./contracts/contract-detail-page/contract-detail-page').then(
+            (m) => m.ContractDetailPage,
+          ),
+        title: 'Contrato · Custódia',
       },
     ],
   },

@@ -8,6 +8,7 @@ import { LOCALE_ID } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatInputHarness } from '@angular/material/input/testing';
+import { provideRouter } from '@angular/router';
 import { ContractResponse } from '../contract-api.service';
 import { RegisterContractPage } from './register-contract-page';
 
@@ -57,6 +58,7 @@ describe('RegisterContractPage', () => {
         provideHttpClient(),
         provideHttpClientTesting(),
         { provide: LOCALE_ID, useValue: 'pt-BR' },
+        provideRouter([]),
       ],
     });
     const fixture = TestBed.createComponent(RegisterContractPage);
@@ -121,6 +123,9 @@ describe('RegisterContractPage', () => {
     expect(element.textContent).toContain('26,95%');
     expect(element.querySelectorAll('tr.installment').length).toBe(12);
     expect(element.textContent).toContain('945,55');
+    const link = element.querySelector('a[href]') as HTMLAnchorElement;
+    expect(link.textContent).toContain('Ver contrato');
+    expect(link.getAttribute('href')).toBe('/contratos/3f2a6c1e-0000-4000-8000-000000000001');
   });
 
   it('0005/CT-24: recusa do servidor aparece no topo e os dados ficam', async () => {

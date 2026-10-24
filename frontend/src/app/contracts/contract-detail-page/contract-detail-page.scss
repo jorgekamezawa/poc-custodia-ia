@@ -1,0 +1,55 @@
+.error {
+  color: var(--mat-sys-error);
+}
+
+.summary,
+.groups dl {
+  display: grid;
+  gap: 4px 16px;
+  margin: 0 0 16px;
+}
+
+.summary {
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  font-size: 1.05rem;
+}
+
+.groups {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+h2 {
+  font-size: 1rem;
+  margin: 8px 0;
+}
+
+dt {
+  color: var(--mat-sys-on-surface-variant);
+  font-size: 0.85rem;
+}
+
+dd {
+  margin: 0;
+}
+
+.installments {
+  border-collapse: collapse;
+  width: 100%;
+  display: block;
+  overflow-x: auto;
+}
+
+.installments th,
+.installments td {
+  padding: 6px 12px;
+  text-align: right;
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
+  white-space: nowrap;
+}
+
+.overdue td:last-child {
+  color: var(--mat-sys-error);
+  font-weight: 500;
+}
