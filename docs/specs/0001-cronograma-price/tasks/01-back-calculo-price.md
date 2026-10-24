@@ -1,5 +1,5 @@
 ---
-status: aprovada
+status: concluída
 atualizado: 2026-10-24
 descricao: Cria o módulo calculator com o cálculo do cronograma Price exposto na api do módulo.
 ---
