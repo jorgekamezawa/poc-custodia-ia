@@ -1,5 +1,5 @@
 ---
-status: aprovada
+status: concluída
 atualizado: 2026-10-24
 descricao: Adiciona ao módulo contracts a busca por número ou CPF e a consulta do contrato com saldo devedor e situação das parcelas.
 ---

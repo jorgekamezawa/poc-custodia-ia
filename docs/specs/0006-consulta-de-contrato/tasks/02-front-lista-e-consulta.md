@@ -1,5 +1,5 @@
 ---
-status: aprovada
+status: concluída
 atualizado: 2026-10-24
 descricao: Telas Contratos (busca) e Contrato (consulta) no portal, com os itens no menu e o atalho depois do cadastro.
 ---

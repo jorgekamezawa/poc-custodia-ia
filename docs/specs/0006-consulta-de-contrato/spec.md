@@ -1,5 +1,5 @@
 ---
-status: aprovada
+status: entregue
 atualizado: 2026-10-24
 descricao: Busca de contratos por número ou CPF e consulta de um contrato com saldo devedor e situação de cada parcela, no portal.
 ---
