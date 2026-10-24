@@ -4,9 +4,28 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import localePt from '@angular/common/locales/pt';
 import { LOCALE_ID } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { PaymentQuote } from '../payment-api.service';
 import { RegisterPaymentForm, todayIso } from './register-payment-form';
 
 registerLocaleData(localePt);
+
+const ON_TIME: PaymentQuote = {
+  installmentNumber: 2,
+  installmentAmount: 945.6,
+  daysLate: 0,
+  lateFee: 0,
+  defaultInterest: 0,
+  total: 945.6,
+};
+
+const LATE: PaymentQuote = {
+  installmentNumber: 2,
+  installmentAmount: 945.6,
+  daysLate: 14,
+  lateFee: 18.91,
+  defaultInterest: 4.41,
+  total: 968.92,
+};
 
 describe('RegisterPaymentForm', () => {
   let http: HttpTestingController;
@@ -36,16 +55,69 @@ describe('RegisterPaymentForm', () => {
     fixture.detectChanges();
   }
 
-  it('começa com a data de hoje e o valor da parcela', () => {
-    const fixture = render();
-    const inputs = fixture.nativeElement.querySelectorAll('input') as NodeListOf<HTMLInputElement>;
+  function answerQuote(paidOn: string, quote: PaymentQuote): void {
+    const request = http.expectOne(
+      (r) =>
+        r.url === '/api/contracts/c1/payments/quote' &&
+        r.params.get('installmentNumber') === '2' &&
+        r.params.get('paidOn') === paidOn,
+    );
+    request.flush(quote);
+  }
 
-    expect(inputs[0].value).toBe(todayIso());
-    expect(inputs[1].value).toBe('945.6');
+  function inputs(fixture: ReturnType<typeof render>): HTMLInputElement[] {
+    return Array.from(fixture.nativeElement.querySelectorAll('input'));
+  }
+
+  it('começa com a data de hoje e o valor devido nela', async () => {
+    const fixture = render();
+    answerQuote(todayIso(), ON_TIME);
+    await settle(fixture);
+
+    expect(inputs(fixture)[0].value).toBe(todayIso());
+    expect(inputs(fixture)[1].value).toBe('945.6');
+  });
+
+  it('0008/CT-11: mostra multa e juros, preenche o total e pede nova simulação ao mudar a data', async () => {
+    const fixture = render();
+    answerQuote(todayIso(), LATE);
+    await settle(fixture);
+
+    const text = fixture.nativeElement.textContent.replace(/\u00a0/g, ' ');
+    expect(text).toContain('R$ 18,91');
+    expect(text).toContain('R$ 4,41');
+    expect(text).toContain('R$ 968,92');
+    expect(inputs(fixture)[1].value).toBe('968.92');
+
+    const date = inputs(fixture)[0];
+    date.value = '2026-10-11';
+    date.dispatchEvent(new Event('input'));
+    await settle(fixture);
+    answerQuote('2026-10-11', { ...LATE, daysLate: 1, defaultInterest: 0.32, total: 964.83 });
+    await settle(fixture);
+
+    expect(inputs(fixture)[1].value).toBe('964.83');
+  });
+
+  it('recusa da simulação aparece no formulário', async () => {
+    const fixture = render();
+    http
+      .expectOne((r) => r.url === '/api/contracts/c1/payments/quote')
+      .flush(
+        { detail: 'Data do pagamento deve ficar entre a liberação e hoje' },
+        { status: 400, statusText: 'Bad Request' },
+      );
+    await settle(fixture);
+
+    expect(fixture.nativeElement.querySelector('[role="alert"]').textContent).toContain(
+      'Data do pagamento deve ficar entre a liberação e hoje',
+    );
   });
 
   it('0007/CT-22: envio aceito mostra "Pagamento registrado." e avisa a tela', async () => {
     const fixture = render();
+    answerQuote(todayIso(), ON_TIME);
+    await settle(fixture);
     let registered = 0;
     fixture.componentInstance.registered.subscribe(() => registered++);
 
@@ -66,6 +138,8 @@ describe('RegisterPaymentForm', () => {
 
   it('0007/CT-23: recusa do servidor aparece no formulário', async () => {
     const fixture = render();
+    answerQuote(todayIso(), ON_TIME);
+    await settle(fixture);
 
     (fixture.nativeElement.querySelector('button[type="submit"]') as HTMLButtonElement).click();
     http

@@ -11,14 +11,15 @@ Spec: [Multa e juros de mora](../spec.md) · Depende de: 01
 | Caminho | Novo / alterado | Responsabilidade |
 |---|---|---|
 | `frontend/src/app/payments/payment-api.service.ts` | alterado | Simulação do valor devido. |
+| `frontend/src/app/contracts/contract-detail-page/contract-detail-page.spec.ts` | alterado | Os testes que abrem o formulário respondem à simulação. |
 | `frontend/src/app/payments/register-payment-form/` | alterado | Simulação ao abrir e a cada data; mostra parcela, multa, juros e total; preenche o valor. |
 
 ## Testes desta task
-- [ ] Componente `register-payment-form`: CT-11.
+- [x] Componente `register-payment-form`: CT-11.
 
 ## Cenários cobertos
 CT-11
 
 ## Checklist
-- [ ] Testes de componente antes da tela.
-- [ ] `npm run lint`, `npm run format:check`, `npm test` e `npm run build` sem aviso.
+- [x] Testes de componente antes da tela.
+- [x] `npm run lint`, `npm run format:check`, `npm test` e `npm run build` sem aviso.
