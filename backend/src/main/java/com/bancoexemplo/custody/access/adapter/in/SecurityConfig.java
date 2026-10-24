@@ -1,5 +1,6 @@
 package com.bancoexemplo.custody.access.adapter.in;
 
+import jakarta.servlet.DispatcherType;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Map;
@@ -32,7 +33,11 @@ class SecurityConfig {
             HttpSecurity http, CurrentUsers currentUsers, ConfiguredUsers configuredUsers, JsonMapper json)
             throws Exception {
         int sessionSeconds = Math.toIntExact(configuredUsers.sessionTimeout().toSeconds());
-        http.authorizeHttpRequests(requests -> requests.anyRequest().authenticated())
+        // The error dispatch only renders the status of a request already refused; securing it turns 403 into 401.
+        http.authorizeHttpRequests(requests -> requests.dispatcherTypeMatchers(DispatcherType.ERROR)
+                        .permitAll()
+                        .anyRequest()
+                        .authenticated())
                 .csrf(csrf -> csrf.spa())
                 .addFilterAfter(new CsrfCookieFilter(), CsrfFilter.class)
                 .formLogin(form -> form.loginProcessingUrl("/api/auth/login")
