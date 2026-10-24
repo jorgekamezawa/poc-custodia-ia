@@ -1,0 +1,44 @@
+<h1>Contratos</h1>
+
+<form class="search" (ngSubmit)="search()">
+  <mat-form-field>
+    <mat-label>Buscar por número ou CPF</mat-label>
+    <input matInput name="busca" [ngModel]="term()" (ngModelChange)="term.set($event)" />
+  </mat-form-field>
+  <button mat-flat-button type="submit">Buscar</button>
+</form>
+
+@if (error(); as message) {
+  <p class="error" role="alert">{{ message }}</p>
+}
+
+@if (contracts(); as list) {
+  @if (list.length === 0) {
+    <p>Nenhum contrato encontrado.</p>
+  } @else {
+    <table class="contracts">
+      <thead>
+        <tr>
+          <th scope="col">Número</th>
+          <th scope="col">Cliente</th>
+          <th scope="col">CPF</th>
+          <th scope="col">Valor financiado</th>
+          <th scope="col">Cadastrado em</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (contract of list; track contract.id) {
+          <tr>
+            <td>
+              <a [routerLink]="['/contratos', contract.id]">{{ contract.number }}</a>
+            </td>
+            <td>{{ contract.customerName }}</td>
+            <td>{{ contract.customerCpf | cpf }}</td>
+            <td>{{ contract.principal | currency: 'BRL' }}</td>
+            <td>{{ contract.registeredAt | date: 'dd/MM/yyyy HH:mm' }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+}

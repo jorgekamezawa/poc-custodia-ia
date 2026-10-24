@@ -28,7 +28,10 @@
         }
       </tbody>
     </table>
-    <button mat-flat-button type="button" (click)="registerAnother()">Cadastrar outro</button>
+    <div class="actions">
+      <a mat-flat-button [routerLink]="['/contratos', contract.id]">Ver contrato</a>
+      <button mat-button type="button" (click)="registerAnother()">Cadastrar outro</button>
+    </div>
   </section>
 } @else {
   <form [formGroup]="form" (ngSubmit)="submit()" novalidate>

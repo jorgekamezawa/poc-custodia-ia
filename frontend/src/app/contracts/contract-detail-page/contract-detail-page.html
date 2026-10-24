@@ -1,0 +1,113 @@
+@if (error(); as message) {
+  <p class="error" role="alert">{{ message }}</p>
+}
+
+@if (contract(); as c) {
+  <h1>Contrato {{ c.number }}</h1>
+
+  <dl class="summary">
+    <div>
+      <dt>Saldo devedor</dt>
+      <dd>{{ c.outstandingBalance | currency: 'BRL' }}</dd>
+    </div>
+    <div>
+      <dt>CET</dt>
+      <dd>{{ c.annualCetPercent | number: '1.2-2' }}% ao ano</dd>
+    </div>
+    <div>
+      <dt>Situação</dt>
+      <dd>{{ c.status === 'ACTIVE' ? 'Ativo' : c.status }}</dd>
+    </div>
+  </dl>
+
+  <section class="groups">
+    <dl>
+      <h2>Cliente</h2>
+      <div>
+        <dt>Nome</dt>
+        <dd>{{ c.customerName }}</dd>
+      </div>
+      <div>
+        <dt>CPF</dt>
+        <dd>{{ c.customerCpf | cpf }}</dd>
+      </div>
+    </dl>
+    <dl>
+      <h2>Veículo</h2>
+      <div>
+        <dt>Chassi</dt>
+        <dd>{{ c.chassisNumber }}</dd>
+      </div>
+      <div>
+        <dt>Descrição</dt>
+        <dd>{{ c.vehicleDescription }}</dd>
+      </div>
+    </dl>
+    <dl>
+      <h2>Financiamento</h2>
+      <div>
+        <dt>Sistema</dt>
+        <dd>{{ c.amortizationSystem === 'PRICE' ? 'Price' : 'SAC' }}</dd>
+      </div>
+      <div>
+        <dt>Valor financiado</dt>
+        <dd>{{ c.principal | currency: 'BRL' }}</dd>
+      </div>
+      <div>
+        <dt>Taxa ao mês</dt>
+        <dd>{{ c.monthlyRatePercent | number: '1.0-4' }}%</dd>
+      </div>
+      <div>
+        <dt>Prazo</dt>
+        <dd>{{ c.termMonths }} meses</dd>
+      </div>
+      <div>
+        <dt>Liberação</dt>
+        <dd>{{ c.releaseDate | date: 'dd/MM/yyyy' : 'UTC' }}</dd>
+      </div>
+      <div>
+        <dt>Custos pagos antecipadamente</dt>
+        <dd>{{ c.upfrontCosts | currency: 'BRL' }}</dd>
+      </div>
+    </dl>
+    <dl>
+      <h2>Cadastro</h2>
+      <div>
+        <dt>Por</dt>
+        <dd>{{ c.registeredBy }}</dd>
+      </div>
+      <div>
+        <dt>Em</dt>
+        <dd>{{ c.registeredAt | date: 'dd/MM/yyyy HH:mm' }}</dd>
+      </div>
+    </dl>
+  </section>
+
+  <h2>Parcelas</h2>
+  <table class="installments">
+    <thead>
+      <tr>
+        <th scope="col">Parcela</th>
+        <th scope="col">Vencimento</th>
+        <th scope="col">Valor</th>
+        <th scope="col">Juros remuneratórios</th>
+        <th scope="col">Amortização</th>
+        <th scope="col">Saldo devedor</th>
+        <th scope="col">Situação</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (installment of c.installments; track installment.number) {
+        <tr class="installment" [class.overdue]="installment.situation === 'OVERDUE'">
+          <td>{{ installment.number }}</td>
+          <td>{{ installment.dueDate | date: 'dd/MM/yyyy' : 'UTC' }}</td>
+          <td>{{ installment.amount | currency: 'BRL' }}</td>
+          <td>{{ installment.interest | currency: 'BRL' }}</td>
+          <td>{{ installment.amortization | currency: 'BRL' }}</td>
+          <td>{{ installment.balanceAfter | currency: 'BRL' }}</td>
+          <td>{{ situationLabels[installment.situation] }}</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+}

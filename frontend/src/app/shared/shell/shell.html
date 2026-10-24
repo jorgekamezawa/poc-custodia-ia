@@ -1,6 +1,13 @@
 <mat-toolbar>
   <a class="brand" routerLink="/">Custódia · Banco Exemplo</a>
   <nav aria-label="Menu">
+    <a
+      mat-button
+      routerLink="/contratos"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      >Contratos</a
+    >
     <a mat-button routerLink="/contratos/novo" routerLinkActive="active">Cadastrar contrato</a>
   </nav>
   <span class="spacer"></span>

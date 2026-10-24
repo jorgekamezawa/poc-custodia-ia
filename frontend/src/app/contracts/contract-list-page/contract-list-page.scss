@@ -1,0 +1,29 @@
+.search {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: baseline;
+}
+
+.search mat-form-field {
+  width: min(360px, 100%);
+}
+
+.error {
+  color: var(--mat-sys-error);
+}
+
+.contracts {
+  border-collapse: collapse;
+  width: 100%;
+  display: block;
+  overflow-x: auto;
+}
+
+.contracts th,
+.contracts td {
+  padding: 6px 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
+  white-space: nowrap;
+}

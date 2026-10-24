@@ -8,6 +8,7 @@ import { LOCALE_ID } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatInputHarness } from '@angular/material/input/testing';
+import { provideRouter } from '@angular/router';
 import { ContractResponse } from '../contract-api.service';
 import { RegisterContractPage } from './register-contract-page';
 
@@ -57,6 +58,7 @@ describe('RegisterContractPage', () => {
         provideHttpClient(),
         provideHttpClientTesting(),
         { provide: LOCALE_ID, useValue: 'pt-BR' },
+        provideRouter([]),
       ],
     });
     const fixture = TestBed.createComponent(RegisterContractPage);
