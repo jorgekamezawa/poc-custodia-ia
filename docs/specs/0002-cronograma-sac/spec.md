@@ -1,5 +1,5 @@
 ---
-status: aprovada
+status: entregue
 atualizado: 2026-10-24
 descricao: Cálculo do cronograma de parcelas pelo SAC (amortização constante, parcela decrescente), no mesmo cálculo que já atende a tabela Price.
 ---

@@ -1,5 +1,5 @@
 ---
-status: aprovada
+status: concluída
 atualizado: 2026-10-24
 descricao: Adiciona o SAC ao módulo calculator, pedido pela mesma interface da api que já atende o Price.
 ---
