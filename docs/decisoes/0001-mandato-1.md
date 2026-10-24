@@ -37,6 +37,7 @@ descricao: Decisões do mandato 1 de autonomia, sobre escopo, cálculo, arquitet
 - **Motivo:** o CET é uma taxa arredondada a 2 casas, não um valor em dinheiro; o ADR-0009 trata de valores em reais.
 - **Fonte:** [Resolução CMN 4.881/2020](https://www.bcb.gov.br/content/estabilidadefinanceira/especialnor/Resolu%C3%A7%C3%A3o4881.pdf), art. 4º, consultada em 2026-10-24.
 - **Escopo:** IOF e seguros entram como custos já somados; o cálculo do IOF fica fora.
+- **Mutantes equivalentes:** 3 de 54 sobrevivem no `TotalEffectiveCostRate`, todos trocando `>` por `>=` (ou `<` por `<=`) nos laços da bisseção; só mudariam algo num empate exato de ponto flutuante, e uma volta a mais não muda o resultado em 2 casas. Mutação em 94%, acima do limite; não foram excluídos da configuração.
 
 ## Corrigido no caminho
 - **Título de task repetido no board:** "02 · qa · Validação" se repetiria em toda spec; as issues #31 e #32 ganharam o prefixo `0001 · `. O `board.md` passa a pedir o prefixo (PR de material do mandato 1).

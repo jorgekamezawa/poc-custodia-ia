@@ -23,13 +23,13 @@ Spec: [Custo efetivo total do contrato](../spec.md) · Depende de: nenhuma
 | `.../calculator/application/EffectiveCostCalculatorService` | novo | Implementa `EffectiveCostCalculator`: valida, pede o cronograma ao `ScheduleCalculator` do módulo e calcula a taxa. Bean do Spring. |
 
 ## Testes desta task
-- [ ] Unitário de domínio `TotalEffectiveCostRateTest`: CT-1 a CT-5, com cronogramas montados pelo `PriceSchedule` e pelo `SacSchedule`.
-- [ ] Unitário de domínio `EffectiveCostLimitsTest`: CT-6 a CT-10.
-- [ ] Unitário de caso de uso `EffectiveCostCalculatorServiceTest`: CT-11 e pedido válido devolvendo o CET do CT-1.
+- [x] Unitário de domínio `TotalEffectiveCostRateTest`: CT-1 a CT-5, com cronogramas montados pelo `PriceSchedule` e pelo `SacSchedule`, e CET acima de 100% ao ano (custos de R$ 6.000,00: 931,54%), para o intervalo de busca crescer.
+- [x] Unitário de domínio `EffectiveCostLimitsTest`: CT-6 a CT-10.
+- [x] Unitário de caso de uso `EffectiveCostCalculatorServiceTest`: CT-11 e pedido válido devolvendo o CET do CT-1.
 
 ## Cenários cobertos
 CT-1, CT-2, CT-3, CT-4, CT-5, CT-6, CT-7, CT-8, CT-9, CT-10, CT-11
 
 ## Checklist
-- [ ] Testes de domínio escritos antes do código.
-- [ ] `./gradlew build` e `./gradlew pitest` verdes, mutação acima de 80%.
+- [x] Testes de domínio escritos antes do código.
+- [x] `./gradlew build` e `./gradlew pitest` verdes, mutação acima de 80%.
