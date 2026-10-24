@@ -36,7 +36,9 @@ test('0006/CT-17: busca pelo número e consulta o contrato', async ({ page }) =>
   await page.getByRole('link', { name: number }).click();
 
   await expect(page.getByRole('heading', { name: `Contrato ${number}` })).toBeVisible();
-  await expect(page.getByText('R$ 10.000,00').first()).toBeVisible();
+  await expect(page.locator('.summary div').filter({ hasText: 'Saldo devedor' })).toContainText(
+    'R$ 10.000,00',
+  );
   const installments = page.locator('tr.installment');
   await expect(installments).toHaveCount(12);
   await expect(installments.filter({ hasText: 'Em aberto' })).toHaveCount(12);
