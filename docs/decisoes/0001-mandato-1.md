@@ -5,7 +5,7 @@ descricao: Decisões do mandato 1 de autonomia, sobre escopo, cálculo, arquitet
 ---
 # Registro-0001: Mandato 1 de autonomia
 
-**Cobre:** as decisões que iriam para a pessoa durante o mandato 1, de 2026-10-24 até o fim do mandato. Escopo original: lote 1, mensageria, banco não relacional e alertas de gravame; reduzido pela pessoa em 2026-10-24 para terminar na história #16, seguido da análise do desenvolvimento autônomo. Atualizado no PR de cada entrega enquanto o mandato vale; congelado no fim.
+**Cobre:** as decisões que iriam para a pessoa durante o mandato 1, de 2026-10-24 até o fim do mandato. Escopo original: lote 1, mensageria, banco não relacional e alertas de gravame; reduzido pela pessoa em 2026-10-24 para terminar na história #16, seguido da análise do desenvolvimento autônomo. Encerrado em 2026-10-24, na história #16, como a pessoa pediu; congelado daqui em diante.
 
 ## Decisões
 
@@ -91,3 +91,9 @@ descricao: Decisões do mandato 1 de autonomia, sobre escopo, cálculo, arquitet
 - **`npx tsc` baixou um pacote antigo:** `tsc` no npm não é o TypeScript; o comando baixou o pacote `tsc@2.0.4` para o cache do npx (não entrou no projeto). Usar `npx --package typescript tsc` ou o script do projeto.
 - **Barras invertidas na spec 0006 (lapso meu):** um texto com crases escapadas dentro de Python foi gravado como `\``; o `check_docs.py` não acusa e o revisor revisou antes do erro. Corrigido no PR da task 01 da spec 0006. Vale o `check_docs.py` acusar `\`` fora de bloco de código.
 - **Nome de teste sem regra:** a rule do backend manda o `@DisplayName` começar pelo identificador da regra, mas não diz o que fazer quando o cenário não prova regra (ex.: 404, busca); pus uma regra errada e o revisor pegou. Vale a rule dizer: sem regra, começa pelo `<spec>/CT-n`.
+- **Para a pessoa decidir:**
+  - Trocar na skill `lote-autonomo` o `gh pr merge` direto por `merge_when_green.py` (a regra da skill me impede de mudá-la).
+  - Instalar as bibliotecas do Chromium no WSL (`sudo`), para o ponta a ponta rodar também localmente.
+  - Dizer se o padrão permite apelido local de termo (o revisor-docs decidiu dos dois jeitos).
+  - O hook `guard_git.py` só lê a data do mandato, não o escopo: quem respeitou o limite da #16 foi a skill.
+  - `check_docs.py` não acusa `\`` fora de bloco de código (barra invertida antes de crase), que escapou duas vezes.

@@ -1,5 +1,5 @@
 ---
-status: aprovada
+status: concluída
 atualizado: 2026-10-24
 descricao: Formulário de pagamento busca o valor devido na data escolhida e mostra multa e juros de mora.
 ---

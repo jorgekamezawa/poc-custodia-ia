@@ -1,5 +1,5 @@
 ---
-status: aprovada
+status: concluída
 atualizado: 2026-10-24
 descricao: Calcula multa e juros de mora, aceita o pagamento atrasado com multa e juros de mora e expõe a simulação do valor devido.
 ---

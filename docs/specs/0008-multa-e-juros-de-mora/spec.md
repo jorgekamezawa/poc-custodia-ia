@@ -1,5 +1,5 @@
 ---
-status: aprovada
+status: entregue
 atualizado: 2026-10-24
 descricao: Pagamento de parcela depois do vencimento, com multa de 2% e juros de mora de 1% ao mês pelos dias de atraso, e simulação do valor devido numa data.
 ---
