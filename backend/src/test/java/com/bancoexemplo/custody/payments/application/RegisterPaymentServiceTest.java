@@ -85,13 +85,64 @@ class RegisterPaymentServiceTest {
     }
 
     @Test
-    @DisplayName("PAG-03 0007/CT-5: pagamento no dia seguinte ao vencimento é recusado")
-    void refusesPaymentAfterTheDueDate() {
-        LocalDate dayAfterDue = LocalDate.of(2026, 11, 11);
+    @DisplayName("PAG-05 0008/CT-5: pagamento atrasado com multa e juros é aceito e guarda os dois")
+    void acceptsLatePaymentWithCharges() {
+        Payment payment = serviceOn(TODAY).register(payLate("968.92"));
 
-        assertThatThrownBy(() -> serviceOn(dayAfterDue).register(pay(1, "945.60", dayAfterDue)))
+        assertThat(payment.amount()).isEqualByComparingTo("968.92");
+        assertThat(payment.lateFee()).isEqualByComparingTo("18.91");
+        assertThat(payment.defaultInterest()).isEqualByComparingTo("4.41");
+        assertThat(payments.saved).containsExactly(payment);
+    }
+
+    @Test
+    @DisplayName("PAG-02 0008/CT-6: pagamento atrasado sem multa e juros é recusado com o valor devido")
+    void refusesLatePaymentWithoutCharges() {
+        assertThatThrownBy(() -> serviceOn(TODAY).register(payLate("945.60")))
                 .isInstanceOf(InvalidPaymentException.class)
-                .hasMessage("Pagamento depois do vencimento ainda não pode ser registrado");
+                .hasMessage("Valor deve ser igual ao da parcela com multa e juros de mora: R$ 968,92");
+    }
+
+    @Test
+    @DisplayName("PAG-06 0008/CT-7: a simulação traz parcela, dias, multa, juros e total")
+    void quotesTheAmountDue() {
+        PaymentQuote quote = serviceOn(TODAY).quote(PaymentFakes.Contracts.LATE_ID, 1, TODAY);
+
+        assertThat(quote.installmentNumber()).isEqualTo(1);
+        assertThat(quote.installmentAmount()).isEqualByComparingTo("945.60");
+        assertThat(quote.daysLate()).isEqualTo(14);
+        assertThat(quote.lateFee()).isEqualByComparingTo("18.91");
+        assertThat(quote.defaultInterest()).isEqualByComparingTo("4.41");
+        assertThat(quote.total()).isEqualByComparingTo("968.92");
+    }
+
+    @Test
+    void quoteAppliesTheSameRefusals() {
+        RegisterPaymentService service = serviceOn(TODAY);
+
+        assertThatThrownBy(() -> service.quote(PaymentFakes.Contracts.ID, 2, TODAY))
+                .isInstanceOf(InvalidPaymentException.class)
+                .hasMessage("Pague antes a parcela 1");
+        service.register(pay(1, "945.60", TODAY));
+        assertThatThrownBy(() -> service.quote(PaymentFakes.Contracts.ID, 1, TODAY))
+                .isInstanceOf(InstallmentAlreadyPaidException.class);
+        assertThatThrownBy(() -> service.quote(PaymentFakes.Contracts.ID, 2, TODAY.plusDays(1)))
+                .isInstanceOf(InvalidPaymentException.class)
+                .hasMessage(DATE_RANGE_MESSAGE);
+        assertThatThrownBy(() -> service.quote(UUID.randomUUID(), 1, TODAY))
+                .isInstanceOf(ContractNotFoundForPaymentException.class);
+    }
+
+    @Test
+    void onTimePaymentHasNoCharges() {
+        Payment payment = serviceOn(TODAY).register(pay(1, "945.60", TODAY));
+
+        assertThat(payment.lateFee()).isEqualByComparingTo("0.00");
+        assertThat(payment.defaultInterest()).isEqualByComparingTo("0.00");
+    }
+
+    private static RegisterPaymentCommand payLate(String amount) {
+        return new RegisterPaymentCommand(PaymentFakes.Contracts.LATE_ID, 1, TODAY, new BigDecimal(amount), "operador");
     }
 
     @Test

@@ -57,13 +57,16 @@ class PaymentApiTest {
 
     /** Registers the spec example released 44 days ago with the first installment due in 17 days. */
     private String registeredContract(MockHttpSession session) throws Exception {
-        String body =
-                """
+        return registeredContract(session, TODAY.minusDays(44), TODAY.plusDays(17));
+    }
+
+    private String registeredContract(MockHttpSession session, LocalDate release, LocalDate firstDue) throws Exception {
+        String body = """
                 {"number": "CTR-P-%s", "customerName": "Cliente Exemplo", "customerCpf": "12345678909",
                  "chassisNumber": "9BWZZZ377VT004251", "vehicleDescription": "Hatch 1.0 2026",
                  "amortizationSystem": "PRICE", "principal": 10000.00, "monthlyRatePercent": 2,
                  "termMonths": 12, "releaseDate": "%s", "firstDueDate": "%s", "upfrontCosts": 0}
-                """.formatted(UUID.randomUUID().toString().substring(0, 8), TODAY.minusDays(44), TODAY.plusDays(17));
+                """.formatted(UUID.randomUUID().toString().substring(0, 8), release, firstDue);
         String response = mvc.perform(withCsrf(post("/api/contracts")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(body))
@@ -81,6 +84,56 @@ class PaymentApiTest {
                 .content("""
                         {"installmentNumber": %d, "paidOn": "%s", "amount": %s}
                         """.formatted(installment, TODAY, amount)));
+    }
+
+    private String lateContract(MockHttpSession session) throws Exception {
+        return registeredContract(session, TODAY.minusDays(45), TODAY.minusDays(14));
+    }
+
+    @Test
+    @DisplayName("PAG-06 0008/CT-8: simulação da parcela vencida há 14 dias")
+    void quotesLateInstallment() throws Exception {
+        MockHttpSession session = operatorSession();
+        String contractId = lateContract(session);
+
+        mvc.perform(get("/api/contracts/" + contractId + "/payments/quote")
+                        .param("installmentNumber", "1")
+                        .param("paidOn", TODAY.toString())
+                        .session(session))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.installmentAmount").value(945.60))
+                .andExpect(jsonPath("$.daysLate").value(14))
+                .andExpect(jsonPath("$.lateFee").value(18.91))
+                .andExpect(jsonPath("$.defaultInterest").value(4.41))
+                .andExpect(jsonPath("$.total").value(968.92));
+    }
+
+    @Test
+    @DisplayName("PAG-05 0008/CT-9: pagamento atrasado com multa e juros responde 201 com os encargos")
+    void registersLatePayment() throws Exception {
+        MockHttpSession session = operatorSession();
+        String contractId = lateContract(session);
+
+        mvc.perform(pay(contractId, 1, "968.92").session(session))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.amount").value(968.92))
+                .andExpect(jsonPath("$.lateFee").value(18.91))
+                .andExpect(jsonPath("$.defaultInterest").value(4.41));
+    }
+
+    @Test
+    @DisplayName("PAG-04 0008/CT-10: simulação de parcela já paga responde 409")
+    void quoteOfPaidInstallmentAnswers409() throws Exception {
+        MockHttpSession session = operatorSession();
+        String contractId = registeredContract(session);
+        mvc.perform(pay(contractId, 1, "945.60").session(session)).andExpect(status().isCreated());
+
+        mvc.perform(get("/api/contracts/" + contractId + "/payments/quote")
+                        .param("installmentNumber", "1")
+                        .param("paidOn", TODAY.toString())
+                        .session(session))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.detail").value("Parcela já paga"));
     }
 
     private JsonNode contract(String id, MockHttpSession session) throws Exception {

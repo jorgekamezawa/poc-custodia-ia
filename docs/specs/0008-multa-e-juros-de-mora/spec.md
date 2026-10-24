@@ -78,7 +78,7 @@ Corpo igual ao da spec 0007. A resposta 201 ganha dois campos; `amount` segue se
 ### payment (alterada)
 | Coluna | Tipo | Nulo | Restrições | Descrição |
 |---|---|---|---|---|
-| lateFee | numeric(15,2) | não | padrão 0 | Multa de mora cobrada |
+| late_fee | numeric(15,2) | não | padrão 0 | Multa de mora cobrada |
 | default_interest | numeric(15,2) | não | padrão 0 | Juros de mora cobrados |
 
 ## Cenários de teste
