@@ -1,0 +1,13 @@
+<mat-toolbar>
+  <span>Custódia · Banco Exemplo</span>
+  <span class="spacer"></span>
+  @if (user(); as current) {
+    <span class="user">
+      {{ current.displayName }} · <span data-testid="role">{{ roleLabel() }}</span>
+    </span>
+  }
+  <button mat-button type="button" (click)="logout()">Sair</button>
+</mat-toolbar>
+<main class="content">
+  <router-outlet />
+</main>
