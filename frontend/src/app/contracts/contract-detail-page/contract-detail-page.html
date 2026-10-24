@@ -102,6 +102,7 @@
         <th scope="col">Amortização</th>
         <th scope="col">Saldo devedor</th>
         <th scope="col">Situação</th>
+        <th scope="col"><span class="visually-hidden">Ação</span></th>
       </tr>
     </thead>
     <tbody>
@@ -114,8 +115,24 @@
           <td>{{ installment.amortization | currency: 'BRL' }}</td>
           <td>{{ installment.balanceAfter | currency: 'BRL' }}</td>
           <td>{{ situationLabels[installment.situation] }}</td>
+          <td>
+            @if (installment.number === nextToPay()?.number && !paying()) {
+              <button mat-button type="button" (click)="paying.set(true)">
+                Registrar pagamento
+              </button>
+            }
+          </td>
         </tr>
       }
     </tbody>
   </table>
+
+  @if (paying() && nextToPay(); as installment) {
+    <app-register-payment-form
+      [contractId]="c.id"
+      [installmentNumber]="installment.number"
+      [amount]="installment.amount"
+      (registered)="onPaymentRegistered(installment.number)"
+    />
+  }
 }

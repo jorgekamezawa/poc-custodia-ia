@@ -47,7 +47,7 @@ export interface ContractSummary {
   registeredAt: string;
 }
 
-export type InstallmentSituation = 'OPEN' | 'OVERDUE';
+export type InstallmentSituation = 'OPEN' | 'OVERDUE' | 'PAID';
 
 export interface ContractDetail {
   id: string;
@@ -68,7 +68,10 @@ export interface ContractDetail {
   registeredBy: string;
   registeredAt: string;
   outstandingBalance: number;
-  installments: (ContractInstallment & { situation: InstallmentSituation })[];
+  installments: (ContractInstallment & {
+    situation: InstallmentSituation;
+    paidOn?: string | null;
+  })[];
 }
 
 @Injectable({ providedIn: 'root' })

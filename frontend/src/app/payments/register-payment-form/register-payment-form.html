@@ -1,0 +1,21 @@
+@if (done()) {
+  <p class="success" role="status">Pagamento registrado.</p>
+} @else {
+  <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+    <h3>Pagamento da parcela {{ installmentNumber() }}</h3>
+    @if (error(); as message) {
+      <p class="error" role="alert">{{ message }}</p>
+    }
+    <mat-form-field>
+      <mat-label>Data do pagamento</mat-label>
+      <input matInput type="date" formControlName="paidOn" />
+      <mat-error>Campo obrigatório</mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Valor (R$)</mat-label>
+      <input matInput type="number" step="0.01" formControlName="amount" />
+      <mat-error>Campo obrigatório</mat-error>
+    </mat-form-field>
+    <button mat-flat-button type="submit" [disabled]="submitting()">Registrar</button>
+  </form>
+}
