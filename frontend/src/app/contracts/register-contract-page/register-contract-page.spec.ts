@@ -123,6 +123,9 @@ describe('RegisterContractPage', () => {
     expect(element.textContent).toContain('26,95%');
     expect(element.querySelectorAll('tr.installment').length).toBe(12);
     expect(element.textContent).toContain('945,55');
+    const link = element.querySelector('a[href]') as HTMLAnchorElement;
+    expect(link.textContent).toContain('Ver contrato');
+    expect(link.getAttribute('href')).toBe('/contratos/3f2a6c1e-0000-4000-8000-000000000001');
   });
 
   it('0005/CT-24: recusa do servidor aparece no topo e os dados ficam', async () => {

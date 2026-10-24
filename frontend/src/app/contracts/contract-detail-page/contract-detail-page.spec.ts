@@ -88,6 +88,8 @@ describe('ContractDetailPage', () => {
     expect(text).toContain('CTR-0001');
     expect(text).toContain('R$ 10.000,00');
     expect(text).toContain('26,95%');
+    expect(text).toMatch(/Primeiro vencimento\s*10\/10\/2026/);
+    expect(text).toMatch(/Cadastrado por\s*operador/);
     const rows = harness.routeNativeElement!.querySelectorAll('tr.installment');
     expect(rows[0].textContent).toContain('Vencida');
     expect(rows[1].textContent).toContain('Em aberto');
