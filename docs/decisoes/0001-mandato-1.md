@@ -44,6 +44,11 @@ descricao: Decisões do mandato 1 de autonomia, sobre escopo, cálculo, arquitet
 - **Motivo:** o login é base de toda tela e não cabia na spec do contrato; as regras de acesso valem para todos os módulos.
 - **Esboço:** sem Claude Design; a tela é descrita na spec e desenhada direto com Angular Material.
 
+### 6. Como o contrato entra e é guardado (2026-10-24)
+- **Escolha:** o operador digita o contrato assinado (sem integração com contratação); cronograma e CET calculados no cadastro e guardados; acesso a banco com `JdbcClient` ([ADR-0015](../adr/0015-acesso-a-banco-com-jdbcclient.md)); erros da API em `ProblemDetail`; CON-01 a CON-04 ([spec 0005](../specs/0005-cadastro-de-contrato/spec.md)).
+- **Motivo:** cronograma guardado não muda se a regra de cálculo mudar depois; digitar evita a área vizinha antes da hora.
+- **Fonte das regras:** fictícias da POC, salvo o formato do chassi (17 caracteres sem I, O e Q), que segue o padrão VIN (ISO 3779).
+
 ## Corrigido no caminho
 - **Título de task repetido no board:** "02 · qa · Validação" se repetiria em toda spec; as issues #31 e #32 ganharam o prefixo `0001 · `. O `board.md` passa a pedir o prefixo (PR de material do mandato 1).
 - **Link para o custodia-docs:** o `check_docs.py` agora acusa link relativo que sai do repositório e o padrão manda usar a URL do GitHub ([custodia-docs#6](https://github.com/jorgekamezawa/custodia-docs/pull/6)).
@@ -66,3 +71,4 @@ descricao: Decisões do mandato 1 de autonomia, sobre escopo, cálculo, arquitet
 - **Playwright deixa o backend de pé quando falha localmente:** o `bootRun` abre um processo Java filho que sobrevive ao fim do Gradle; precisei derrubar à mão. No CI a máquina é descartada.
 - **pesquisador-contexto deixou passar arquivo de novo:** disse que `e2e/tests` não existia, mas `e2e/tests/smoke.spec.ts` existe (levantamento da #12), mesmo depois da regra do Glob exato.
 - **`npx tsc` baixou um pacote antigo:** `tsc` no npm não é o TypeScript; o comando baixou o pacote `tsc@2.0.4` para o cache do npx (não entrou no projeto). Usar `npx --package typescript tsc` ou o script do projeto.
+- **Lapso meu: cenários com dois casos de novo:** depois de anotar a regra na spec 0003, a spec 0005 voltou a juntar dois casos em CT-7 e CT-8; o revisor pegou. A regra está no padrão, mas não no template da spec nem na `padrao-testes`, onde eu a leria na hora de escrever.
