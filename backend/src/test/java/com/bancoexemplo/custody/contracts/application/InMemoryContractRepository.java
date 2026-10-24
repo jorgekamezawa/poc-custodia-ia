@@ -3,6 +3,7 @@ package com.bancoexemplo.custody.contracts.application;
 import com.bancoexemplo.custody.contracts.application.port.ContractRepository;
 import com.bancoexemplo.custody.contracts.domain.Contract;
 import com.bancoexemplo.custody.contracts.domain.ContractNumber;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -63,5 +64,14 @@ class InMemoryContractRepository implements ContractRepository {
                 .limit(limit)
                 .map(ContractSummary::of)
                 .toList();
+    }
+
+    @Override
+    public void markInstallmentPaid(UUID contractId, int installmentNumber, LocalDate paidOn) {
+        for (int i = 0; i < saved.size(); i++) {
+            if (saved.get(i).id().equals(contractId)) {
+                saved.set(i, saved.get(i).withInstallmentPaid(installmentNumber, paidOn));
+            }
+        }
     }
 }

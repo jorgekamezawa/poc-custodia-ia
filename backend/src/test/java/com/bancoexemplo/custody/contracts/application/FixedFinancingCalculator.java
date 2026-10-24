@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-/** Answers a fixed 12-installment schedule with CET 26.95, recording the last request. */
+/** Answers a fixed 12-installment schedule with CET 26.95 (the first with the real Price values), recording the last request. */
 class FixedFinancingCalculator implements FinancingCalculator {
 
     FinancingRequest lastRequest;
@@ -22,9 +22,9 @@ class FixedFinancingCalculator implements FinancingCalculator {
                     number,
                     request.firstDueDate().plusMonths(number - 1L),
                     new BigDecimal(number == 12 ? "945.55" : "945.60"),
-                    BigDecimal.ZERO,
-                    BigDecimal.ZERO,
-                    BigDecimal.ZERO));
+                    number == 1 ? new BigDecimal("200.00") : BigDecimal.ZERO,
+                    number == 1 ? new BigDecimal("745.60") : BigDecimal.ZERO,
+                    number == 1 ? new BigDecimal("9254.40") : BigDecimal.ZERO));
         }
         return new Financing(installments, new BigDecimal("26.95"));
     }

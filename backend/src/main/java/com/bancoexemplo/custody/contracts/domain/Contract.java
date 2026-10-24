@@ -33,6 +33,37 @@ public record Contract(
 
     /** Balance after the last paid installment; with none paid yet, the principal. */
     public BigDecimal outstandingBalance() {
-        return principal;
+        BigDecimal balance = principal;
+        for (ContractInstallment installment : installments) {
+            if (installment.paid()) {
+                balance = installment.balanceAfter();
+            }
+        }
+        return balance;
+    }
+
+    public Contract withInstallmentPaid(int installmentNumber, LocalDate paidOn) {
+        return new Contract(
+                id,
+                number,
+                customerName,
+                customerCpf,
+                chassisNumber,
+                vehicleDescription,
+                amortizationSystem,
+                principal,
+                monthlyRatePercent,
+                termMonths,
+                releaseDate,
+                firstDueDate,
+                upfrontCosts,
+                annualCetPercent,
+                status,
+                registeredBy,
+                registeredAt,
+                installments.stream()
+                        .map(installment ->
+                                installment.number() == installmentNumber ? installment.paidOn(paidOn) : installment)
+                        .toList());
     }
 }

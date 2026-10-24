@@ -100,7 +100,7 @@ class JdbcContractRepository implements ContractRepository {
     @Override
     public Optional<Contract> findById(UUID id) {
         List<ContractInstallment> installments = jdbc.sql("""
-                        SELECT number, due_date, amount, interest, amortization, balance_after
+                        SELECT number, due_date, amount, interest, amortization, balance_after, paid_on
                         FROM contract_installment WHERE contract_id = :id ORDER BY number
                         """)
                 .param("id", id)
@@ -110,7 +110,8 @@ class JdbcContractRepository implements ContractRepository {
                         row.getBigDecimal("amount"),
                         row.getBigDecimal("interest"),
                         row.getBigDecimal("amortization"),
-                        row.getBigDecimal("balance_after")))
+                        row.getBigDecimal("balance_after"),
+                        row.getObject("paid_on", LocalDate.class)))
                 .list();
         return jdbc.sql("SELECT * FROM contract WHERE id = :id")
                 .param("id", id)
@@ -144,6 +145,15 @@ class JdbcContractRepository implements ContractRepository {
                 .param("limit", limit)
                 .query(JdbcContractRepository::summary)
                 .list();
+    }
+
+    @Override
+    public void markInstallmentPaid(UUID contractId, int installmentNumber, LocalDate paidOn) {
+        jdbc.sql("UPDATE contract_installment SET paid_on = :paidOn WHERE contract_id = :id AND number = :number")
+                .param("paidOn", paidOn)
+                .param("id", contractId)
+                .param("number", installmentNumber)
+                .update();
     }
 
     private static ContractSummary summary(ResultSet row, int index) throws SQLException {
