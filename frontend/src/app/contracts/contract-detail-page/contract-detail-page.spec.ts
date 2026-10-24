@@ -115,6 +115,17 @@ describe('ContractDetailPage', () => {
 
     button.click();
     await settle();
+    http
+      .expectOne((r) => r.url === '/api/contracts/c1/payments/quote')
+      .flush({
+        installmentNumber: 2,
+        installmentAmount: 5252.49,
+        daysLate: 0,
+        lateFee: 0,
+        defaultInterest: 0,
+        total: 5252.49,
+      });
+    await settle();
     const amount = harness.routeNativeElement!.querySelector(
       'app-register-payment-form input[type="number"]',
     ) as HTMLInputElement;
@@ -132,6 +143,17 @@ describe('ContractDetailPage', () => {
     (
       harness.routeNativeElement!.querySelector('tr.installment button') as HTMLButtonElement
     ).click();
+    await settle();
+    http
+      .expectOne((r) => r.url === '/api/contracts/c1/payments/quote')
+      .flush({
+        installmentNumber: 1,
+        installmentAmount: 5050.5,
+        daysLate: 0,
+        lateFee: 0,
+        defaultInterest: 0,
+        total: 5050.5,
+      });
     await settle();
 
     (

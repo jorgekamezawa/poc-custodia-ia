@@ -17,5 +17,27 @@
       <mat-error>Campo obrigatório</mat-error>
     </mat-form-field>
     <button mat-flat-button type="submit" [disabled]="submitting()">Registrar</button>
+    @if (quote(); as q) {
+      <dl class="due">
+        <div>
+          <dt>Parcela</dt>
+          <dd>{{ q.installmentAmount | currency: 'BRL' }}</dd>
+        </div>
+        @if (q.daysLate > 0) {
+          <div>
+            <dt>Multa</dt>
+            <dd>{{ q.lateFee | currency: 'BRL' }}</dd>
+          </div>
+          <div>
+            <dt>Juros de mora ({{ q.daysLate }} dias)</dt>
+            <dd>{{ q.defaultInterest | currency: 'BRL' }}</dd>
+          </div>
+        }
+        <div>
+          <dt>Total</dt>
+          <dd>{{ q.total | currency: 'BRL' }}</dd>
+        </div>
+      </dl>
+    }
   </form>
 }

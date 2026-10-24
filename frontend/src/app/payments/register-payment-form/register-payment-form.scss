@@ -21,3 +21,21 @@ h3 {
 .success {
   font-weight: 500;
 }
+
+.due {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 24px;
+  width: 100%;
+  margin: 8px 0 0;
+}
+
+.due dt {
+  font-size: 0.85rem;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.due dd {
+  margin: 0;
+  font-weight: 500;
+}
