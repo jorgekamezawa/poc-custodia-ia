@@ -1,5 +1,5 @@
 ---
-status: aprovada
+status: concluída
 atualizado: 2026-10-24
 descricao: Formulário de registro de pagamento na tela Contrato, com a situação Paga e a recarga até o contrato receber o aviso.
 ---

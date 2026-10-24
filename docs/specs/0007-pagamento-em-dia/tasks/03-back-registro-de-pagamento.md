@@ -1,5 +1,5 @@
 ---
-status: aprovada
+status: concluída
 atualizado: 2026-10-24
 descricao: Cria o módulo payments com o registro do pagamento em dia e faz o contrato marcar a parcela paga ao receber o evento.
 ---
