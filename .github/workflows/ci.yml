@@ -17,6 +17,8 @@ jobs:
         with:
           repository: jorgekamezawa/custodia-docs
           path: .custodia-docs
+      - name: Test the agent hook scripts
+        run: python3 -m unittest discover -s .claude/scripts -p 'test_*.py' -v
       - name: Check documents against the area standard
         run: python3 .custodia-docs/scripts/check_docs.py --root .
 

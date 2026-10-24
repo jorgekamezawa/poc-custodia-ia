@@ -1,0 +1,43 @@
+{
+  "permissions": {
+    "additionalDirectories": [
+      "../custodia-docs"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PROJECT_DIR}/.claude/scripts/guard_git.py\" --pre",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PROJECT_DIR}/.claude/scripts/guard_git.py\" --post",
+            "timeout": 10
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "f=\"${CLAUDE_PROJECT_DIR}/../custodia-docs/scripts/check_docs.py\"; [ ! -f \"$f\" ] || python3 \"$f\" --hook",
+            "timeout": 30
+          }
+        ]
+      }
+    ]
+  }
+}
