@@ -10,7 +10,7 @@ Spec: [Entrar no portal](../spec.md) · Depende de: 01, 02, 03
 ## Verificação contra a spec
 | Critério / cenário | Como verificado | Resultado | Evidência |
 |---|---|---|---|
-| CA-1 (CT-1, CT-9, CT-13, CT-15) | API, componente e Playwright | passou | CI do PR #56: `e2e` verde |
+| CA-1 (CT-1, CT-9, CT-13, CT-15) | API, componente e Playwright | passou | [CI run 40113799075](https://github.com/jorgekamezawa/poc-custodia-ia/actions/runs/40113799075): `backend`, `frontend`, `mutation`, `docs` e `e2e` verdes |
 | CA-2 (CT-2, CT-3, CT-10, CT-11, CT-16) | API, componente e Playwright | passou | idem |
 | CA-3 (CT-4, CT-12, CT-17) | API, servidor real, componente e Playwright | passou | idem |
 | CA-4 (CT-5, CT-14, CT-15) | API, componente e Playwright | passou | idem |
@@ -20,7 +20,7 @@ Spec: [Entrar no portal](../spec.md) · Depende de: 01, 02, 03
 
 ## Boas práticas
 - [x] Convenções do projeto seguidas.
-- [x] Sensores verdes (build, lint, testes, PIT).
+- [x] Sensores verdes (build, lint, testes, PIT): CI run 40113799075; local `./gradlew test --tests '*Authentication*'` 10 de 10 e `npm test` 9 de 9.
 - [x] GER-03 a GER-05 publicadas em `regras/gerais.md` do custodia-docs no mesmo ciclo.
 
 ## Testes ponta a ponta criados

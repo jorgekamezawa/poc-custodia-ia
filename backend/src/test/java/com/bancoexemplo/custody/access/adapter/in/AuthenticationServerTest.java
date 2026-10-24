@@ -37,7 +37,7 @@ class AuthenticationServerTest {
     }
 
     @Test
-    @DisplayName("GER-03 0004/CT-4: a página de erro chamada direto também exige login")
+    @DisplayName("GER-03: a página de erro chamada direto também exige login")
     void errorPageRequestedDirectlyNeedsLogin() throws Exception {
         HttpRequest request = HttpRequest.newBuilder(URI.create("http://localhost:" + port + "/error"))
                 .GET()
