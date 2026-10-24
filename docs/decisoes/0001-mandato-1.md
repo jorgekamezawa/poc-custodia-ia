@@ -23,10 +23,9 @@ descricao: Decisões do mandato 1 de autonomia, sobre escopo, cálculo, arquitet
 - **Motivo:** é a convenção de mercado para Price; os limites são fictícios da POC, faixa típica de financiamento de veículo.
 
 ## Corrigido no caminho
-- **Título de task repetido no board:** "02 · qa · Validação" se repetiria em toda spec; as issues #31 e #32 ganharam o prefixo `0001 · `. O `board.md` passa a pedir o prefixo no PR de material.
+- **Título de task repetido no board:** "02 · qa · Validação" se repetiria em toda spec; as issues #31 e #32 ganharam o prefixo `0001 · `. O `board.md` passa a pedir o prefixo (PR de material do mandato 1).
 - **Link para o custodia-docs:** o `check_docs.py` agora acusa link relativo que sai do repositório e o padrão manda usar a URL do GitHub ([custodia-docs#6](https://github.com/jorgekamezawa/custodia-docs/pull/6)).
-- **Teste parametrizado sem o cenário no relatório:** o JUnit nomeia `[1] term = 0`; os testes da spec 0001 usam `name = "{displayName} [{arguments}]"` (task 02 da spec 0001); a convenção vai para a rule do backend.
-- **Exemplo de nome de teste divergente:** `backend.md` mostra `GAR-03 CT-4` e a `padrao-testes` mostra `GAR-03 0007/CT-4`; vale o da skill, e a rule é corrigida no PR de material.
+- **Teste parametrizado sem o cenário no relatório:** o JUnit nomeia `[1] term = 0`; os testes da spec 0001 usam `name = "{displayName} [{arguments}]"` (task 02 da spec 0001); a convenção entrou na rule do backend (PR de material do mandato 1).
+- **Exemplo de nome de teste divergente:** `backend.md` mostra `GAR-03 CT-4` e a `padrao-testes` mostra `GAR-03 0007/CT-4`; vale o da skill; rule corrigida (PR de material do mandato 1).
 
-## Em aberto
-- **pesquisador-contexto deixou passar arquivo:** no refinamento da #8 disse que não havia teste ArchUnit, mas `backend/src/test/java/.../architecture/ArchitectureTest.java` existe. Ver se o roteiro `estado-atual.md` aponta a pasta de teste de um jeito que o Glob ache.
+- **pesquisador-contexto deixou passar arquivo:** disse que não havia teste ArchUnit, mas o roteiro já apontava a pasta; o subagente passa a fazer Glob do caminho exato antes de declarar ausência (PR de material do mandato 1).
