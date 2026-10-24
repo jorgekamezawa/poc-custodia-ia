@@ -13,7 +13,7 @@ Define **o quê** e **em que ordem**. Arquitetura, contratos, dados e tasks são
 - **Regra de negócio não se supõe.** Regra nova cita a fonte oficial (norma e link) ou vira pergunta em aberto.
 - **Perguntas em rodadas de no máximo 7**, nunca o que o contexto já responde.
 - **Domínio fictício.** Nada de nome de empresa, pessoa ou dado real: os repositórios são públicos.
-- **Aprovação antes de criar.** Documento só é commitado aprovado; issue só nasce com a estrutura aprovada (número de issue nunca é reaproveitado).
+- **Aprovação antes de criar.** Documento só é commitado aprovado; issue só nasce com a estrutura aprovada (número de issue nunca é reaproveitado). Com mandato válido, a aprovação é a da `lote-autonomo`.
 
 ## Fluxo 1: Discovery da área
 Documentos no `../custodia-docs`, do template do tipo, quando o gatilho do catálogo em `../custodia-docs/padroes/documentacao.md` acontecer.

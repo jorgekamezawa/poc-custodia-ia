@@ -5,7 +5,7 @@ description: Abre o PR de uma entrega no padrão do projeto: confere as pré-con
 
 # Abrir PR
 
-Commit, push e PR só com aprovação explícita da pessoa. Sem ela, pare e peça. O hook `guard_git` confirma de novo na hora; esta skill garante que o que chega lá está pronto.
+Commit, push e PR só com aprovação explícita da pessoa. Sem ela, pare e peça; com mandato válido, siga a `lote-autonomo`. O hook `guard_git` confirma de novo na hora; esta skill garante que o que chega lá está pronto.
 
 ## Passos
 1. **Pré-condições:** `python3 ${CLAUDE_SKILL_DIR}/scripts/preflight.py`. Falhou? Mostre o que falta e pare; não contorne.

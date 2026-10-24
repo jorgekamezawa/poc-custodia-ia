@@ -39,7 +39,7 @@ Da spec aprovada, em `docs/specs/NNNN-titulo-curto/tasks/`, dos templates `task.
 - A primeira task de cada camada abre com a abordagem técnica; escolha significativa vira ADR.
 - Cada task: dependências, peças com caminho e responsabilidade (sem código nem assinatura), testes da própria task e cenários que ficam verdes.
 - A última é sempre a task `qa`.
-- Chame o subagente `revisor-docs` pelo nome com o caminho da spec (ele confere CA → CT → task) e mostre para aprovação.
+- Chame o subagente `revisor-docs` pelo nome com o caminho da spec (ele confere CA → CT → task) e mostre para aprovação (com mandato válido, siga a `lote-autonomo`).
 - Spec e tasks aprovadas vão juntas num PR de docs. Depois do merge, cada task vira issue `type: task`, sub-issue da história (ver `${CLAUDE_SKILL_DIR}/../product-owner/references/board.md`).
 
 ## Fluxo 5: onde cada regra mora

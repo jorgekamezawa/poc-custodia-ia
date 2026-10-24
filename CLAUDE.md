@@ -10,6 +10,9 @@ Sistema fictício de custódia de financiamentos (Banco Exemplo), usado numa POC
 5. **Documento só é commitado depois de aprovado.** Rejeitado durante a escrita, é apagado sem passar pelo git.
 6. **Ação destrutiva** (apagar arquivo, volume, branch, dado): pergunte antes.
 
+## Modo autônomo (mandato)
+Com `.claude/mandato.json` válido (escopo aprovado pela pessoa, data `ate` não vencida), as regras 1, 2, 3 e 5 acima e as paradas das skills passam a ser cumpridas por sensores e subagentes revisores, pela skill `lote-autonomo`. A regra 4 continua. A regra 6 continua para dados e volumes locais, branch `main` e repositório. O que pode e o que segue proibido está na skill.
+
 ## Comandos
 | O quê | Comando |
 |---|---|
