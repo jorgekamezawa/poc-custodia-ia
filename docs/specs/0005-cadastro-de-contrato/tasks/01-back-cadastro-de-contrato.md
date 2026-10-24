@@ -33,16 +33,19 @@ Spec: [Cadastro de contrato](../spec.md) · Depende de: nenhuma
 | `.../contracts/adapter/in/web/RegisterContractRequest`, `ContractResponse` | novo | Corpos do contrato de API. |
 | `.../contracts/adapter/in/web/ContractErrorHandler` | novo | Recusas em 400 e 409 com `ProblemDetail`. |
 | `backend/src/main/resources/db/migration/V1__create_contract.sql` | novo | Tabelas `contract` e `contract_installment` da seção Dados. |
+| `backend/build.gradle.kts` | alterado | Starter de JDBC declarado (vinha só de forma indireta pelo Flyway). |
+| `.../contracts/application/port/FinancingRequest`, `Financing` | novo | Pedido e resposta da porta de cálculo. |
+| `.../contracts/domain/AmortizationSystem` | novo | Sistema de amortização do contrato, traduzido pelo adaptador para o do calculator. |
 
 ## Testes desta task
-- [ ] Unitário de domínio `CpfTest`, `ChassisNumberTest`, `ContractNumberTest`, `TextFieldTest`: CT-3 a CT-11.
-- [ ] Unitário de caso de uso `RegisterContractServiceTest`, com repositório e calculador falsos em memória e relógio fixo: CT-1, CT-2, CT-12.
-- [ ] Integração `JdbcContractRepositoryTest`: CT-13 e CT-14.
-- [ ] API `ContractApiTest`: CT-15 a CT-21.
+- [x] Unitário de domínio `CpfTest`, `ChassisNumberTest`, `ContractNumberTest`, `TextFieldTest`: CT-3 a CT-11.
+- [x] Unitário de caso de uso `RegisterContractServiceTest`, com repositório e calculador falsos em memória e relógio fixo: CT-1, CT-2, CT-12.
+- [x] Integração `JdbcContractRepositoryTest`: CT-13 e CT-14.
+- [x] API `ContractApiTest`: CT-15 a CT-21.
 
 ## Cenários cobertos
 CT-1, CT-2, CT-3, CT-4, CT-5, CT-6, CT-7, CT-8, CT-9, CT-10, CT-11, CT-12, CT-13, CT-14, CT-15, CT-16, CT-17, CT-18, CT-19, CT-20, CT-21
 
 ## Checklist
-- [ ] Testes de domínio e de caso de uso antes do código.
-- [ ] `./gradlew build` e `./gradlew pitest` verdes, mutação acima de 80%.
+- [x] Testes de domínio e de caso de uso antes do código.
+- [x] `./gradlew build` e `./gradlew pitest` verdes, mutação acima de 80%.
