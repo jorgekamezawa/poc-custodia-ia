@@ -10,3 +10,4 @@ Uma linha por entrega. Tempo é o de relógio, da aprovação do plano até a en
 | Data | Fase | Entrega | Tempo | Rodadas de correção | Observação |
 |---|---|---|---|---|---|
 | 2026-10-24 | 0 | Esqueleto: backend, frontend, CI e portal | cerca de 30 min | 0 | Planejamento e definições da POC tomaram a maior parte do dia, antes da fase |
+| 2026-10-24 | 1a | Padrão de documentação, templates, verificação, portal e ADRs | cerca de 3 h | 2 | Specs debatidas a fundo (pesquisa de SDD); revisor apontou 2 problemas num ADR |
