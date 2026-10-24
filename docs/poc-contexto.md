@@ -40,7 +40,7 @@ Custo e consumo de tokens são secundários nesta POC.
 | `CLAUDE.md` na raiz, curto (cerca de 60 linhas), revisado por humano, só com o que o agente não descobre sozinho. | Contexto genérico não melhora o acerto e custa mais (ETH Zurich 2026; Radar Thoughtworks vol. 34). |
 | Seguir as convenções do Claude Code: convenções de back e front em `.claude/rules/` com escopo por pasta, skills em `.claude/skills/`, subagentes em `.claude/agents/`. | A POC usa as melhores práticas da ferramenta em uso; adaptar para outra ferramenta é trabalho de quem for adotar. |
 | Cada skill com SKILL.md curto e detalhe em `references/`. | Só a descrição fica sempre no contexto; o resto é lido quando preciso. |
-| PO e tech lead como skills; busca de contexto e revisão como subagentes (`pesquisador-contexto`, `revisor`). | Skill roda na conversa e permite ir e voltar com o humano. Subagente faz tarefa fechada em contexto isolado e devolve só o relevante. |
+| PO e tech lead como skills; busca de contexto e revisão como subagentes (`pesquisador-contexto`, `revisor-docs`, `revisor-codigo`). | Skill roda na conversa e permite ir e voltar com o humano. Subagente faz tarefa fechada em contexto isolado e devolve só o relevante. |
 | Backlog em GitHub Issues e Projects: fase = milestone, épico = issue `type: epic`, história = sub-issue `type: story`. | Simula o backlog real e liga história, spec e PR. |
 | Spec por feature em `docs/specs/`, aprovada antes de qualquer código. | Spec-driven development (spec, plano, implementação). |
 | Esboço de tela no Claude Design, a partir do repositório e de screenshots, sem `/design-sync`. | Aprovar a tela antes da spec. O `/design-sync` é voltado a React; o agente traduz o esboço para Angular. |
@@ -90,9 +90,9 @@ As regras finas de cada módulo são definidas no discovery (fase 2) e nas specs
 1. **História** no board.
 2. **Refinamento** com a skill `product-owner`, que aciona o subagente `pesquisador-contexto` para trazer só a doc relevante. Ela traz opções e perguntas; o humano decide.
 3. **Esboço de tela** no Claude Design. O humano aprova.
-4. **Spec**: regras, critérios de aceite, link do esboço e cenários de teste de back, front e ponta a ponta. O humano aprova.
-5. **Plano técnico** com a skill `tech-lead`, depois implementação pelo agente.
-6. **Sensores** (build, lint, testes, PIT, Playwright) e subagente `revisor`.
+4. **Spec**: a parte de negócio (regras, critérios de aceite, link do esboço) com a skill `product-owner`; a parte técnica e os cenários de teste de back, front e ponta a ponta com a skill `tech-lead`. O humano aprova cada parte.
+5. **Tasks por camada** com a skill `tech-lead`, depois implementação pelo agente.
+6. **Sensores** (build, lint, testes, PIT, Playwright) e subagente `revisor-codigo`.
 7. **PR**, revisão humana e board atualizado.
 
 ## 7. Fases

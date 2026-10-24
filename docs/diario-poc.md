@@ -13,3 +13,4 @@ Uma linha por entrega. Tempo é o de relógio, da aprovação do plano até a en
 | 2026-10-24 | 1a | Padrão de documentação, templates, verificação, portal e ADRs | cerca de 3 h | 2 | Specs debatidas a fundo (pesquisa de SDD); revisor apontou 2 problemas num ADR |
 | 2026-10-24 | 1b | CLAUDE.md, rules e hooks | cerca de 40 min | 0 | Hook de git só vale a partir da próxima sessão |
 | 2026-10-24 | 1c | Sensores: formato, análise estática, lint, PIT e Playwright | cerca de 1 h | 2 | Conflito JUnit 5 e 6 trazido pelo plugin do PIT; Chromium sem bibliotecas no WSL |
+| 2026-10-24 | 1d | Skills, subagentes e scripts de apoio (board fica para depois do PR) | cerca de 50 min | 3 | Revisor externo achou 17 pontos (4 de prática documentada); idioma dos subagentes trocado para português após pesquisa; pesquisador passou do limite de linhas na validação |
