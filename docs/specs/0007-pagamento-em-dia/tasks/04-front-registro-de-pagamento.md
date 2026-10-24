@@ -16,12 +16,12 @@ Spec: [Pagamento de parcela em dia](../spec.md) · Depende de: 03
 | `frontend/src/app/contracts/contract-api.service.ts` | alterado | Situação `PAID` e `paidOn` na parcela. |
 
 ## Testes desta task
-- [ ] Componente `contract-detail-page`: CT-21.
-- [ ] Componente `register-payment-form`: CT-22, CT-23.
+- [x] Componente `contract-detail-page`: CT-21.
+- [x] Componente `register-payment-form`: CT-22, CT-23.
 
 ## Cenários cobertos
 CT-21, CT-22, CT-23
 
 ## Checklist
-- [ ] Testes de componente antes das telas.
-- [ ] `npm run lint`, `npm run format:check`, `npm test` e `npm run build` sem aviso.
+- [x] Testes de componente antes das telas.
+- [x] `npm run lint`, `npm run format:check`, `npm test` e `npm run build` sem aviso.

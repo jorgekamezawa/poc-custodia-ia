@@ -95,6 +95,59 @@ describe('ContractDetailPage', () => {
     expect(rows[1].textContent).toContain('Em aberto');
   });
 
+  it('0007/CT-21: "Registrar pagamento" só na parcela não paga mais antiga, com o valor dela', async () => {
+    const paidFirst = detail();
+    paidFirst.installments[0] = {
+      ...paidFirst.installments[0],
+      situation: 'PAID',
+      paidOn: '2026-10-09',
+    };
+    await harness.navigateByUrl('/contratos/c1', ContractDetailPage);
+    http.expectOne('/api/contracts/c1').flush(paidFirst);
+    await settle();
+
+    const rows = harness.routeNativeElement!.querySelectorAll('tr.installment');
+    expect(rows[0].textContent).toContain('Paga');
+    expect(rows[0].querySelector('button')).toBeNull();
+    const button = rows[1].querySelector('button') as HTMLButtonElement;
+    expect(button.textContent).toContain('Registrar pagamento');
+
+    button.click();
+    await settle();
+    const amount = harness.routeNativeElement!.querySelector(
+      'app-register-payment-form input[type="number"]',
+    ) as HTMLInputElement;
+    expect(amount.value).toBe('5252.49');
+  });
+
+  it('0007/CT-22: depois do pagamento registrado a consulta é feita de novo', async () => {
+    await harness.navigateByUrl('/contratos/c1', ContractDetailPage);
+    http.expectOne('/api/contracts/c1').flush(detail());
+    await settle();
+    (
+      harness.routeNativeElement!.querySelector('tr.installment button') as HTMLButtonElement
+    ).click();
+    await settle();
+
+    (
+      harness.routeNativeElement!.querySelector(
+        'app-register-payment-form button[type="submit"]',
+      ) as HTMLButtonElement
+    ).click();
+    http
+      .expectOne('/api/contracts/c1/payments')
+      .flush({ id: 'p1' }, { status: 201, statusText: 'Created' });
+    await settle();
+
+    const paid = detail();
+    paid.installments[0] = { ...paid.installments[0], situation: 'PAID', paidOn: '2026-10-24' };
+    http.expectOne('/api/contracts/c1').flush(paid);
+    await settle();
+    expect(harness.routeNativeElement!.querySelector('tr.installment')!.textContent).toContain(
+      'Paga',
+    );
+  });
+
   it('0006/CT-16: contrato que não existe mostra a mensagem', async () => {
     await harness.navigateByUrl('/contratos/nao-existe', ContractDetailPage);
     http
