@@ -77,10 +77,9 @@ Sem coluna nova. Índices novos para a busca:
 
 | Índice | Colunas | Motivo |
 |---|---|---|
-| contract_customer_cpf_idx | \`customer_cpf\` | Busca por CPF exato |
-| contract_registered_at_idx | \`registered_at\` | Lista dos mais recentes |
-
-A busca por prefixo do número usa o índice único de \`number\` da spec 0005, comparando em maiúsculas.
+| contract_customer_cpf_idx | `customer_cpf` | Busca por CPF exato |
+| contract_registered_at_idx | `registered_at` | Lista dos mais recentes |
+| contract_number_upper_idx | `upper(number)` | Busca por prefixo do número sem diferenciar maiúscula |
 
 ## Cenários de teste
 | ID | Critério | Camada | Entrada | Resultado esperado |

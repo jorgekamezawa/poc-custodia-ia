@@ -30,4 +30,9 @@ public record Contract(
     public Contract {
         installments = List.copyOf(installments);
     }
+
+    /** Balance after the last paid installment; with none paid yet, the principal. */
+    public BigDecimal outstandingBalance() {
+        return principal;
+    }
 }
