@@ -4,6 +4,7 @@ import com.bancoexemplo.custody.calculator.api.InstallmentSchedule;
 import com.bancoexemplo.custody.calculator.api.ScheduleCalculator;
 import com.bancoexemplo.custody.calculator.api.ScheduleRequest;
 import com.bancoexemplo.custody.calculator.domain.PriceSchedule;
+import com.bancoexemplo.custody.calculator.domain.SacSchedule;
 import com.bancoexemplo.custody.calculator.domain.ScheduleLimits;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +17,12 @@ public class ScheduleCalculatorService implements ScheduleCalculator {
         return switch (request.system()) {
             case PRICE ->
                 PriceSchedule.calculate(
+                        request.principal(),
+                        request.monthlyRatePercent(),
+                        request.termMonths(),
+                        request.firstDueDate());
+            case SAC ->
+                SacSchedule.calculate(
                         request.principal(),
                         request.monthlyRatePercent(),
                         request.termMonths(),

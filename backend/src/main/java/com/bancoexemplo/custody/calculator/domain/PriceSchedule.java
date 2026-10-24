@@ -13,7 +13,6 @@ import java.util.List;
 public final class PriceSchedule {
 
     private static final BigDecimal HUNDRED = new BigDecimal("100");
-    private static final int CENTS = 2;
 
     private PriceSchedule() {}
 
@@ -24,31 +23,26 @@ public final class PriceSchedule {
         List<Installment> installments = new ArrayList<>(termMonths);
         BigDecimal balance = principal;
         for (int number = 1; number <= termMonths; number++) {
-            BigDecimal interest = money(balance.multiply(rate));
+            BigDecimal interest = Money.of(balance.multiply(rate));
             BigDecimal amortization = number == termMonths ? balance : fixedAmount.subtract(interest);
             balance = balance.subtract(amortization);
             installments.add(new Installment(
                     number,
-                    // plusMonths from the first date keeps the original day after a short month.
-                    firstDueDate.plusMonths(number - 1L),
+                    DueDates.of(firstDueDate, number),
                     interest.add(amortization),
                     interest,
                     amortization,
-                    money(balance)));
+                    Money.of(balance)));
         }
         return new InstallmentSchedule(installments);
     }
 
     private static BigDecimal fixedAmount(BigDecimal principal, BigDecimal rate, int termMonths) {
         if (rate.signum() == 0) {
-            return principal.divide(BigDecimal.valueOf(termMonths), CENTS, RoundingMode.HALF_EVEN);
+            return principal.divide(BigDecimal.valueOf(termMonths), Money.CENTS, RoundingMode.HALF_EVEN);
         }
         BigDecimal discount =
                 BigDecimal.ONE.subtract(BigDecimal.ONE.add(rate).pow(-termMonths, MathContext.DECIMAL128));
-        return money(principal.multiply(rate).divide(discount, MathContext.DECIMAL128));
-    }
-
-    private static BigDecimal money(BigDecimal value) {
-        return value.setScale(CENTS, RoundingMode.HALF_EVEN);
+        return Money.of(principal.multiply(rate).divide(discount, MathContext.DECIMAL128));
     }
 }
