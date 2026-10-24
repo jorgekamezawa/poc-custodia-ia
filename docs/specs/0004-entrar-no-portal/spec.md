@@ -1,5 +1,5 @@
 ---
-status: aprovada
+status: entregue
 atualizado: 2026-10-24
 descricao: Login no portal com os perfis operador e supervisor, saída, expiração da sessão e bloqueio de toda tela e API sem login.
 ---

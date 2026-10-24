@@ -25,6 +25,8 @@ export class AuthService {
   }
 
   async login(username: string, password: string): Promise<CurrentUser> {
+    // Opening /entrar directly, or having just logged out, leaves no CSRF cookie; this answer brings a fresh one.
+    await this.loadCurrentUser();
     const body = new HttpParams().set('username', username).set('password', password);
     const user = await firstValueFrom(this.http.post<CurrentUser>('/api/auth/login', body));
     this.user.set(user);

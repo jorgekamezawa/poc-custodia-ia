@@ -1,5 +1,5 @@
 ---
-status: aprovada
+status: concluída
 atualizado: 2026-10-24
 descricao: Tela de entrada, moldura do portal com usuário e saída, e bloqueio das rotas sem login.
 ---

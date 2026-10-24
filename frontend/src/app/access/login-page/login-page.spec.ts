@@ -51,9 +51,16 @@ describe('LoginPage', () => {
     await button.click();
   }
 
+  /** The login first asks who is logged in, which brings the CSRF cookie. */
+  async function answerCsrfBootstrap(): Promise<void> {
+    http.expectOne('/api/auth/me').flush(null, { status: 401, statusText: 'Unauthorized' });
+    await new Promise((resolve) => setTimeout(resolve));
+  }
+
   it('0004/CT-9: login aceito leva ao Início', async () => {
     await fill('operador', 'operador-demo');
     await submit();
+    await answerCsrfBootstrap();
 
     const request = http.expectOne('/api/auth/login');
     expect(request.request.method).toBe('POST');
@@ -68,6 +75,7 @@ describe('LoginPage', () => {
   it('0004/CT-10: login recusado mostra a mensagem e continua na entrada', async () => {
     await fill('operador', 'senha-errada');
     await submit();
+    await answerCsrfBootstrap();
 
     http
       .expectOne('/api/auth/login')
@@ -88,6 +96,7 @@ describe('LoginPage', () => {
 
     expect(element.textContent).toContain('Informe o usuário');
     expect(element.textContent).toContain('Informe a senha');
+    http.expectNone('/api/auth/me');
     http.expectNone('/api/auth/login');
   });
 });
