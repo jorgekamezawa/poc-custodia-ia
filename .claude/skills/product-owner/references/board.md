@@ -42,7 +42,7 @@ gh api graphql -f query='mutation{ updateProjectV2ItemFieldValue(input:{projectI
 
 ## Task como sub-issue da história
 Cada arquivo de `docs/specs/NNNN-titulo/tasks/` aprovado e mergeado vira uma issue:
-- título igual ao do arquivo (`01 · back · Registro de gravame`);
+- título com o número da spec antes do título do arquivo (`0007 · 01 · back · Registro de gravame`): sem ele, "02 · qa · Validação" se repete em toda spec e o board fica ambíguo;
 - corpo com o link do arquivo na `main`;
 - label `type: task` e o milestone da história;
 - ligada como sub-issue da história, pelo comando acima.

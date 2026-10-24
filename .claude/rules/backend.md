@@ -29,7 +29,8 @@ paths:
 ## Testes
 - Teste de domínio e de caso de uso roda sem Spring, sem banco e sem rede. Dependência externa entra como implementação falsa em memória escrita no projeto, não biblioteca de mock: o teste verifica comportamento, não chamada.
 - Teste que toca banco usa PostgreSQL real via Testcontainers ([ADR-0008](../../docs/adr/0008-testes-de-banco-contra-postgres-real.md)).
-- Teste que verifica uma regra de negócio tem `@DisplayName` começando pelo identificador da regra e do cenário (ex.: `"GAR-03 CT-4: baixa recusada sem quitação"`).
+- Teste que verifica uma regra de negócio tem `@DisplayName` começando pelo identificador da regra, o número da spec e o cenário (ex.: `"GAR-03 0007/CT-4: baixa recusada sem quitação"`).
+- Teste parametrizado usa `@ParameterizedTest(name = "{displayName} [{arguments}]")`: o nome padrão do JUnit (`[1] term = 0`) tira o cenário do relatório.
 
 ## Comentário e idioma
 - Código, identificadores e comentários em inglês; mensagem que o usuário lê em português.
