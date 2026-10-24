@@ -6,6 +6,20 @@ on:
     branches: [main]
 
 jobs:
+  docs:
+    name: docs
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      # The standard, the templates and the check script live in the area repository.
+      - uses: actions/checkout@v7
+        with:
+          repository: jorgekamezawa/custodia-docs
+          path: .custodia-docs
+      - name: Check documents against the area standard
+        run: python3 .custodia-docs/scripts/check_docs.py --root .
+
   backend:
     name: backend
     # Pinned version, not the moving label: a new red means code, not a different machine.

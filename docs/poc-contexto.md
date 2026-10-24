@@ -1,6 +1,11 @@
+---
+status: ativo
+atualizado: 2026-10-24
+descricao: Objetivo, restrições, decisões, domínio, fluxo e fases da POC de desenvolvimento orientado a IA.
+---
 # POC: desenvolvimento orientado a IA (custódia de financiamento fictícia)
 
-Documento de entrada para o agente. Resume as decisões já tomadas. Não é o AGENTS.md: fica em `docs/` e só é lido quando necessário.
+Documento de entrada para o agente. Resume as decisões já tomadas. Não é o `CLAUDE.md`: fica em `docs/` e só é lido quando necessário.
 
 ## 1. Objetivo
 
@@ -32,9 +37,9 @@ Custo e consumo de tokens são secundários nesta POC.
 | Decisão | Motivo |
 | --- | --- |
 | Construir direto o estado ideal e fazer o sistema crescer rápido, em vez de simular um legado e migrá-lo. | A demonstração é do resultado. Como adotar em projeto existente vira um roteiro escrito. |
-| AGENTS.md na raiz, curto (cerca de 60 linhas), revisado por humano, só com o que o agente não descobre sozinho. | Contexto genérico não melhora o acerto e custa mais (ETH Zurich 2026; Radar Thoughtworks vol. 34). |
-| `CLAUDE.md` contém só `@AGENTS.md`. | Uma fonte única, lida por Claude Code, Devin e outros agentes. |
-| Skills em `.agents/skills/<nome>/SKILL.md`, com link `.claude/skills -> ../.agents/skills`; SKILL.md curto e detalhe em `references/`. | Formato aberto lido pelo Devin e pelo Claude Code; só a descrição fica sempre no contexto. |
+| `CLAUDE.md` na raiz, curto (cerca de 60 linhas), revisado por humano, só com o que o agente não descobre sozinho. | Contexto genérico não melhora o acerto e custa mais (ETH Zurich 2026; Radar Thoughtworks vol. 34). |
+| Seguir as convenções do Claude Code: convenções de back e front em `.claude/rules/` com escopo por pasta, skills em `.claude/skills/`, subagentes em `.claude/agents/`. | A POC usa as melhores práticas da ferramenta em uso; adaptar para outra ferramenta é trabalho de quem for adotar. |
+| Cada skill com SKILL.md curto e detalhe em `references/`. | Só a descrição fica sempre no contexto; o resto é lido quando preciso. |
 | PO e tech lead como skills; busca de contexto e revisão como subagentes (`pesquisador-contexto`, `revisor`). | Skill roda na conversa e permite ir e voltar com o humano. Subagente faz tarefa fechada em contexto isolado e devolve só o relevante. |
 | Backlog em GitHub Issues e Projects: fase = milestone, épico = issue `type: epic`, história = sub-issue `type: story`. | Simula o backlog real e liga história, spec e PR. |
 | Spec por feature em `docs/specs/`, aprovada antes de qualquer código. | Spec-driven development (spec, plano, implementação). |
@@ -77,7 +82,7 @@ As regras finas de cada módulo são definidas no discovery (fase 2) e nas specs
 - **Portal Angular:** cerca de 12 telas de formulário e tabela para o operador (simulação, contratação, contrato e cronograma, pagamento, antecipação, alteração, cancelamento, garantias e alertas).
 - **Login:** usuários fixos com dois perfis, operador e supervisor. Sem servidor de identidade.
 - **Integrações externas** (SNG, registradora) simuladas por adaptadores falsos.
-- **Documentação:** do projeto em `docs/`, da área no repositório `custodia-docs`; o portal no GitHub Pages junta as duas e é publicado por GitHub Actions (o repositório tem link simbólico, que impede publicar direto da branch). A estrutura e os templates são definidos na fase 1.
+- **Documentação:** do projeto em `docs/`, da área no repositório `custodia-docs`; o portal no GitHub Pages junta as duas e é publicado por GitHub Actions, que junta os repositórios. A estrutura e os templates são definidos na fase 1.
 - **Repositório único** com backend e frontend.
 
 ## 6. Fluxo de uma feature
@@ -95,7 +100,7 @@ As regras finas de cada módulo são definidas no discovery (fase 2) e nas specs
 | Fase | Entrega | Critério de pronto |
 | --- | --- | --- |
 | 0. Esqueleto | Backend Gradle (Java), Angular, Testcontainers, GitHub Actions com build e testes de back e front; repositório `custodia-docs` com o portal no GitHub Pages. | Build e testes verdes local e no CI; portal publicado. |
-| 1. Padrões | Estrutura de docs e templates, AGENTS.md, `CLAUDE.md`, skills, subagentes, sensores (lint, PIT, Playwright), board. | Humano revisou cada arquivo; sensores rodando no CI. |
+| 1. Padrões | Estrutura de docs e templates, `CLAUDE.md`, convenções, skills, subagentes, sensores (lint, PIT, Playwright), board. | Humano revisou cada arquivo; sensores rodando no CI. |
 | 2. Discovery e backlog | Visão, glossário, regras gerais; épicos e histórias no board. | Documentos aprovados; backlog criado. |
 | 3. Construção | Features em lotes pelo fluxo da seção 6; spike do Claude Design na primeira tela. Uma feature fica reservada para a demo. | Histórias entregues com sensores verdes; spike registrado. |
 | 4. Demonstração | Feature reservada pelo fluxo completo e gravada; GitHub Pages; roteiro de adoção para projeto existente; tabela de equivalência; roteiro da reunião. | Site publicado e demo gravada. |
@@ -111,12 +116,11 @@ Em todas as fases, um diário curto registra tempo gasto e rodadas de correção
 
 ## 9. Fontes principais
 
-- ETH Zurich, Evaluating AGENTS.md (2026): https://arxiv.org/abs/2602.11988
+- ETH Zurich, Evaluating AGENTS.md (2026, vale para `CLAUDE.md`): https://arxiv.org/abs/2602.11988
 - Thoughtworks Technology Radar vol. 34, Técnicas (abr/2026): https://www.thoughtworks.com/radar/techniques
 - DORA, ROI of AI-assisted Software Development (2026): https://www.infoq.com/news/2026/05/dora-roi-ai-assisted-dev-report/
 - METR, atualização (fev/2026): https://metr.org/blog/2026-02-24-uplift-update/
 - Böckeler, Spec-Driven Development: https://www.martinfowler.com/articles/exploring-gen-ai/sdd-3-tools.html
-- Devin Skills: https://docs.devin.ai/it/product-guides/skills
 - Devin e Figma: https://docs.devin.ai/use-cases/gallery/figma-design-implementation
 - Claude Design: https://support.claude.com/en/articles/14604416-get-started-with-claude-design
 - GitHub Pages: https://docs.github.com/en/pages/getting-started-with-github-pages/creating-a-github-pages-site
