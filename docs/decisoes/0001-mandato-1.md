@@ -29,3 +29,6 @@ descricao: Decisões do mandato 1 de autonomia, sobre escopo, cálculo, arquitet
 - **Exemplo de nome de teste divergente:** `backend.md` mostra `GAR-03 CT-4` e a `padrao-testes` mostra `GAR-03 0007/CT-4`; vale o da skill; rule corrigida (PR de material do mandato 1).
 
 - **pesquisador-contexto deixou passar arquivo:** disse que não havia teste ArchUnit, mas o roteiro já apontava a pasta; o subagente passa a fazer Glob do caminho exato antes de declarar ausência (PR de material do mandato 1).
+
+## Em aberto
+- **revisor-docs inconsistente entre specs:** na spec 0001 sugeriu escrever "juros remuneratórios (chamados só de juros nesta spec)"; na 0002 acusou esse mesmo apelido como violação da regra 8. Segui a leitura estrita (nome completo do glossário). Vale o padrão dizer se apelido local de termo é permitido.
