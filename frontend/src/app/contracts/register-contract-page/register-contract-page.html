@@ -19,7 +19,7 @@
         @for (installment of contract.installments; track installment.number) {
           <tr class="installment">
             <td>{{ installment.number }}</td>
-            <td>{{ installment.dueDate | date: 'dd/MM/yyyy' : 'UTC' }}</td>
+            <td>{{ installment.dueDate | date: 'dd/MM/yyyy' }}</td>
             <td>{{ installment.amount | currency: 'BRL' }}</td>
             <td>{{ installment.interest | currency: 'BRL' }}</td>
             <td>{{ installment.amortization | currency: 'BRL' }}</td>
