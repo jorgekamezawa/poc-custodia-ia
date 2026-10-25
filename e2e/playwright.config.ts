@@ -8,6 +8,8 @@ export default defineConfig({
   reporter: process.env['CI'] ? [['github'], ['html', { open: 'never' }]] : 'list',
   use: {
     baseURL: 'http://localhost:4200',
+    // The operators' browsers run in Brasília; the CI machine runs in UTC, a day ahead from 21:00 there.
+    timezoneId: 'America/Sao_Paulo',
     trace: 'retain-on-failure',
     // npm run test:headed sets SLOWMO so a person can follow each step on screen.
     launchOptions: { slowMo: Number(process.env['SLOWMO'] ?? 0) },

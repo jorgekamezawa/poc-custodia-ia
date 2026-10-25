@@ -155,3 +155,21 @@ describe('RegisterPaymentForm', () => {
     );
   });
 });
+
+describe('todayIso', () => {
+  afterEach(() => vi.useRealTimers());
+
+  function at(instant: string): string {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date(instant));
+    return todayIso();
+  }
+
+  it('CON-05: às 23:59 de Brasília ainda é o mesmo dia, qualquer que seja o fuso do navegador', () => {
+    expect(at('2026-10-25T02:59:59Z')).toBe('2026-10-24');
+  });
+
+  it('CON-05: à meia-noite de Brasília já é o dia seguinte', () => {
+    expect(at('2026-10-25T03:00:00Z')).toBe('2026-10-25');
+  });
+});

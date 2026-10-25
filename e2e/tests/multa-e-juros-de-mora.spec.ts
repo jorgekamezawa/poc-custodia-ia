@@ -1,12 +1,5 @@
 import { expect, test } from '@playwright/test';
-
-function isoDaysFromToday(days: number): string {
-  const date = new Date();
-  date.setDate(date.getDate() + days);
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${date.getFullYear()}-${month}-${day}`;
-}
+import { isoDaysFromToday } from './brasilia-dates';
 
 test('0008/CT-12: parcela vencida há 14 dias é paga com multa e juros de mora', async ({
   page,
