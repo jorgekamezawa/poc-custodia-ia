@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.bancoexemplo.custody.contracts.ContractFixture;
+import com.bancoexemplo.custody.contracts.domain.contract.exception.InstallmentNotPayableException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import org.junit.jupiter.api.DisplayName;

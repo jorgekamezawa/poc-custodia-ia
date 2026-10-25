@@ -16,7 +16,7 @@ public interface ContractRepository {
     /**
      * Stores a new contract with its installments.
      *
-     * @throws com.bancoexemplo.custody.contracts.domain.contract.DuplicateContractNumberException when the number is taken
+     * @throws com.bancoexemplo.custody.contracts.domain.contract.exception.DuplicateContractNumberException when the number is taken
      */
     void save(Contract contract);
 
@@ -34,7 +34,7 @@ public interface ContractRepository {
     /**
      * Records the payment date of an installment still open; the contract decides first, this only stores it.
      *
-     * @throws com.bancoexemplo.custody.contracts.domain.contract.InstallmentNotPayableException when no open installment matched
+     * @throws com.bancoexemplo.custody.contracts.domain.contract.exception.InstallmentNotPayableException when no open installment matched
      */
     void markInstallmentPaid(UUID contractId, int installmentNumber, LocalDate paidOn);
 }

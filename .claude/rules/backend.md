@@ -15,6 +15,14 @@ paths:
 - **A porta pertence a quem consome:** o módulo que precisa declara a interface na linguagem dele; o adaptador de saída traduz e chama a `api/` do vizinho.
 - Nenhum módulo usa repositório, entidade de banco ou tabela de outro.
 - Integração externa é porta mais adaptador falso em `adapter/out/` ([ADR-0011](../../docs/adr/0011-integracoes-externas-por-adaptadores-falsos.md)).
+- `com.bancoexemplo.custody.shared` é o núcleo que todo módulo pode usar, não um módulo: só entra o que serve a vários módulos e não tem dono (hoje, a base das exceções e o tratador de erro da API). Ele não depende de nenhum módulo (o ArchUnit barra).
+
+## Exceções
+- Toda recusa é uma exceção concreta com nome do negócio, num pacote `exception`: `<modulo>/domain/<agregado>/exception/` ou `<modulo>/application/exception/` (ex.: contrato inexistente numa consulta).
+- Ela estende uma categoria de `shared/domain/exception/`, que decide a resposta: `BusinessRuleException` (400), `ConflictException` (409) ou `NotFoundException` (404). As categorias e a `DomainException` são abstratas; nunca se lança a categoria direto.
+- Um único tratador, `shared/adapter/in/web/ApiErrorHandler`, traduz categoria em `ProblemDetail`. Exceção nova de uma categoria já sai com o status certo; não crie tratador por módulo.
+- O adaptador de saída traduz o erro da tecnologia na exceção do domínio (ex.: `DuplicateKeyException` vira `DuplicateContractNumberException`).
+- O ArchUnit barra exceção de `domain` ou `application` fora de um pacote `exception` ou fora da `DomainException`.
 
 ## Domínio
 - Sem anotação nem import de framework.

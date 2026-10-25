@@ -1,5 +1,6 @@
 package com.bancoexemplo.custody.payments.domain.payment;
 
+import com.bancoexemplo.custody.payments.domain.payment.exception.InvalidPaymentException;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;

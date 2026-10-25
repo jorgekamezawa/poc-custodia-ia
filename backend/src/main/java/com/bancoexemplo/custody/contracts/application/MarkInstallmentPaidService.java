@@ -1,5 +1,6 @@
 package com.bancoexemplo.custody.contracts.application;
 
+import com.bancoexemplo.custody.contracts.application.exception.ContractNotFoundException;
 import com.bancoexemplo.custody.contracts.application.port.ContractRepository;
 import java.time.LocalDate;
 import java.util.UUID;

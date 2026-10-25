@@ -12,7 +12,7 @@ public interface PaymentRepository {
     /**
      * Stores the payment.
      *
-     * @throws com.bancoexemplo.custody.payments.domain.payment.InstallmentAlreadyPaidException when it already has one
+     * @throws com.bancoexemplo.custody.payments.domain.payment.exception.InstallmentAlreadyPaidException when it already has one
      */
     void save(Payment payment);
 }

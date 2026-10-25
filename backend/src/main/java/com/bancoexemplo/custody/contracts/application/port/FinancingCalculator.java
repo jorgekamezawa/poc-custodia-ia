@@ -9,7 +9,7 @@ public interface FinancingCalculator {
     /**
      * Calculates the schedule and the CET for the terms.
      *
-     * @throws com.bancoexemplo.custody.contracts.domain.contract.InvalidContractException when a term is outside the limits
+     * @throws com.bancoexemplo.custody.contracts.domain.contract.exception.InvalidContractException when a term is outside the limits
      */
     Financing calculate(FinancingTerms terms);
 }

@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
 import com.bancoexemplo.custody.contracts.ContractFixture;
+import com.bancoexemplo.custody.contracts.application.exception.ContractNotFoundException;
 import com.bancoexemplo.custody.contracts.application.port.ContractRepository;
 import com.bancoexemplo.custody.contracts.domain.contract.Contract;
 import com.bancoexemplo.custody.contracts.domain.contract.InstallmentSituation;

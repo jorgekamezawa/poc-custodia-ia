@@ -8,7 +8,7 @@ import com.bancoexemplo.custody.contracts.ContractFixture;
 import com.bancoexemplo.custody.contracts.application.port.ContractRepository;
 import com.bancoexemplo.custody.contracts.domain.contract.Contract;
 import com.bancoexemplo.custody.contracts.domain.contract.ContractInstallment;
-import com.bancoexemplo.custody.contracts.domain.contract.InstallmentNotPayableException;
+import com.bancoexemplo.custody.contracts.domain.contract.exception.InstallmentNotPayableException;
 import java.time.LocalDate;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;

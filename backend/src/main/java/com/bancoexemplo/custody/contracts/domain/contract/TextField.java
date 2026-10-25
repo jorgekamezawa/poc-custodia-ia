@@ -1,5 +1,7 @@
 package com.bancoexemplo.custody.contracts.domain.contract;
 
+import com.bancoexemplo.custody.contracts.domain.contract.exception.InvalidContractException;
+
 /** The rule the free-text fields of the contract share: trimmed, from 1 to 120 characters. */
 final class TextField {
 

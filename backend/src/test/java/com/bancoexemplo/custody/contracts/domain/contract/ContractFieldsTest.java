@@ -3,6 +3,7 @@ package com.bancoexemplo.custody.contracts.domain.contract;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.bancoexemplo.custody.contracts.domain.contract.exception.InvalidContractException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

@@ -1,5 +1,6 @@
 package com.bancoexemplo.custody.contracts.domain.contract;
 
+import com.bancoexemplo.custody.contracts.domain.contract.exception.InvalidContractException;
 import java.util.regex.Pattern;
 
 /** The number the contract was signed with, unique in the custody. */

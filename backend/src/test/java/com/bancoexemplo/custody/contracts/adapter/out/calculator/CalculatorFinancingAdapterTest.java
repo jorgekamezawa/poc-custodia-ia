@@ -9,7 +9,7 @@ import com.bancoexemplo.custody.contracts.domain.contract.AmortizationSystem;
 import com.bancoexemplo.custody.contracts.domain.contract.CalculatedInstallment;
 import com.bancoexemplo.custody.contracts.domain.contract.Financing;
 import com.bancoexemplo.custody.contracts.domain.contract.FinancingTerms;
-import com.bancoexemplo.custody.contracts.domain.contract.InvalidContractException;
+import com.bancoexemplo.custody.contracts.domain.contract.exception.InvalidContractException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import org.junit.jupiter.api.Test;
