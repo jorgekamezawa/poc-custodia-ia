@@ -12,6 +12,7 @@ import com.bancoexemplo.custody.archfixture.ReachesIntoCalculatorDomain;
 import com.bancoexemplo.custody.archfixture.adapter.in.RefusesInTheController;
 import com.bancoexemplo.custody.archfixture.adapter.out.PartlyCoveredAdapter;
 import com.bancoexemplo.custody.archfixture.adapter.out.UntestedAdapter;
+import com.bancoexemplo.custody.archfixture.api.LogicInTheApi;
 import com.bancoexemplo.custody.archfixture.domain.EntityAsRecord;
 import com.bancoexemplo.custody.archfixture.domain.EntityWithPublicConstructor;
 import com.bancoexemplo.custody.archfixture.domain.RefusalOutsideTheHierarchy;
@@ -117,6 +118,28 @@ class ArchitectureTest {
                     return created.getPackageName().contains(".domain") && created.isAssignableTo(Throwable.class);
                 }
             });
+
+    /** A module api is a contract: what neighbours call and the types they pass, never the implementation. */
+    @ArchTest
+    static final ArchRule apisHoldOnlyContracts =
+            classes().that().resideInAPackage("..api..").should(beAContract());
+
+    /** A module api exposes only what another module uses; anything else stays inside the module. */
+    @ArchTest
+    static final ArchRule apiTypesAreUsedByAnotherModule =
+            classes().that().resideInAPackage("..api..").should(beUsedByAnotherModule());
+
+    @Test
+    void logicInAnApiBreaksTheRules() {
+        var violating = new ClassFileImporter().importClasses(LogicInTheApi.class);
+
+        assertThatThrownBy(() -> apisHoldOnlyContracts.check(violating))
+                .isInstanceOf(AssertionError.class)
+                .hasMessageContaining("LogicInTheApi");
+        assertThatThrownBy(() -> apiTypesAreUsedByAnotherModule.check(violating))
+                .isInstanceOf(AssertionError.class)
+                .hasMessageContaining("LogicInTheApi");
+    }
 
     /** Shared kernel types are used by every module, so they cannot know any of them. */
     @ArchTest
@@ -284,6 +307,36 @@ class ArchitectureTest {
         int dot = rest.indexOf('.');
         String first = dot < 0 ? rest : rest.substring(0, dot);
         return first.equals(SHARED) ? Optional.empty() : Optional.of(first);
+    }
+
+    private static ArchCondition<JavaClass> beAContract() {
+        return new ArchCondition<>("be an interface, record, enum or exception") {
+            @Override
+            public void check(JavaClass type, ConditionEvents events) {
+                boolean contract = type.isInterface()
+                        || type.isEnum()
+                        || type.isAssignableTo(Record.class)
+                        || type.isAssignableTo(Throwable.class);
+                if (!contract) {
+                    events.add(SimpleConditionEvent.violated(type, type.getName() + " is a concrete class in an api"));
+                }
+            }
+        };
+    }
+
+    private static ArchCondition<JavaClass> beUsedByAnotherModule() {
+        return new ArchCondition<>("be used by another module") {
+            @Override
+            public void check(JavaClass type, ConditionEvents events) {
+                Optional<String> owner = module(type.getPackageName());
+                boolean used = type.getDirectDependenciesToSelf().stream()
+                        .map(dependency -> module(dependency.getOriginClass().getPackageName()))
+                        .anyMatch(origin -> origin.isPresent() && !origin.equals(owner));
+                if (!used) {
+                    events.add(SimpleConditionEvent.violated(type, type.getName() + " is used by no other module"));
+                }
+            }
+        };
     }
 
     private static ArchCondition<JavaClass> notDependOnAnyModule() {

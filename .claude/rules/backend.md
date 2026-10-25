@@ -7,7 +7,8 @@ paths:
 
 ## Estrutura
 - Um pacote por módulo de negócio em `com.bancoexemplo.custody.<modulo>` (ex.: `contracts`, `payments`, `collateral`), com:
-  - `api/`: o que outro módulo pode importar (interfaces e tipos de valor). Nada além disso é visível fora do módulo.
+  - `api/`: a porta de entrada que o módulo oferece aos vizinhos, o único pacote que outro módulo pode importar. Só existe quando outro módulo chama este (módulo que só conversa por evento não tem) e contém só o que o vizinho usa: interfaces e os tipos que elas recebem e devolvem (`record`, `enum`, exceção). A implementação fica em `application`. O ArchUnit barra classe concreta na `api/` (inclusive aninhada) e tipo da `api/` que nenhum outro módulo usa; esta última conta só uso direto no código do vizinho, então um tipo que ele só repassa sem nomear (ex.: exceção que deixa propagar) precisa ser nomeado ou sair da `api/`.
+  - Evento entre módulos não mora na `api/` nem no `shared`: quem publica e quem consome mantêm cada um o próprio `record` e o nome do tópico numa constante, e um teste de contrato no módulo consumidor manda o que o adaptador real publica para o ouvinte real (ex.: `PaymentRegisteredContractTest`); só esse teste pode usar a porta e o domínio do publicador, porque teste fica fora do ArchUnit. Pôr o evento na `api/` de quem publica cria ciclo entre módulos quando o consumidor já é chamado por ele.
   - `domain/<agregado>/` (ex.: `contracts/domain/contract/`): a entidade raiz, as entidades dela, os objetos de valor, as exceções e os serviços de domínio do agregado, juntos e sem subpastas por tipo (`entity/`, `vo/`), porque o `package-private` só vale dentro do mesmo pacote. Um pacote por agregado mesmo quando o módulo tem um só. Java puro.
   - `application/`: casos de uso e as portas (`port/`) que eles precisam.
   - `adapter/in/` (REST) e `adapter/out/` (banco, integrações).
