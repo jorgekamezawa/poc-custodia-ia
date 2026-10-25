@@ -46,6 +46,14 @@ paths:
 ## Banco
 - Toda mudança de esquema é migração Flyway nova em `src/main/resources/db/migration`; nunca editar migração aplicada ([ADR-0007](../../docs/adr/0007-postgresql-com-flyway.md)).
 - Tabelas, colunas e restrições seguem exatamente a seção Dados da spec.
+- Agregado se grava e se lê com Spring Data JPA ([ADR-0018](../../docs/adr/0018-acesso-a-banco-com-spring-data-jpa.md)); as tabelas de eventos (`outbox_event`, `processed_event`) seguem com `JdbcClient`, porque usam SQL do PostgreSQL (`FOR UPDATE SKIP LOCKED`, `ON CONFLICT DO NOTHING`).
+- Em `adapter/out/persistence/`, tudo `package-private`: a entidade de banco `<Nome>JpaEntity` (campos e colunas, sem regra), o repositório do Spring Data `<Nome>JpaRepository`, o mapeador `<Nome>JpaMapper` (lê com `reconstruct`) e o adaptador `<Porta>JpaImpl`. Nunca nomeie uma classe `<interface do Spring Data>Impl`: o Spring Data a toma por implementação customizada.
+- Gravação nova é `entityManager.persist` (o id vem do domínio; o `save` do Spring Data faria um `SELECT` antes) seguida de `flush`, para a restrição do banco estourar no próprio adaptador e virar exceção do domínio pelo nome da restrição.
+- Leitura de agregado com filhos traz os filhos na mesma consulta (`JOIN FETCH`), nunca uma consulta por filho (o problema N+1). Consulta que o JPQL não expressa bem vira `@Query(nativeQuery = true)`.
+- O Flyway é dono do esquema e o Hibernate só confere o mapeamento ao subir (`ddl-auto=validate`); `open-in-view` desligado. Teste de banco nunca usa banco em memória, e teste com `@DataJpaTest` (que desfaz a transação no fim) chama `flush()` antes de conferir restrição.
+
+## Nomes de adaptador de saída
+- `<Porta><Tecnologia>Impl`: a interface que implementa mais o que está atrás dela (`PaymentRepositoryJpaImpl`, `EventPublisherJdbcImpl`, `PaymentEventsOutboxImpl`, `ContractToPayApiImpl` para a `api/` de um vizinho). O ArchUnit barra adaptador de saída fora desse padrão.
 
 ## Testes
 - Teste de domínio e de caso de uso roda sem Spring, sem banco e sem rede.
@@ -53,7 +61,7 @@ paths:
 - No caso de uso, a porta entra como mock do Mockito (`@ExtendWith(MockitoExtension.class)`), não como classe falsa escrita à mão: um falso com lógica própria faz o teste provar o falso, não a produção.
   - Consulta (`findById`, `paidInstallments`) se prepara com `when(...)` e se prova pelo resultado; para conferir o que foi passado a ela, prepare com o argumento exato, nunca `verify`.
   - `verify` confere só comando: gravar, publicar, ou nada ter sido chamado depois de uma recusa (`never()`, `verifyNoInteractions`).
-- Todo método público de adaptador de saída (`adapter/out`) é chamado pelo teste com o nome do adaptador (`JdbcPaymentRepositoryTest` para `JdbcPaymentRepository`), contra o que está atrás dele de verdade: PostgreSQL, Kafka ou o módulo vizinho. De 1 a 3 casos por método: grava e lê de volta igual, restrição ou erro traduzido, filtro e ordenação. Variação de regra de negócio fica no teste unitário. O `ArchitectureTest` barra método sem teste.
+- Todo método público de adaptador de saída (`adapter/out`) é chamado pelo teste com o nome do adaptador (`PaymentRepositoryJpaImplTest` para `PaymentRepositoryJpaImpl`; interface do Spring Data é testada pelo adaptador que a usa), contra o que está atrás dele de verdade: PostgreSQL, Kafka ou o módulo vizinho. De 1 a 3 casos por método: grava e lê de volta igual, restrição ou erro traduzido, filtro e ordenação. Variação de regra de negócio fica no teste unitário. O `ArchitectureTest` barra método sem teste.
 - O teste de adaptador chama pela porta (`ContractRepository`), não pela classe concreta, para continuar valendo se a tecnologia de persistência mudar.
 - Teste que toca banco usa PostgreSQL real via Testcontainers ([ADR-0008](../../docs/adr/0008-testes-de-banco-contra-postgres-real.md)).
 - Teste que verifica uma regra de negócio tem `@DisplayName` começando pelo identificador da regra, o número da spec e o cenário (ex.: `"GAR-03 0007/CT-4: baixa recusada sem quitação"`).

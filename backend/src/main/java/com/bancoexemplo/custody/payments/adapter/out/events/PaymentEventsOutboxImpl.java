@@ -10,13 +10,13 @@ import org.springframework.stereotype.Component;
 
 /** Publishes the registered payment on {@code custody.payment-registered}, keyed by contract. */
 @Component
-class PaymentEventsAdapter implements PaymentEvents {
+class PaymentEventsOutboxImpl implements PaymentEvents {
 
     static final String TOPIC = "custody.payment-registered";
 
     private final EventPublisher publisher;
 
-    PaymentEventsAdapter(EventPublisher publisher) {
+    PaymentEventsOutboxImpl(EventPublisher publisher) {
         this.publisher = publisher;
     }
 

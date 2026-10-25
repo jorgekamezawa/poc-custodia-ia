@@ -13,7 +13,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 @Import(TestcontainersConfiguration.class)
 @SpringBootTest
-class JdbcProcessedEventsTest {
+class ProcessedEventsJdbcImplTest {
 
     @Autowired
     private ProcessedEvents processedEvents;

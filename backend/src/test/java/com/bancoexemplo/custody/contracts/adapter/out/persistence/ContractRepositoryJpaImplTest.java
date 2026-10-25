@@ -35,7 +35,7 @@ import org.springframework.context.annotation.Import;
 
 @Import(TestcontainersConfiguration.class)
 @SpringBootTest
-class JdbcContractRepositoryTest {
+class ContractRepositoryJpaImplTest {
 
     private static final Instant REGISTERED_AT = Instant.parse("2027-01-10T13:00:00Z");
 

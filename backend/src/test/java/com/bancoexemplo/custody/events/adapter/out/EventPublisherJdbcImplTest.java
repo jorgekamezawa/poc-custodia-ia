@@ -19,7 +19,7 @@ import tools.jackson.databind.json.JsonMapper;
 
 @Import(TestcontainersConfiguration.class)
 @SpringBootTest
-class JdbcEventPublisherTest {
+class EventPublisherJdbcImplTest {
 
     @Autowired
     private EventPublisher publisher;

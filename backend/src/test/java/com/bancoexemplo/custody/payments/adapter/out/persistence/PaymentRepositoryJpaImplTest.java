@@ -25,7 +25,7 @@ import org.springframework.jdbc.core.simple.JdbcClient;
 
 @Import(TestcontainersConfiguration.class)
 @SpringBootTest
-class JdbcPaymentRepositoryTest {
+class PaymentRepositoryJpaImplTest {
 
     @Autowired
     private PaymentRepository repository;
