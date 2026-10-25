@@ -1,8 +1,8 @@
 package com.bancoexemplo.custody.payments.adapter.out.persistence;
 
 import com.bancoexemplo.custody.payments.application.port.PaymentRepository;
-import com.bancoexemplo.custody.payments.domain.payment.InstallmentAlreadyPaidException;
 import com.bancoexemplo.custody.payments.domain.payment.Payment;
+import com.bancoexemplo.custody.payments.domain.payment.exception.InstallmentAlreadyPaidException;
 import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;

@@ -1,5 +1,6 @@
 package com.bancoexemplo.custody.contracts.domain.contract;
 
+import com.bancoexemplo.custody.contracts.domain.contract.exception.InstallmentNotPayableException;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;

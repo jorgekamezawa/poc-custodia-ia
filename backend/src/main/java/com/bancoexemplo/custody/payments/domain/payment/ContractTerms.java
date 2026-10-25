@@ -1,5 +1,7 @@
 package com.bancoexemplo.custody.payments.domain.payment;
 
+import com.bancoexemplo.custody.payments.domain.payment.exception.InstallmentAlreadyPaidException;
+import com.bancoexemplo.custody.payments.domain.payment.exception.InvalidPaymentException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;

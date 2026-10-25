@@ -2,6 +2,7 @@ package com.bancoexemplo.custody.contracts.domain.contract;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.bancoexemplo.custody.contracts.domain.contract.exception.InvalidContractException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.stream.IntStream;

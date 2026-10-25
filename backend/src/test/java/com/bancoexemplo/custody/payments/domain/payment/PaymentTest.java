@@ -3,6 +3,7 @@ package com.bancoexemplo.custody.payments.domain.payment;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.bancoexemplo.custody.payments.domain.payment.exception.InvalidPaymentException;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;

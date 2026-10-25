@@ -1,5 +1,6 @@
 package com.bancoexemplo.custody.contracts.domain.contract;
 
+import com.bancoexemplo.custody.contracts.domain.contract.exception.InvalidContractException;
 import java.util.regex.Pattern;
 
 /** Vehicle identification number: 17 letters and digits, without I, O and Q. */

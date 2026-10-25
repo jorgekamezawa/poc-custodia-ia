@@ -14,6 +14,9 @@ import com.bancoexemplo.custody.archfixture.adapter.out.PartlyCoveredAdapter;
 import com.bancoexemplo.custody.archfixture.adapter.out.UntestedAdapter;
 import com.bancoexemplo.custody.archfixture.domain.EntityAsRecord;
 import com.bancoexemplo.custody.archfixture.domain.EntityWithPublicConstructor;
+import com.bancoexemplo.custody.archfixture.domain.RefusalOutsideTheHierarchy;
+import com.bancoexemplo.custody.shared.archfixture.SharedReachingIntoAModule;
+import com.bancoexemplo.custody.shared.domain.exception.DomainException;
 import com.tngtech.archunit.base.DescribedPredicate;
 import com.tngtech.archunit.core.domain.Dependency;
 import com.tngtech.archunit.core.domain.JavaClass;
@@ -45,6 +48,8 @@ class ArchitectureTest {
     private static final String ROOT_PACKAGE = "com.bancoexemplo.custody";
 
     private static final String ROOT = ROOT_PACKAGE + ".";
+
+    private static final String SHARED = "shared";
 
     @ArchTest
     static final ArchRule domainDoesNotDependOnFrameworks = noClasses()
@@ -112,6 +117,41 @@ class ArchitectureTest {
                     return created.getPackageName().contains(".domain") && created.isAssignableTo(Throwable.class);
                 }
             });
+
+    /** Shared kernel types are used by every module, so they cannot know any of them. */
+    @ArchTest
+    static final ArchRule sharedDependsOnNoModule =
+            classes().that().resideInAPackage(ROOT + SHARED + "..").should(notDependOnAnyModule());
+
+    /** Every refusal is a domain exception, kept in an exception package, so the edge maps it by category. */
+    @ArchTest
+    static final ArchRule exceptionsAreDomainExceptionsInTheirPackage = classes()
+            .that()
+            .resideInAnyPackage("..domain..", "..application..")
+            .and()
+            .areAssignableTo(Throwable.class)
+            .should()
+            .resideInAPackage("..exception..")
+            .andShould()
+            .beAssignableTo(DomainException.class);
+
+    @Test
+    void sharedCodeKnowingAModuleBreaksTheRule() {
+        var violating = new ClassFileImporter().importClasses(SharedReachingIntoAModule.class);
+
+        assertThatThrownBy(() -> sharedDependsOnNoModule.check(violating))
+                .isInstanceOf(AssertionError.class)
+                .hasMessageContaining("contracts.domain.contract.ContractNumber");
+    }
+
+    @Test
+    void refusalOutsideTheHierarchyBreaksTheRule() {
+        var violating = new ClassFileImporter().importClasses(RefusalOutsideTheHierarchy.class);
+
+        assertThatThrownBy(() -> exceptionsAreDomainExceptionsInTheirPackage.check(violating))
+                .isInstanceOf(AssertionError.class)
+                .hasMessageContaining("RefusalOutsideTheHierarchy");
+    }
 
     @Test
     void publicConstructorOfADomainClassBreaksTheRule() {
@@ -235,12 +275,27 @@ class ArchitectureTest {
         };
     }
 
+    /** The business module a package belongs to; {@code shared} is the kernel every module may use, not a module. */
     private static Optional<String> module(String packageName) {
         if (!packageName.startsWith(ROOT)) {
             return Optional.empty();
         }
         String rest = packageName.substring(ROOT.length());
         int dot = rest.indexOf('.');
-        return Optional.of(dot < 0 ? rest : rest.substring(0, dot));
+        String first = dot < 0 ? rest : rest.substring(0, dot);
+        return first.equals(SHARED) ? Optional.empty() : Optional.of(first);
+    }
+
+    private static ArchCondition<JavaClass> notDependOnAnyModule() {
+        return new ArchCondition<>("not depend on any business module") {
+            @Override
+            public void check(JavaClass origin, ConditionEvents events) {
+                for (Dependency dependency : origin.getDirectDependenciesFromSelf()) {
+                    if (module(dependency.getTargetClass().getPackageName()).isPresent()) {
+                        events.add(SimpleConditionEvent.violated(dependency, dependency.getDescription()));
+                    }
+                }
+            }
+        };
     }
 }

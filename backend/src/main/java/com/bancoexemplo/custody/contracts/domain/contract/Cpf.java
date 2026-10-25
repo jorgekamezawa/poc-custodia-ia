@@ -1,5 +1,6 @@
 package com.bancoexemplo.custody.contracts.domain.contract;
 
+import com.bancoexemplo.custody.contracts.domain.contract.exception.InvalidContractException;
 import java.util.regex.Pattern;
 
 /** Customer's CPF, digits only, with valid check digits. */

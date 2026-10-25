@@ -10,7 +10,7 @@ import com.bancoexemplo.custody.contracts.application.port.FinancingCalculator;
 import com.bancoexemplo.custody.contracts.domain.contract.CalculatedInstallment;
 import com.bancoexemplo.custody.contracts.domain.contract.Financing;
 import com.bancoexemplo.custody.contracts.domain.contract.FinancingTerms;
-import com.bancoexemplo.custody.contracts.domain.contract.InvalidContractException;
+import com.bancoexemplo.custody.contracts.domain.contract.exception.InvalidContractException;
 import org.springframework.stereotype.Component;
 
 /** Translates the contract's financing terms to the calculator module and its refusal back to the contract's. */

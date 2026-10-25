@@ -1,6 +1,6 @@
 package com.bancoexemplo.custody.archfixture.adapter.in;
 
-import com.bancoexemplo.custody.contracts.domain.contract.InvalidContractException;
+import com.bancoexemplo.custody.contracts.domain.contract.exception.InvalidContractException;
 
 /** An inbound adapter that builds a domain refusal, so the architecture test can prove its rule fails. */
 public final class RefusesInTheController {
