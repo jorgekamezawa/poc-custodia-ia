@@ -19,6 +19,7 @@ Casos reais do mandato 1 (`docs/decisoes/0001-mandato-1.md`), com o veredito cer
 | CT-13 da moldura passava sem o perfil na tela (nome igual ao perfil) | PR #55 | Violação: o teste não prova o resultado (apontado certo). |
 | CT-17 do ponta a ponta achava "R$ 10.000,00" do valor financiado, não do saldo | PR #74 | Violação: o teste não prova o resultado (apontado certo). |
 | Sessão no `custodia-docs` ao revisar branch do projeto | PR #64, primeira passada | Revisão impossível: sem o diff não se confere peça nem teste apagado. |
+| 0007/CT-11 provado em `MarkInstallmentPaidServiceTest` com `InMemoryContractRepository`, que usava `Contract.withInstallmentPaid`, enquanto o `JdbcContractRepository` rodava um `UPDATE` sem teste | PR #83 | Violação: o teste não executa o código da produção. Na época foi aceito. |
 
 ## pesquisador-contexto
 | Caso | Onde | Veredito certo |
