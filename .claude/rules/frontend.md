@@ -18,6 +18,7 @@ paths:
 ## Testes
 - Todo componente com comportamento tem teste de componente (Vitest + TestBed), verificando o que o usuário vê e faz, não detalhes internos.
 - Teste ponta a ponta (Playwright) nasce na task de QA, não nas tasks de front.
+- Os testes de componente rodam em `TZ=Asia/Tokyo` (script `test`): um fuso a leste de UTC e longe de Brasília faz falhar data exibida pelo fuso errado. Data de negócio (`yyyy-MM-dd`) se exibe com `date` sem fuso; instante (`...Z`) se exibe no fuso do navegador.
 
 ## Ferramenta
 - Formato é do Prettier e regra é do angular-eslint; rode `npm run format` e `npm run lint` antes de mostrar código. O commit é barrado se o formato estiver fora.

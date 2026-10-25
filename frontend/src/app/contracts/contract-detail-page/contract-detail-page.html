@@ -78,11 +78,11 @@
       </div>
       <div>
         <dt>Liberação</dt>
-        <dd>{{ c.releaseDate | date: 'dd/MM/yyyy' : 'UTC' }}</dd>
+        <dd>{{ c.releaseDate | date: 'dd/MM/yyyy' }}</dd>
       </div>
       <div>
         <dt>Primeiro vencimento</dt>
-        <dd>{{ c.firstDueDate | date: 'dd/MM/yyyy' : 'UTC' }}</dd>
+        <dd>{{ c.firstDueDate | date: 'dd/MM/yyyy' }}</dd>
       </div>
       <div>
         <dt>Custos pagos antecipadamente</dt>
@@ -109,7 +109,7 @@
       @for (installment of c.installments; track installment.number) {
         <tr class="installment" [class.overdue]="installment.situation === 'OVERDUE'">
           <td>{{ installment.number }}</td>
-          <td>{{ installment.dueDate | date: 'dd/MM/yyyy' : 'UTC' }}</td>
+          <td>{{ installment.dueDate | date: 'dd/MM/yyyy' }}</td>
           <td>{{ installment.amount | currency: 'BRL' }}</td>
           <td>{{ installment.interest | currency: 'BRL' }}</td>
           <td>{{ installment.amortization | currency: 'BRL' }}</td>

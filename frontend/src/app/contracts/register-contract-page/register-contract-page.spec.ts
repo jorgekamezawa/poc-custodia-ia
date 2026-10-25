@@ -122,6 +122,7 @@ describe('RegisterContractPage', () => {
     expect(element.textContent).toContain('Contrato CTR-0001 cadastrado.');
     expect(element.textContent).toContain('26,95%');
     expect(element.querySelectorAll('tr.installment').length).toBe(12);
+    expect(element.querySelector('tr.installment')?.textContent).toContain('10/02/2027');
     expect(element.textContent).toContain('945,55');
     const link = element.querySelector('a[href]') as HTMLAnchorElement;
     expect(link.textContent).toContain('Ver contrato');
