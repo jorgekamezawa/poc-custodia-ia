@@ -14,6 +14,7 @@ import com.bancoexemplo.custody.contracts.domain.ContractNumber;
 import com.bancoexemplo.custody.contracts.domain.ContractStatus;
 import com.bancoexemplo.custody.contracts.domain.Cpf;
 import com.bancoexemplo.custody.contracts.domain.DuplicateContractNumberException;
+import com.bancoexemplo.custody.contracts.domain.InstallmentNotPayableException;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -195,5 +196,22 @@ class JdbcContractRepositoryTest {
         assertThat(updated.installments().get(0).paidOn()).isEqualTo(LocalDate.of(2026, 10, 24));
         assertThat(updated.installments().get(1).paidOn()).isNull();
         assertThat(updated.outstandingBalance()).isEqualByComparingTo("9254.40");
+    }
+
+    @Test
+    void installmentAlreadyPaidKeepsItsDateAndIsRefused() {
+        Contract contract = contract(uniqueNumber("CTR-PAG-"));
+        repository.save(contract);
+        repository.markInstallmentPaid(contract.id(), 1, LocalDate.of(2026, 10, 24));
+
+        assertThatThrownBy(() -> repository.markInstallmentPaid(contract.id(), 1, LocalDate.of(2026, 10, 25)))
+                .isInstanceOf(InstallmentNotPayableException.class);
+        assertThat(repository
+                        .findById(contract.id())
+                        .orElseThrow()
+                        .installments()
+                        .get(0)
+                        .paidOn())
+                .isEqualTo(LocalDate.of(2026, 10, 24));
     }
 }
