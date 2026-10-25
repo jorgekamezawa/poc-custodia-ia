@@ -2,6 +2,8 @@ package com.bancoexemplo.custody.payments.adapter.out.contracts;
 
 import com.bancoexemplo.custody.contracts.api.ContractInstallments;
 import com.bancoexemplo.custody.payments.application.port.ContractToPay;
+import com.bancoexemplo.custody.payments.domain.payment.ContractTerms;
+import com.bancoexemplo.custody.payments.domain.payment.InstallmentTerms;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.stereotype.Component;

@@ -2,16 +2,23 @@ package com.bancoexemplo.custody.architecture;
 
 import static com.tngtech.archunit.core.domain.properties.HasName.Predicates.nameEndingWith;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
+import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.constructors;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
+import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noFields;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.bancoexemplo.custody.archfixture.ReachesIntoCalculatorDomain;
+import com.bancoexemplo.custody.archfixture.adapter.in.RefusesInTheController;
 import com.bancoexemplo.custody.archfixture.adapter.out.PartlyCoveredAdapter;
 import com.bancoexemplo.custody.archfixture.adapter.out.UntestedAdapter;
+import com.bancoexemplo.custody.archfixture.domain.EntityAsRecord;
+import com.bancoexemplo.custody.archfixture.domain.EntityWithPublicConstructor;
+import com.tngtech.archunit.base.DescribedPredicate;
 import com.tngtech.archunit.core.domain.Dependency;
 import com.tngtech.archunit.core.domain.JavaClass;
 import com.tngtech.archunit.core.domain.JavaClasses;
+import com.tngtech.archunit.core.domain.JavaConstructorCall;
 import com.tngtech.archunit.core.domain.JavaMethod;
 import com.tngtech.archunit.core.domain.JavaMethodCall;
 import com.tngtech.archunit.core.domain.JavaModifier;
@@ -60,6 +67,77 @@ class ArchitectureTest {
         assertThatThrownBy(() -> modulesTalkOnlyThroughApi.check(violating))
                 .isInstanceOf(AssertionError.class)
                 .hasMessageContaining("calculator.domain.PriceSchedule");
+    }
+
+    /** Entities and domain services are built through their factories; records, enums and exceptions are values. */
+    @ArchTest
+    static final ArchRule domainClassesAreBuiltThroughFactories = constructors()
+            .that()
+            .areDeclaredInClassesThat()
+            .resideInAPackage("..domain..")
+            .and()
+            .areDeclaredInClassesThat()
+            .areNotAssignableTo(Record.class)
+            .and()
+            .areDeclaredInClassesThat()
+            .areNotEnums()
+            .and()
+            .areDeclaredInClassesThat()
+            .areNotAssignableTo(Throwable.class)
+            .should()
+            .notBePublic();
+
+    /** A record compares every field, so a domain record carrying an identity is an entity in the wrong shape. */
+    @ArchTest
+    static final ArchRule entitiesAreNotRecords = noFields()
+            .that()
+            .areDeclaredInClassesThat()
+            .resideInAPackage("..domain..")
+            .and()
+            .areDeclaredInClassesThat()
+            .areAssignableTo(Record.class)
+            .should()
+            .haveName("id");
+
+    /** The controller validates the request; refusing by business rule is the domain's, through its own types. */
+    @ArchTest
+    static final ArchRule inboundAdaptersDoNotRefuseWithDomainExceptions = noClasses()
+            .that()
+            .resideInAPackage("..adapter.in..")
+            .should()
+            .callConstructorWhere(new DescribedPredicate<>("the constructor of a domain exception") {
+                @Override
+                public boolean test(JavaConstructorCall call) {
+                    JavaClass created = call.getTargetOwner();
+                    return created.getPackageName().contains(".domain") && created.isAssignableTo(Throwable.class);
+                }
+            });
+
+    @Test
+    void publicConstructorOfADomainClassBreaksTheRule() {
+        var violating = new ClassFileImporter().importClasses(EntityWithPublicConstructor.class);
+
+        assertThatThrownBy(() -> domainClassesAreBuiltThroughFactories.check(violating))
+                .isInstanceOf(AssertionError.class)
+                .hasMessageContaining("EntityWithPublicConstructor");
+    }
+
+    @Test
+    void domainRecordWithAnIdBreaksTheRule() {
+        var violating = new ClassFileImporter().importClasses(EntityAsRecord.class);
+
+        assertThatThrownBy(() -> entitiesAreNotRecords.check(violating))
+                .isInstanceOf(AssertionError.class)
+                .hasMessageContaining("EntityAsRecord.id");
+    }
+
+    @Test
+    void domainExceptionCreatedInAnInboundAdapterBreaksTheRule() {
+        var violating = new ClassFileImporter().importClasses(RefusesInTheController.class);
+
+        assertThatThrownBy(() -> inboundAdaptersDoNotRefuseWithDomainExceptions.check(violating))
+                .isInstanceOf(AssertionError.class)
+                .hasMessageContaining("InvalidContractException");
     }
 
     @Test

@@ -1,8 +1,8 @@
 package com.bancoexemplo.custody.payments.adapter.out.persistence;
 
 import com.bancoexemplo.custody.payments.application.port.PaymentRepository;
-import com.bancoexemplo.custody.payments.domain.InstallmentAlreadyPaidException;
-import com.bancoexemplo.custody.payments.domain.Payment;
+import com.bancoexemplo.custody.payments.domain.payment.InstallmentAlreadyPaidException;
+import com.bancoexemplo.custody.payments.domain.payment.Payment;
 import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
@@ -37,15 +37,15 @@ class JdbcPaymentRepository implements PaymentRepository {
                             VALUES (:id, :contractId, :installmentNumber, :paidOn, :amount, :lateFee,
                                 :defaultInterest, :registeredBy, :registeredAt)
                             """)
-                    .param("id", payment.id())
-                    .param("contractId", payment.contractId())
-                    .param("installmentNumber", payment.installmentNumber())
-                    .param("paidOn", payment.paidOn())
-                    .param("amount", payment.amount())
-                    .param("lateFee", payment.lateFee())
-                    .param("defaultInterest", payment.defaultInterest())
-                    .param("registeredBy", payment.registeredBy())
-                    .param("registeredAt", Timestamp.from(payment.registeredAt()))
+                    .param("id", payment.getId())
+                    .param("contractId", payment.getContractId())
+                    .param("installmentNumber", payment.getInstallmentNumber())
+                    .param("paidOn", payment.getPaidOn())
+                    .param("amount", payment.getAmount())
+                    .param("lateFee", payment.getLateFee())
+                    .param("defaultInterest", payment.getDefaultInterest())
+                    .param("registeredBy", payment.getRegisteredBy())
+                    .param("registeredAt", Timestamp.from(payment.getRegisteredAt()))
                     .update();
         } catch (DuplicateKeyException e) {
             throw new InstallmentAlreadyPaidException();

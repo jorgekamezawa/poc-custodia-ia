@@ -1,10 +1,10 @@
 package com.bancoexemplo.custody.contracts.application;
 
-import com.bancoexemplo.custody.contracts.domain.AmortizationSystem;
+import com.bancoexemplo.custody.contracts.domain.contract.AmortizationSystem;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-/** What the operator typed from the signed contract, and who is registering it. */
+/** What the operator typed from the signed contract, and who is registering it; any field may be missing. */
 public record RegisterContractCommand(
         String number,
         String customerName,
@@ -14,7 +14,7 @@ public record RegisterContractCommand(
         AmortizationSystem amortizationSystem,
         BigDecimal principal,
         BigDecimal monthlyRatePercent,
-        int termMonths,
+        Integer termMonths,
         LocalDate releaseDate,
         LocalDate firstDueDate,
         BigDecimal upfrontCosts,

@@ -2,7 +2,7 @@ package com.bancoexemplo.custody.payments.adapter.out.events;
 
 import com.bancoexemplo.custody.events.api.EventPublisher;
 import com.bancoexemplo.custody.payments.application.port.PaymentEvents;
-import com.bancoexemplo.custody.payments.domain.Payment;
+import com.bancoexemplo.custody.payments.domain.payment.Payment;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
@@ -26,8 +26,11 @@ class PaymentEventsAdapter implements PaymentEvents {
     public void paymentRegistered(Payment payment) {
         publisher.publish(
                 TOPIC,
-                payment.contractId().toString(),
+                payment.getContractId().toString(),
                 new PaymentRegistered(
-                        payment.contractId(), payment.installmentNumber(), payment.paidOn(), payment.amount()));
+                        payment.getContractId(),
+                        payment.getInstallmentNumber(),
+                        payment.getPaidOn(),
+                        payment.getAmount()));
     }
 }

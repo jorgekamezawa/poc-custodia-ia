@@ -9,16 +9,16 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import com.bancoexemplo.custody.contracts.application.port.ContractRepository;
-import com.bancoexemplo.custody.contracts.application.port.Financing;
 import com.bancoexemplo.custody.contracts.application.port.FinancingCalculator;
-import com.bancoexemplo.custody.contracts.application.port.FinancingRequest;
-import com.bancoexemplo.custody.contracts.domain.AmortizationSystem;
-import com.bancoexemplo.custody.contracts.domain.Contract;
-import com.bancoexemplo.custody.contracts.domain.ContractInstallment;
-import com.bancoexemplo.custody.contracts.domain.ContractNumber;
-import com.bancoexemplo.custody.contracts.domain.ContractStatus;
-import com.bancoexemplo.custody.contracts.domain.DuplicateContractNumberException;
-import com.bancoexemplo.custody.contracts.domain.InvalidContractException;
+import com.bancoexemplo.custody.contracts.domain.contract.AmortizationSystem;
+import com.bancoexemplo.custody.contracts.domain.contract.CalculatedInstallment;
+import com.bancoexemplo.custody.contracts.domain.contract.Contract;
+import com.bancoexemplo.custody.contracts.domain.contract.ContractNumber;
+import com.bancoexemplo.custody.contracts.domain.contract.ContractStatus;
+import com.bancoexemplo.custody.contracts.domain.contract.DuplicateContractNumberException;
+import com.bancoexemplo.custody.contracts.domain.contract.Financing;
+import com.bancoexemplo.custody.contracts.domain.contract.FinancingTerms;
+import com.bancoexemplo.custody.contracts.domain.contract.InvalidContractException;
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.Instant;
@@ -39,7 +39,7 @@ class RegisterContractServiceTest {
     private static final Instant NOW = Instant.parse("2027-01-10T13:00:00Z");
 
     /** The terms of {@link #command}, exactly as the calculator must receive them. */
-    private static final FinancingRequest TERMS = new FinancingRequest(
+    private static final FinancingTerms TERMS = new FinancingTerms(
             AmortizationSystem.PRICE,
             new BigDecimal("10000.00"),
             new BigDecimal("2"),
@@ -80,9 +80,9 @@ class RegisterContractServiceTest {
 
     /** 12 installments of the spec example (the last of R$ 945.55) with CET 26.95. */
     private static Financing financing() {
-        List<ContractInstallment> installments = new ArrayList<>();
+        List<CalculatedInstallment> installments = new ArrayList<>();
         for (int number = 1; number <= 12; number++) {
-            installments.add(new ContractInstallment(
+            installments.add(new CalculatedInstallment(
                     number,
                     LocalDate.of(2027, 2, 10).plusMonths(number - 1L),
                     new BigDecimal(number == 12 ? "945.55" : "945.60"),
@@ -101,15 +101,15 @@ class RegisterContractServiceTest {
         Contract contract = service.register(command("CTR-0001"));
 
         verify(repository).save(contract);
-        assertThat(contract.status()).isEqualTo(ContractStatus.ACTIVE);
-        assertThat(contract.number().value()).isEqualTo("CTR-0001");
-        assertThat(contract.installments()).hasSize(12);
-        assertThat(contract.installments().get(11).amount()).isEqualByComparingTo("945.55");
-        assertThat(contract.annualCetPercent()).isEqualByComparingTo("26.95");
-        assertThat(contract.customerCpf().digits()).isEqualTo("12345678909");
-        assertThat(contract.chassisNumber().value()).isEqualTo("9BWZZZ377VT004251");
-        assertThat(contract.customerName()).isEqualTo("Cliente Exemplo");
-        assertThat(contract.vehicleDescription()).isEqualTo("Hatch 1.0 2026");
+        assertThat(contract.getStatus()).isEqualTo(ContractStatus.ACTIVE);
+        assertThat(contract.getNumber().value()).isEqualTo("CTR-0001");
+        assertThat(contract.getInstallments()).hasSize(12);
+        assertThat(contract.getInstallments().get(11).getAmount()).isEqualByComparingTo("945.55");
+        assertThat(contract.getAnnualCetPercent()).isEqualByComparingTo("26.95");
+        assertThat(contract.getCustomerCpf().digits()).isEqualTo("12345678909");
+        assertThat(contract.getChassisNumber().value()).isEqualTo("9BWZZZ377VT004251");
+        assertThat(contract.getCustomerName().value()).isEqualTo("Cliente Exemplo");
+        assertThat(contract.getVehicleDescription().value()).isEqualTo("Hatch 1.0 2026");
     }
 
     @Test
@@ -147,13 +147,36 @@ class RegisterContractServiceTest {
     }
 
     @Test
+    void missingFinancingTermIsRefusedBeforeCalculating() {
+        RegisterContractCommand withoutTerm = new RegisterContractCommand(
+                "CTR-0005",
+                "Cliente Exemplo",
+                "12345678909",
+                "9BWZZZ377VT004251",
+                "Hatch 1.0 2026",
+                AmortizationSystem.PRICE,
+                new BigDecimal("10000.00"),
+                new BigDecimal("2"),
+                null,
+                LocalDate.of(2027, 1, 10),
+                LocalDate.of(2027, 2, 10),
+                BigDecimal.ZERO,
+                "operador");
+
+        assertThatThrownBy(() -> service.register(withoutTerm))
+                .isInstanceOf(InvalidContractException.class)
+                .hasMessage("Prazo é obrigatório");
+        verifyNoInteractions(calculator, repository);
+    }
+
+    @Test
     @DisplayName("CON-04 0005/CT-12: o contrato guarda quem cadastrou e quando")
     void recordsWhoAndWhen() {
         when(calculator.calculate(TERMS)).thenReturn(financing());
 
         Contract contract = service.register(command("CTR-0004"));
 
-        assertThat(contract.registeredBy()).isEqualTo("operador");
-        assertThat(contract.registeredAt()).isEqualTo(NOW);
+        assertThat(contract.getRegisteredBy()).isEqualTo("operador");
+        assertThat(contract.getRegisteredAt()).isEqualTo(NOW);
     }
 }

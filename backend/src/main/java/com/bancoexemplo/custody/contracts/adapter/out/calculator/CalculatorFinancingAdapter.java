@@ -6,11 +6,11 @@ import com.bancoexemplo.custody.calculator.api.InstallmentSchedule;
 import com.bancoexemplo.custody.calculator.api.InvalidScheduleRequestException;
 import com.bancoexemplo.custody.calculator.api.ScheduleCalculator;
 import com.bancoexemplo.custody.calculator.api.ScheduleRequest;
-import com.bancoexemplo.custody.contracts.application.port.Financing;
 import com.bancoexemplo.custody.contracts.application.port.FinancingCalculator;
-import com.bancoexemplo.custody.contracts.application.port.FinancingRequest;
-import com.bancoexemplo.custody.contracts.domain.ContractInstallment;
-import com.bancoexemplo.custody.contracts.domain.InvalidContractException;
+import com.bancoexemplo.custody.contracts.domain.contract.CalculatedInstallment;
+import com.bancoexemplo.custody.contracts.domain.contract.Financing;
+import com.bancoexemplo.custody.contracts.domain.contract.FinancingTerms;
+import com.bancoexemplo.custody.contracts.domain.contract.InvalidContractException;
 import org.springframework.stereotype.Component;
 
 /** Translates the contract's financing terms to the calculator module and its refusal back to the contract's. */
@@ -26,21 +26,21 @@ class CalculatorFinancingAdapter implements FinancingCalculator {
     }
 
     @Override
-    public Financing calculate(FinancingRequest request) {
+    public Financing calculate(FinancingTerms terms) {
         ScheduleRequest scheduleRequest = new ScheduleRequest(
                 com.bancoexemplo.custody.calculator.api.AmortizationSystem.valueOf(
-                        request.system().name()),
-                request.principal(),
-                request.monthlyRatePercent(),
-                request.termMonths(),
-                request.firstDueDate());
+                        terms.amortizationSystem().name()),
+                terms.principal(),
+                terms.monthlyRatePercent(),
+                terms.termMonths(),
+                terms.firstDueDate());
         try {
             InstallmentSchedule schedule = scheduleCalculator.calculate(scheduleRequest);
             var cet = effectiveCostCalculator.calculate(
-                    new EffectiveCostRequest(scheduleRequest, request.releaseDate(), request.upfrontCosts()));
+                    new EffectiveCostRequest(scheduleRequest, terms.releaseDate(), terms.upfrontCosts()));
             return new Financing(
                     schedule.installments().stream()
-                            .map(installment -> new ContractInstallment(
+                            .map(installment -> new CalculatedInstallment(
                                     installment.number(),
                                     installment.dueDate(),
                                     installment.amount(),

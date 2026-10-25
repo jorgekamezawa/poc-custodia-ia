@@ -6,8 +6,8 @@ import static org.mockito.Mockito.when;
 
 import com.bancoexemplo.custody.contracts.ContractFixture;
 import com.bancoexemplo.custody.contracts.application.port.ContractRepository;
-import com.bancoexemplo.custody.contracts.domain.Contract;
-import com.bancoexemplo.custody.contracts.domain.InstallmentSituation;
+import com.bancoexemplo.custody.contracts.domain.contract.Contract;
+import com.bancoexemplo.custody.contracts.domain.contract.InstallmentSituation;
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.Instant;
@@ -52,14 +52,14 @@ class ContractQueryServiceTest {
     void viewHasEachInstallmentSituationAndTheBalance() {
         Contract contract = ContractFixture.contract(
                 "CTR-0001", "12345678909", LocalDate.of(2026, 10, 10), Instant.parse("2026-09-10T13:00:00Z"));
-        when(repository.findById(contract.id())).thenReturn(Optional.of(contract));
+        when(repository.findById(contract.getId())).thenReturn(Optional.of(contract));
 
-        ContractView view = service.view(contract.id());
+        ContractView view = service.view(contract.getId());
 
         assertThat(view.outstandingBalance()).isEqualByComparingTo("10000.00");
         assertThat(view.installments().get(0).situation()).isEqualTo(InstallmentSituation.OVERDUE);
         assertThat(view.installments().get(1).situation()).isEqualTo(InstallmentSituation.OPEN);
-        assertThat(view.installments().get(0).installment().number()).isEqualTo(1);
+        assertThat(view.installments().get(0).installment().getNumber()).isEqualTo(1);
     }
 
     @Test

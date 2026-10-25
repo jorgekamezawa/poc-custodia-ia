@@ -6,8 +6,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import com.bancoexemplo.custody.TestcontainersConfiguration;
 import com.bancoexemplo.custody.contracts.ContractFixture;
 import com.bancoexemplo.custody.contracts.application.port.ContractRepository;
-import com.bancoexemplo.custody.contracts.domain.Contract;
-import com.bancoexemplo.custody.contracts.domain.InstallmentNotPayableException;
+import com.bancoexemplo.custody.contracts.domain.contract.Contract;
+import com.bancoexemplo.custody.contracts.domain.contract.ContractInstallment;
+import com.bancoexemplo.custody.contracts.domain.contract.InstallmentNotPayableException;
 import java.time.LocalDate;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
@@ -40,7 +41,7 @@ class PaymentRegisteredListenerTest {
         String message = """
                 {"eventId": "%s", "occurredAt": "2027-02-01T15:00:00Z", "contractId": "%s",
                  "installmentNumber": 1, "paidOn": "2027-02-01", "amount": 945.60}
-                """.formatted(eventId, contract.id());
+                """.formatted(eventId, contract.getId());
 
         listener.on(message);
         listener.on(message);
@@ -50,9 +51,9 @@ class PaymentRegisteredListenerTest {
                         .query(Long.class)
                         .single())
                 .isEqualTo(1L);
-        Contract updated = contracts.findById(contract.id()).orElseThrow();
-        assertThat(updated.installments().get(0).paidOn()).isEqualTo(LocalDate.of(2027, 2, 1));
-        assertThat(updated.installments().stream().filter(i -> i.paidOn() != null))
+        Contract updated = contracts.findById(contract.getId()).orElseThrow();
+        assertThat(updated.getInstallments().get(0).getPaidOn()).isEqualTo(LocalDate.of(2027, 2, 1));
+        assertThat(updated.getInstallments().stream().filter(ContractInstallment::isPaid))
                 .hasSize(1);
     }
 
@@ -65,7 +66,7 @@ class PaymentRegisteredListenerTest {
         String message = """
                 {"eventId": "%s", "occurredAt": "2027-02-01T15:00:00Z", "contractId": "%s",
                  "installmentNumber": 13, "paidOn": "2027-02-01", "amount": 945.60}
-                """.formatted(eventId, contract.id());
+                """.formatted(eventId, contract.getId());
 
         assertThatThrownBy(() -> listener.on(message))
                 .isInstanceOf(InstallmentNotPayableException.class)

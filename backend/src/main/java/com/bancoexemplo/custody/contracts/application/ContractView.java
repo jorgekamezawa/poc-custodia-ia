@@ -1,8 +1,8 @@
 package com.bancoexemplo.custody.contracts.application;
 
-import com.bancoexemplo.custody.contracts.domain.Contract;
-import com.bancoexemplo.custody.contracts.domain.ContractInstallment;
-import com.bancoexemplo.custody.contracts.domain.InstallmentSituation;
+import com.bancoexemplo.custody.contracts.domain.contract.Contract;
+import com.bancoexemplo.custody.contracts.domain.contract.ContractInstallment;
+import com.bancoexemplo.custody.contracts.domain.contract.InstallmentSituation;
 import java.math.BigDecimal;
 import java.util.List;
 

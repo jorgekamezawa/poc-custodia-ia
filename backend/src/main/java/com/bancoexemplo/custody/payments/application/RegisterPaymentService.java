@@ -1,20 +1,17 @@
 package com.bancoexemplo.custody.payments.application;
 
 import com.bancoexemplo.custody.payments.application.port.ContractToPay;
-import com.bancoexemplo.custody.payments.application.port.ContractToPay.ContractTerms;
-import com.bancoexemplo.custody.payments.application.port.ContractToPay.InstallmentTerms;
 import com.bancoexemplo.custody.payments.application.port.PaymentEvents;
 import com.bancoexemplo.custody.payments.application.port.PaymentRepository;
-import com.bancoexemplo.custody.payments.domain.ContractNotFoundForPaymentException;
-import com.bancoexemplo.custody.payments.domain.InstallmentAlreadyPaidException;
-import com.bancoexemplo.custody.payments.domain.LateCharges;
-import com.bancoexemplo.custody.payments.domain.Payment;
-import com.bancoexemplo.custody.payments.domain.PaymentRules;
+import com.bancoexemplo.custody.payments.domain.payment.ContractNotFoundForPaymentException;
+import com.bancoexemplo.custody.payments.domain.payment.ContractTerms;
+import com.bancoexemplo.custody.payments.domain.payment.InstallmentTerms;
+import com.bancoexemplo.custody.payments.domain.payment.LateCharges;
+import com.bancoexemplo.custody.payments.domain.payment.Payment;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.Set;
 import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,18 +36,15 @@ public class RegisterPaymentService {
 
     @Transactional
     public Payment register(RegisterPaymentCommand command) {
-        InstallmentTerms installment = payable(command.contractId(), command.installmentNumber(), command.paidOn());
-        LateCharges due = LateCharges.of(installment.amount(), installment.dueDate(), command.paidOn());
-        PaymentRules.exactAmount(command.amount(), due);
-        Payment payment = new Payment(
-                UUID.randomUUID(),
+        Payment payment = Payment.create(
                 command.contractId(),
+                terms(command.contractId()),
+                payments.paidInstallments(command.contractId()),
                 command.installmentNumber(),
                 command.paidOn(),
                 command.amount(),
-                due.lateFee(),
-                due.defaultInterest(),
                 command.registeredBy(),
+                today(),
                 Instant.now(clock));
         payments.save(payment);
         events.paymentRegistered(payment);
@@ -59,7 +53,8 @@ public class RegisterPaymentService {
 
     /** The amount due for the installment on the date, with the same refusals as registering it. */
     public PaymentQuote quote(UUID contractId, int installmentNumber, LocalDate paidOn) {
-        InstallmentTerms installment = payable(contractId, installmentNumber, paidOn);
+        InstallmentTerms installment =
+                terms(contractId).payable(installmentNumber, paidOn, payments.paidInstallments(contractId), today());
         LateCharges due = LateCharges.of(installment.amount(), installment.dueDate(), paidOn);
         return new PaymentQuote(
                 installmentNumber,
@@ -70,18 +65,11 @@ public class RegisterPaymentService {
                 due.total());
     }
 
-    private InstallmentTerms payable(UUID contractId, int installmentNumber, LocalDate paidOn) {
-        ContractTerms terms = contracts.find(contractId).orElseThrow(ContractNotFoundForPaymentException::new);
-        Set<Integer> paid = payments.paidInstallments(contractId);
-        if (paid.contains(installmentNumber)) {
-            throw new InstallmentAlreadyPaidException();
-        }
-        InstallmentTerms oldestUnpaid = terms.installments().stream()
-                .filter(installment -> !paid.contains(installment.number()))
-                .findFirst()
-                .orElseThrow(InstallmentAlreadyPaidException::new);
-        PaymentRules.oldestUnpaid(installmentNumber, oldestUnpaid.number());
-        PaymentRules.withinRange(paidOn, terms.releaseDate(), LocalDate.now(clock.withZone(BRASILIA)));
-        return oldestUnpaid;
+    private ContractTerms terms(UUID contractId) {
+        return contracts.find(contractId).orElseThrow(ContractNotFoundForPaymentException::new);
+    }
+
+    private LocalDate today() {
+        return LocalDate.now(clock.withZone(BRASILIA));
     }
 }

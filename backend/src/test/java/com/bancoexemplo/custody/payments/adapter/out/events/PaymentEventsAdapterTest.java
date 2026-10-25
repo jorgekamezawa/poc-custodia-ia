@@ -4,11 +4,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.bancoexemplo.custody.TestcontainersConfiguration;
 import com.bancoexemplo.custody.payments.application.port.PaymentEvents;
-import com.bancoexemplo.custody.payments.domain.Payment;
+import com.bancoexemplo.custody.payments.domain.payment.ContractTerms;
+import com.bancoexemplo.custody.payments.domain.payment.InstallmentTerms;
+import com.bancoexemplo.custody.payments.domain.payment.Payment;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,15 +42,18 @@ class PaymentEventsAdapterTest {
     @Test
     void registeredPaymentGoesToTheOutboxKeyedByContract() {
         UUID contractId = UUID.randomUUID();
-        Payment payment = new Payment(
-                UUID.randomUUID(),
+        ContractTerms terms = new ContractTerms(
+                LocalDate.of(2026, 9, 10),
+                List.of(new InstallmentTerms(1, LocalDate.of(2026, 11, 10), new BigDecimal("945.60"))));
+        Payment payment = Payment.create(
                 contractId,
+                terms,
+                Set.of(),
                 1,
                 LocalDate.of(2026, 10, 24),
                 new BigDecimal("945.60"),
-                new BigDecimal("0.00"),
-                new BigDecimal("0.00"),
                 "operador",
+                LocalDate.of(2026, 10, 24),
                 Instant.parse("2026-10-24T15:00:00Z"));
 
         transaction.executeWithoutResult(status -> events.paymentRegistered(payment));

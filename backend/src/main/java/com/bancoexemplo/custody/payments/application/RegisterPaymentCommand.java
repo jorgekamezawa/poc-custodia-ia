@@ -4,6 +4,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
 
-/** A payment as the operator typed it, and who is registering it. */
+/** A payment as the operator typed it, and who is registering it; any typed field may be missing. */
 public record RegisterPaymentCommand(
-        UUID contractId, int installmentNumber, LocalDate paidOn, BigDecimal amount, String registeredBy) {}
+        UUID contractId, Integer installmentNumber, LocalDate paidOn, BigDecimal amount, String registeredBy) {}

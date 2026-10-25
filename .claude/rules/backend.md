@@ -8,7 +8,7 @@ paths:
 ## Estrutura
 - Um pacote por módulo de negócio em `com.bancoexemplo.custody.<modulo>` (ex.: `contracts`, `payments`, `collateral`), com:
   - `api/`: o que outro módulo pode importar (interfaces e tipos de valor). Nada além disso é visível fora do módulo.
-  - `domain/`: entidades, objetos de valor e regras. Java puro.
+  - `domain/<agregado>/` (ex.: `contracts/domain/contract/`): a entidade raiz, as entidades dela, os objetos de valor, as exceções e os serviços de domínio do agregado, juntos e sem subpastas por tipo (`entity/`, `vo/`), porque o `package-private` só vale dentro do mesmo pacote. Um pacote por agregado mesmo quando o módulo tem um só. Java puro.
   - `application/`: casos de uso e as portas (`port/`) que eles precisam.
   - `adapter/in/` (REST) e `adapter/out/` (banco, integrações).
 - Regras de dependência verificadas por ArchUnit ([ADR-0002](../../docs/adr/0002-monolito-modular-hexagonal-verificado-por-archunit.md)): toda regra nova de fronteira vira teste em `architecture/`.
@@ -18,6 +18,17 @@ paths:
 
 ## Domínio
 - Sem anotação nem import de framework.
+- **Entidade** é classe, nunca `record`: construtor privado, igualdade e `hashCode` pelo id (a entidade interna do agregado, pela identidade local, ex.: número da parcela), getters `getX()`/`isX()` e nenhum setter. O estado muda por método com nome do negócio (`payInstallment`), que aplica a regra antes de mudar.
+  - `create(...)`: nasce a entidade nova; gera o id, define o estado inicial e aplica as regras de criação.
+  - `reconstruct(...)`: devolve a entidade como foi gravada, sem gerar id nem validar regra de criação, porque a regra pode ter mudado depois e o dado antigo continua válido. Só existe quando a entidade é lida do banco.
+  - O ArchUnit barra construtor público em classe de `domain` e `record` de `domain` com campo `id`.
+- **Objeto de valor** é `record` (ou `enum`) e se valida no construtor: um objeto de valor inválido não existe (`new Cpf("12345678900")` recusa com "CPF inválido"). O comportamento dele mora nele.
+- **Serviço de domínio**, quando a regra é grande ou envolve mais de um agregado: classe `final` sem estado, com construtor privado, que recebe dados e nunca repositório. Quem consulta o banco é o caso de uso, que entrega o resultado ao domínio.
+- **Validação em camadas**, cada uma com a sua parte:
+  - adaptador de entrada: o contrato da API (campo presente, tipo), com Bean Validation no request; recusa antes de chamar o caso de uso e nunca cria exceção de domínio (o ArchUnit barra);
+  - caso de uso: o que depende de consulta ou contexto (ex.: número de contrato já cadastrado, contrato inexistente);
+  - domínio: a regra de negócio e o que ela exige, inclusive campo obrigatório para a regra.
+- **Persistência separada do domínio:** a entidade de banco (JPA ou linha do JDBC) é outra classe, no adaptador de saída, que lê com `reconstruct` e grava pelos getters. Nunca anotação de persistência na entidade de domínio.
 - Dinheiro: `BigDecimal`, construído de texto, comparado com `compareTo`, arredondado HALF_EVEN só na fronteira ([ADR-0009](../../docs/adr/0009-dinheiro-em-decimal-exato.md)).
 - Data de negócio (vencimento, data-com) é `LocalDate`; instante do sistema é `Instant` em UTC.
 - Data e hora atuais vêm de um `Clock` injetado, nunca de `now()` sem argumento: o teste fixa o instante.
