@@ -2,28 +2,57 @@ package com.bancoexemplo.custody.contracts.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.when;
 
 import com.bancoexemplo.custody.contracts.ContractFixture;
+import com.bancoexemplo.custody.contracts.application.port.ContractRepository;
 import com.bancoexemplo.custody.contracts.domain.Contract;
 import com.bancoexemplo.custody.contracts.domain.InstallmentSituation;
+import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+@ExtendWith(MockitoExtension.class)
 class ContractQueryServiceTest {
 
-    private final InMemoryContractRepository repository = new InMemoryContractRepository();
-    private final ContractQueryService service =
-            new ContractQueryService(repository, Clock.fixed(Instant.parse("2026-10-24T15:00:00Z"), ZoneOffset.UTC));
+    private static final int LIMIT = 50;
+
+    @Mock
+    private ContractRepository repository;
+
+    private ContractQueryService service;
+
+    @BeforeEach
+    void setUp() {
+        service = new ContractQueryService(
+                repository, Clock.fixed(Instant.parse("2026-10-24T15:00:00Z"), ZoneOffset.UTC));
+    }
+
+    private static List<ContractSummary> found(String number) {
+        return List.of(new ContractSummary(
+                UUID.randomUUID(),
+                number,
+                "Cliente Exemplo",
+                "12345678909",
+                new BigDecimal("10000.00"),
+                Instant.parse("2027-01-10T13:00:00Z")));
+    }
 
     @Test
     void viewHasEachInstallmentSituationAndTheBalance() {
         Contract contract = ContractFixture.contract(
                 "CTR-0001", "12345678909", LocalDate.of(2026, 10, 10), Instant.parse("2026-09-10T13:00:00Z"));
-        repository.save(contract);
+        when(repository.findById(contract.id())).thenReturn(Optional.of(contract));
 
         ContractView view = service.view(contract.id());
 
@@ -35,50 +64,44 @@ class ContractQueryServiceTest {
 
     @Test
     void unknownContractIsNotFound() {
-        assertThatThrownBy(() -> service.view(UUID.randomUUID()))
+        UUID unknown = UUID.randomUUID();
+        when(repository.findById(unknown)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> service.view(unknown))
                 .isInstanceOf(ContractNotFoundException.class)
                 .hasMessage("Contrato não encontrado");
     }
 
     @Test
     void elevenDigitsWithPunctuationSearchTheCpf() {
-        Contract contract = ContractFixture.contract(
-                "CTR-0001", "52998224725", LocalDate.of(2027, 2, 10), Instant.parse("2027-01-10T13:00:00Z"));
-        repository.save(contract);
+        List<ContractSummary> byCpf = found("CTR-0001");
+        when(repository.findByCpf("52998224725", LIMIT)).thenReturn(byCpf);
 
-        assertThat(service.search("529.982.247-25")).containsExactly(ContractSummary.of(contract));
-        assertThat(repository.lastSearch).isEqualTo("cpf:52998224725");
+        assertThat(service.search("529.982.247-25")).isEqualTo(byCpf);
     }
 
     @Test
     void otherTextSearchesTheNumberPrefix() {
-        repository.save(ContractFixture.contract("CTR-0001"));
+        List<ContractSummary> byNumber = found("CTR-0001");
+        when(repository.findByNumberPrefix("ctr-00", LIMIT)).thenReturn(byNumber);
 
-        assertThat(service.search(" ctr-00 ")).singleElement().satisfies(summary -> {
-            assertThat(summary.number()).isEqualTo("CTR-0001");
-            assertThat(summary.customerName()).isEqualTo("Cliente Exemplo");
-            assertThat(summary.customerCpf()).isEqualTo("12345678909");
-            assertThat(summary.principal()).isEqualByComparingTo("10000.00");
-            assertThat(summary.registeredAt()).isEqualTo(Instant.parse("2027-01-10T13:00:00Z"));
-        });
-        assertThat(repository.lastSearch).isEqualTo("number:ctr-00");
+        assertThat(service.search(" ctr-00 ")).isEqualTo(byNumber);
     }
 
     @Test
     void elevenCharactersWithLettersSearchTheNumber() {
-        service.search("CTR12345678");
+        List<ContractSummary> byNumber = found("CTR12345678");
+        when(repository.findByNumberPrefix("CTR12345678", LIMIT)).thenReturn(byNumber);
 
-        assertThat(repository.lastSearch).isEqualTo("number:CTR12345678");
+        assertThat(service.search("CTR12345678")).isEqualTo(byNumber);
     }
 
     @Test
     void noTextListsTheLatest() {
-        repository.save(ContractFixture.contract("CTR-0001"));
+        List<ContractSummary> latest = found("CTR-0001");
+        when(repository.findLatest(LIMIT)).thenReturn(latest);
 
-        assertThat(service.search(null)).hasSize(1);
-        assertThat(repository.lastSearch).isEqualTo("latest");
-
-        service.search("   ");
-        assertThat(repository.lastSearch).isEqualTo("latest");
+        assertThat(service.search(null)).isEqualTo(latest);
+        assertThat(service.search("   ")).isEqualTo(latest);
     }
 }

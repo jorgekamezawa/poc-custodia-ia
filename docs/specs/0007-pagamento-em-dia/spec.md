@@ -132,7 +132,7 @@ Tópico do Kafka (registro de eventos entre módulos, [ADR-0016](../../adr/0016-
 | CT-8 | CA-5 | unitário | Data 09/09/2026, liberação 10/09/2026 | Recusado com a mensagem do CT-7 |
 | CT-9 | CA-6 | unitário | Parcela 1 já com pagamento guardado | Recusado: "Parcela já paga" |
 | CT-10 | CA-1 | unitário | Pagamento do CT-1 | Evento `custody.payment-registered` com contrato, parcela, data e valor entregue à tabela de saída |
-| CT-11 | CA-1 | unitário | Contrato recebe o evento do CT-1 | Parcela 1 com `paid_on` 24/10/2026; saldo devedor R$ 9.254,40 |
+| CT-11 | CA-1 | integração | Contrato recebe o evento do CT-1 | Parcela 1 com `paid_on` 24/10/2026; saldo devedor R$ 9.254,40 |
 | CT-12 | CA-7 | integração | O mesmo evento aplicado duas vezes pelo consumidor do contrato | Uma linha em `processed_event`; parcela paga uma vez |
 | CT-13 | CA-1 | unitário | Parcela paga com vencimento já passado | Situação `PAID` |
 | CT-14 | CA-1 | integração | Linha nova em `outbox_event` | Mensagem no tópico com a mesma chave e corpo; `published_at` preenchida |
