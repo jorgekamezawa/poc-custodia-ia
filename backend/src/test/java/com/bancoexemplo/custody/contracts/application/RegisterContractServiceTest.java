@@ -23,7 +23,7 @@ import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.ZoneOffset;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -58,7 +58,7 @@ class RegisterContractServiceTest {
 
     @BeforeEach
     void setUp() {
-        service = new RegisterContractService(repository, calculator, Clock.fixed(NOW, ZoneOffset.UTC));
+        service = new RegisterContractService(repository, calculator, Clock.fixed(NOW, ZoneId.of("America/Sao_Paulo")));
     }
 
     static RegisterContractCommand command(String number) {

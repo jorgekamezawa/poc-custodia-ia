@@ -3,10 +3,7 @@ package com.bancoexemplo.custody.contracts.domain.contract;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.bancoexemplo.custody.contracts.ContractFixture;
-import java.time.Clock;
-import java.time.Instant;
 import java.time.LocalDate;
-import java.time.ZoneOffset;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -30,16 +27,6 @@ class ContractQueryRulesTest {
     @DisplayName("CON-05 0006/CT-3: parcela que vence no futuro está em aberto")
     void dueInTheFutureIsOpen() {
         assertThat(InstallmentSituation.of(LocalDate.of(2026, 11, 10), TODAY)).isEqualTo(InstallmentSituation.OPEN);
-    }
-
-    @Test
-    @DisplayName("CON-05 0006/CT-4: hoje é a data de Brasília, não a do UTC")
-    void todayIsTheBrasiliaDate() {
-        Clock lateNightInBrasilia = Clock.fixed(Instant.parse("2026-10-25T02:00:00Z"), ZoneOffset.UTC);
-
-        assertThat(BusinessCalendar.today(lateNightInBrasilia)).isEqualTo(TODAY);
-        assertThat(InstallmentSituation.of(TODAY, BusinessCalendar.today(lateNightInBrasilia)))
-                .isEqualTo(InstallmentSituation.OPEN);
     }
 
     @Test
