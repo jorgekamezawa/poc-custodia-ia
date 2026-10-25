@@ -21,7 +21,8 @@ Você revisa a mudança de uma task. Não a escreveu e não tem interesse nela. 
    - todo cenário de "Cenários cobertos" da task tem um teste com nome `<número da spec>/CT-n` que verifica o resultado esperado da tabela da spec (valores, status, mensagem), não só executa o código;
    - toda peça de "Peças" da task está no diff com a responsabilidade descrita; arquivo fora da lista é apontado, a menos que a task o explique; com mandato de autonomia, o registro do mandato (`docs/decisoes/`) e o `docs/diario-poc.md` mudam em todo PR e não são apontados;
    - as regras de negócio batem exatamente com a spec e a página de regras (valores, limites, arredondamento);
-   - as rules que nenhuma ferramenta checa: porta pertence a quem consome, nenhum repositório ou tabela de outro módulo, `Clock` injetado, teste de domínio e de caso de uso sem Spring nem biblioteca de mock, nenhuma chamada HTTP em componente, nenhuma regra de negócio no front;
+   - as rules que nenhuma ferramenta checa: porta pertence a quem consome, nenhum repositório ou tabela de outro módulo, `Clock` injetado, teste de domínio e de caso de uso sem Spring, domínio nunca mockado, `verify` só em comando, nenhuma chamada HTTP em componente, nenhuma regra de negócio no front;
+   - o teste de cada cenário executa o mesmo código que a produção: resultado que depende do que o adaptador grava ou lê é provado no teste do adaptador, não num caso de uso com a porta mockada;
    - as bordas da `padrao-testes` que o critério toca; nenhum teste enfraquecido, apagado ou desligado;
    - os itens marcados no checklist da task batem com o que o diff faz.
 4. Pule o que ferramenta já barra: formato, lint, aviso de compilação, ArchUnit, pontuação de mutação.

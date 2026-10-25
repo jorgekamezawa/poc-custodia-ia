@@ -22,6 +22,8 @@ repositories {
 	mavenCentral()
 }
 
+val mockitoAgent = configurations.create("mockitoAgent")
+
 dependencies {
 	errorprone("com.google.errorprone:error_prone_core:2.51.0")
 	implementation("org.springframework.boot:spring-boot-starter-flyway")
@@ -41,11 +43,16 @@ dependencies {
 	testImplementation("org.testcontainers:testcontainers-kafka")
 	testImplementation("org.testcontainers:testcontainers-postgresql")
 	testImplementation("com.tngtech.archunit:archunit-junit5:1.5.1")
+	testImplementation("org.mockito:mockito-junit-jupiter")
+	mockitoAgent("org.mockito:mockito-core") { isTransitive = false }
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
 tasks.withType<Test> {
 	useJUnitPlatform()
+	// Loading Mockito as an agent at startup; attaching it later makes the JDK print a warning on every run.
+	// The agent extends the boot classpath, which turns class data sharing off with a warning; turning it off here is silent.
+	jvmArgs("-javaagent:${mockitoAgent.asPath}", "-Xshare:off")
 }
 
 spotless {
@@ -69,6 +76,8 @@ pitest {
 	junit5PluginVersion = "1.2.3"
 	// The plugin would add a JUnit 5 launcher, which breaks the JUnit 6 that Spring Boot brings.
 	addJUnitPlatformLauncher = false
+	// The mutation runs start their own JVMs, which do not inherit the test task's arguments.
+	jvmArgs = listOf("-javaagent:${mockitoAgent.asPath}", "-Xshare:off")
 	targetClasses = setOf("com.bancoexemplo.custody.*.domain.*", "com.bancoexemplo.custody.*.application.*")
 	mutationThreshold = 80
 	// Passes while no business module exists yet; the threshold applies once there is code to mutate.

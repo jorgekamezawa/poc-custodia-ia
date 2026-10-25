@@ -18,8 +18,8 @@ A mais barata que prova o critério.
 | Tipo | Prova | Mora em | Nasce na task |
 |---|---|---|---|
 | Unitário de domínio | regra, cálculo, borda | `<modulo>/domain`, sem Spring | back |
-| Caso de uso | orquestração, com falsos em memória | `<modulo>/application` | back |
-| Integração | banco real, restrições, migração | `<modulo>/adapter/out` | back |
+| Caso de uso | orquestração, com as portas mockadas (Mockito) | `<modulo>/application` | back |
+| Adaptador de saída | cada método da porta contra o real: banco, Kafka ou módulo vizinho | `<modulo>/adapter/out` | back |
 | API | contrato da spec: status, corpo, erros, perfil | `<modulo>/adapter/in` | back |
 | Arquitetura | fronteira nova entre módulos ou camadas | `architecture/` | back |
 | Componente | o que a tela mostra e faz | `frontend/src/app/<modulo>/` | front |
@@ -27,6 +27,7 @@ A mais barata que prova o critério.
 
 - Na tabela de cenários da spec, caso de uso conta como `unitário` e API como `integração`.
 - Ponta a ponta não repete borda já provada abaixo; cobre o fluxo atravessando tudo.
+- **O cenário mora onde o código que o produz roda.** Se o resultado depende do que o adaptador grava ou lê (ex.: saldo que cai depois de marcar a parcela paga), o cenário é de adaptador, não de caso de uso: com a porta mockada, o caso de uso só prova que chamou a porta. Foi o que escondeu o 0007/CT-11, provado por um falso que usava o domínio enquanto o banco rodava outro SQL.
 - Teste de mutação não se escreve: mede os testes de `domain` e `application`. Sobrou mutante? Escreva o teste que o mata ou, se ele não muda o comportamento (mutante equivalente), mostre por quê e peça para excluí-lo.
 
 ## Bordas que viram cenário próprio
