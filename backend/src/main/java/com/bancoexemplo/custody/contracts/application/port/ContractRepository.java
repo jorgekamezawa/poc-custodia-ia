@@ -31,6 +31,10 @@ public interface ContractRepository {
     /** Contracts whose number starts with the prefix, ignoring case, newest first. */
     List<ContractSummary> findByNumberPrefix(String prefix, int limit);
 
-    /** Records the payment date of the installment. */
+    /**
+     * Records the payment date of an installment still open; the contract decides first, this only stores it.
+     *
+     * @throws com.bancoexemplo.custody.contracts.domain.InstallmentNotPayableException when no open installment matched
+     */
     void markInstallmentPaid(UUID contractId, int installmentNumber, LocalDate paidOn);
 }

@@ -15,6 +15,10 @@ public class MarkInstallmentPaidService {
     }
 
     public void markPaid(UUID contractId, int installmentNumber, LocalDate paidOn) {
+        repository
+                .findById(contractId)
+                .orElseThrow(ContractNotFoundException::new)
+                .payInstallment(installmentNumber, paidOn);
         repository.markInstallmentPaid(contractId, installmentNumber, paidOn);
     }
 }

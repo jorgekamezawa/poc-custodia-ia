@@ -1,6 +1,7 @@
 package com.bancoexemplo.custody.contracts.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.bancoexemplo.custody.contracts.ContractFixture;
 import java.math.BigDecimal;
@@ -38,11 +39,30 @@ class InstallmentPaidTest {
     @Test
     void balanceIsTheOneAfterTheLastPaidInstallment() {
         Contract contract = ContractFixture.contract("CTR-0001");
-        Contract withFirstPaid = contract.withInstallmentPaid(1, LocalDate.of(2027, 2, 1));
+        Contract withFirstPaid = contract.payInstallment(1, LocalDate.of(2027, 2, 1));
 
         assertThat(withFirstPaid.installments().get(0).paidOn()).isEqualTo(LocalDate.of(2027, 2, 1));
+        assertThat(withFirstPaid.installments().get(1).paidOn()).isNull();
         assertThat(withFirstPaid.outstandingBalance())
                 .isEqualByComparingTo(contract.installments().get(0).balanceAfter());
         assertThat(contract.outstandingBalance()).isEqualByComparingTo("10000.00");
+    }
+
+    @Test
+    void installmentNotInTheScheduleIsRefused() {
+        Contract contract = ContractFixture.contract("CTR-0001");
+
+        assertThatThrownBy(() -> contract.payInstallment(13, LocalDate.of(2027, 2, 1)))
+                .isInstanceOf(InstallmentNotPayableException.class)
+                .hasMessage("Parcela 13 não existe no contrato");
+    }
+
+    @Test
+    void installmentAlreadyPaidIsRefused() {
+        Contract withFirstPaid = ContractFixture.contract("CTR-0001").payInstallment(1, LocalDate.of(2027, 2, 1));
+
+        assertThatThrownBy(() -> withFirstPaid.payInstallment(1, LocalDate.of(2027, 2, 5)))
+                .isInstanceOf(InstallmentNotPayableException.class)
+                .hasMessage("Parcela 1 já está paga");
     }
 }

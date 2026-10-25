@@ -10,6 +10,7 @@ import com.bancoexemplo.custody.contracts.domain.ContractNumber;
 import com.bancoexemplo.custody.contracts.domain.ContractStatus;
 import com.bancoexemplo.custody.contracts.domain.Cpf;
 import com.bancoexemplo.custody.contracts.domain.DuplicateContractNumberException;
+import com.bancoexemplo.custody.contracts.domain.InstallmentNotPayableException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -149,11 +150,17 @@ class JdbcContractRepository implements ContractRepository {
 
     @Override
     public void markInstallmentPaid(UUID contractId, int installmentNumber, LocalDate paidOn) {
-        jdbc.sql("UPDATE contract_installment SET paid_on = :paidOn WHERE contract_id = :id AND number = :number")
+        int updated = jdbc.sql("""
+                        UPDATE contract_installment SET paid_on = :paidOn
+                        WHERE contract_id = :id AND number = :number AND paid_on IS NULL
+                        """)
                 .param("paidOn", paidOn)
                 .param("id", contractId)
                 .param("number", installmentNumber)
                 .update();
+        if (updated != 1) {
+            throw new InstallmentNotPayableException("Parcela " + installmentNumber + " não está em aberto");
+        }
     }
 
     private static ContractSummary summary(ResultSet row, int index) throws SQLException {

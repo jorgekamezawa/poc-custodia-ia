@@ -42,7 +42,16 @@ public record Contract(
         return balance;
     }
 
-    public Contract withInstallmentPaid(int installmentNumber, LocalDate paidOn) {
+    /** This contract with the installment paid on the date; refused when it is not in the schedule or already paid. */
+    public Contract payInstallment(int installmentNumber, LocalDate paidOn) {
+        ContractInstallment toPay = installments.stream()
+                .filter(candidate -> candidate.number() == installmentNumber)
+                .findFirst()
+                .orElseThrow(() ->
+                        new InstallmentNotPayableException("Parcela " + installmentNumber + " não existe no contrato"));
+        if (toPay.paid()) {
+            throw new InstallmentNotPayableException("Parcela " + installmentNumber + " já está paga");
+        }
         return new Contract(
                 id,
                 number,
