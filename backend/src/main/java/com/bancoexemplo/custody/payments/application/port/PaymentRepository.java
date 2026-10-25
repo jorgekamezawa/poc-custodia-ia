@@ -1,6 +1,6 @@
 package com.bancoexemplo.custody.payments.application.port;
 
-import com.bancoexemplo.custody.payments.domain.Payment;
+import com.bancoexemplo.custody.payments.domain.payment.Payment;
 import java.util.Set;
 import java.util.UUID;
 
@@ -12,7 +12,7 @@ public interface PaymentRepository {
     /**
      * Stores the payment.
      *
-     * @throws com.bancoexemplo.custody.payments.domain.InstallmentAlreadyPaidException when it already has one
+     * @throws com.bancoexemplo.custody.payments.domain.payment.InstallmentAlreadyPaidException when it already has one
      */
     void save(Payment payment);
 }

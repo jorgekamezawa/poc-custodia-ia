@@ -1,8 +1,8 @@
 package com.bancoexemplo.custody.contracts.application.port;
 
 import com.bancoexemplo.custody.contracts.application.ContractSummary;
-import com.bancoexemplo.custody.contracts.domain.Contract;
-import com.bancoexemplo.custody.contracts.domain.ContractNumber;
+import com.bancoexemplo.custody.contracts.domain.contract.Contract;
+import com.bancoexemplo.custody.contracts.domain.contract.ContractNumber;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -16,7 +16,7 @@ public interface ContractRepository {
     /**
      * Stores a new contract with its installments.
      *
-     * @throws com.bancoexemplo.custody.contracts.domain.DuplicateContractNumberException when the number is taken
+     * @throws com.bancoexemplo.custody.contracts.domain.contract.DuplicateContractNumberException when the number is taken
      */
     void save(Contract contract);
 
@@ -34,7 +34,7 @@ public interface ContractRepository {
     /**
      * Records the payment date of an installment still open; the contract decides first, this only stores it.
      *
-     * @throws com.bancoexemplo.custody.contracts.domain.InstallmentNotPayableException when no open installment matched
+     * @throws com.bancoexemplo.custody.contracts.domain.contract.InstallmentNotPayableException when no open installment matched
      */
     void markInstallmentPaid(UUID contractId, int installmentNumber, LocalDate paidOn);
 }

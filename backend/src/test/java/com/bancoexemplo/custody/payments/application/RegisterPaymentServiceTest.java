@@ -9,14 +9,14 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import com.bancoexemplo.custody.payments.application.port.ContractToPay;
-import com.bancoexemplo.custody.payments.application.port.ContractToPay.ContractTerms;
-import com.bancoexemplo.custody.payments.application.port.ContractToPay.InstallmentTerms;
 import com.bancoexemplo.custody.payments.application.port.PaymentEvents;
 import com.bancoexemplo.custody.payments.application.port.PaymentRepository;
-import com.bancoexemplo.custody.payments.domain.ContractNotFoundForPaymentException;
-import com.bancoexemplo.custody.payments.domain.InstallmentAlreadyPaidException;
-import com.bancoexemplo.custody.payments.domain.InvalidPaymentException;
-import com.bancoexemplo.custody.payments.domain.Payment;
+import com.bancoexemplo.custody.payments.domain.payment.ContractNotFoundForPaymentException;
+import com.bancoexemplo.custody.payments.domain.payment.ContractTerms;
+import com.bancoexemplo.custody.payments.domain.payment.InstallmentAlreadyPaidException;
+import com.bancoexemplo.custody.payments.domain.payment.InstallmentTerms;
+import com.bancoexemplo.custody.payments.domain.payment.InvalidPaymentException;
+import com.bancoexemplo.custody.payments.domain.payment.Payment;
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.Instant;
@@ -102,12 +102,12 @@ class RegisterPaymentServiceTest {
         Payment payment = serviceOn(TODAY).register(pay(1, "945.60", TODAY));
 
         verify(payments).save(payment);
-        assertThat(payment.contractId()).isEqualTo(CONTRACT_ID);
-        assertThat(payment.installmentNumber()).isEqualTo(1);
-        assertThat(payment.paidOn()).isEqualTo(TODAY);
-        assertThat(payment.amount()).isEqualByComparingTo("945.60");
-        assertThat(payment.registeredBy()).isEqualTo("operador");
-        assertThat(payment.registeredAt()).isEqualTo(Instant.parse("2026-10-24T15:00:00Z"));
+        assertThat(payment.getContractId()).isEqualTo(CONTRACT_ID);
+        assertThat(payment.getInstallmentNumber()).isEqualTo(1);
+        assertThat(payment.getPaidOn()).isEqualTo(TODAY);
+        assertThat(payment.getAmount()).isEqualByComparingTo("945.60");
+        assertThat(payment.getRegisteredBy()).isEqualTo("operador");
+        assertThat(payment.getRegisteredAt()).isEqualTo(Instant.parse("2026-10-24T15:00:00Z"));
     }
 
     @Test
@@ -126,7 +126,7 @@ class RegisterPaymentServiceTest {
         onTimeContract();
         alreadyPaid(1);
 
-        assertThat(serviceOn(TODAY).register(pay(2, "945.60", TODAY)).installmentNumber())
+        assertThat(serviceOn(TODAY).register(pay(2, "945.60", TODAY)).getInstallmentNumber())
                 .isEqualTo(2);
     }
 
@@ -157,9 +157,9 @@ class RegisterPaymentServiceTest {
 
         Payment payment = serviceOn(TODAY).register(payLate("968.92"));
 
-        assertThat(payment.amount()).isEqualByComparingTo("968.92");
-        assertThat(payment.lateFee()).isEqualByComparingTo("18.91");
-        assertThat(payment.defaultInterest()).isEqualByComparingTo("4.41");
+        assertThat(payment.getAmount()).isEqualByComparingTo("968.92");
+        assertThat(payment.getLateFee()).isEqualByComparingTo("18.91");
+        assertThat(payment.getDefaultInterest()).isEqualByComparingTo("4.41");
         verify(payments).save(payment);
     }
 
@@ -212,8 +212,8 @@ class RegisterPaymentServiceTest {
 
         Payment payment = serviceOn(TODAY).register(pay(1, "945.60", TODAY));
 
-        assertThat(payment.lateFee()).isEqualByComparingTo("0.00");
-        assertThat(payment.defaultInterest()).isEqualByComparingTo("0.00");
+        assertThat(payment.getLateFee()).isEqualByComparingTo("0.00");
+        assertThat(payment.getDefaultInterest()).isEqualByComparingTo("0.00");
     }
 
     @Test
@@ -221,7 +221,7 @@ class RegisterPaymentServiceTest {
     void acceptsPaymentOnTheDueDate() {
         onTimeContract();
 
-        assertThat(serviceOn(FIRST_DUE).register(pay(1, "945.60", FIRST_DUE)).paidOn())
+        assertThat(serviceOn(FIRST_DUE).register(pay(1, "945.60", FIRST_DUE)).getPaidOn())
                 .isEqualTo(FIRST_DUE);
     }
 
@@ -249,7 +249,7 @@ class RegisterPaymentServiceTest {
     void acceptsPaymentOnTheReleaseDate() {
         onTimeContract();
 
-        assertThat(serviceOn(TODAY).register(pay(1, "945.60", RELEASE)).paidOn())
+        assertThat(serviceOn(TODAY).register(pay(1, "945.60", RELEASE)).getPaidOn())
                 .isEqualTo(RELEASE);
     }
 

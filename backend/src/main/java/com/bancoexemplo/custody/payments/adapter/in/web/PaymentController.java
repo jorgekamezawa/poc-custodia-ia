@@ -3,8 +3,8 @@ package com.bancoexemplo.custody.payments.adapter.in.web;
 import com.bancoexemplo.custody.payments.application.PaymentQuote;
 import com.bancoexemplo.custody.payments.application.RegisterPaymentCommand;
 import com.bancoexemplo.custody.payments.application.RegisterPaymentService;
-import com.bancoexemplo.custody.payments.domain.InvalidPaymentException;
-import com.bancoexemplo.custody.payments.domain.Payment;
+import com.bancoexemplo.custody.payments.domain.payment.Payment;
+import jakarta.validation.Valid;
 import java.net.URI;
 import java.time.LocalDate;
 import java.util.UUID;
@@ -29,14 +29,10 @@ class PaymentController {
 
     @PostMapping("/api/contracts/{contractId}/payments")
     ResponseEntity<Payment> register(
-            @PathVariable UUID contractId, @RequestBody RegisterPaymentRequest request, Authentication user) {
+            @PathVariable UUID contractId, @RequestBody @Valid RegisterPaymentRequest request, Authentication user) {
         Payment payment = registerPayment.register(new RegisterPaymentCommand(
-                contractId,
-                required(request.installmentNumber(), "Parcela"),
-                required(request.paidOn(), "Data do pagamento"),
-                required(request.amount(), "Valor"),
-                user.getName()));
-        return ResponseEntity.created(URI.create("/api/contracts/" + contractId + "/payments/" + payment.id()))
+                contractId, request.installmentNumber(), request.paidOn(), request.amount(), user.getName()));
+        return ResponseEntity.created(URI.create("/api/contracts/" + contractId + "/payments/" + payment.getId()))
                 .body(payment);
     }
 
@@ -46,12 +42,5 @@ class PaymentController {
             @RequestParam int installmentNumber,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate paidOn) {
         return registerPayment.quote(contractId, installmentNumber, paidOn);
-    }
-
-    private static <T> T required(T value, String label) {
-        if (value == null) {
-            throw new InvalidPaymentException(label + " é obrigatório");
-        }
-        return value;
     }
 }

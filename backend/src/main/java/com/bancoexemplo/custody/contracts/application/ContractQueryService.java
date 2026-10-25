@@ -1,9 +1,9 @@
 package com.bancoexemplo.custody.contracts.application;
 
 import com.bancoexemplo.custody.contracts.application.port.ContractRepository;
-import com.bancoexemplo.custody.contracts.domain.BusinessCalendar;
-import com.bancoexemplo.custody.contracts.domain.Contract;
-import com.bancoexemplo.custody.contracts.domain.InstallmentSituation;
+import com.bancoexemplo.custody.contracts.domain.contract.BusinessCalendar;
+import com.bancoexemplo.custody.contracts.domain.contract.Contract;
+import com.bancoexemplo.custody.contracts.domain.contract.InstallmentSituation;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
@@ -36,7 +36,7 @@ public class ContractQueryService {
         return new ContractView(
                 contract,
                 contract.outstandingBalance(),
-                contract.installments().stream()
+                contract.getInstallments().stream()
                         .map(installment -> new ContractView.InstallmentView(
                                 installment, InstallmentSituation.of(installment, today)))
                         .toList());

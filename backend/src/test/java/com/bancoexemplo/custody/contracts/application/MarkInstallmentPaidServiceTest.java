@@ -9,8 +9,8 @@ import static org.mockito.Mockito.when;
 
 import com.bancoexemplo.custody.contracts.ContractFixture;
 import com.bancoexemplo.custody.contracts.application.port.ContractRepository;
-import com.bancoexemplo.custody.contracts.domain.Contract;
-import com.bancoexemplo.custody.contracts.domain.InstallmentNotPayableException;
+import com.bancoexemplo.custody.contracts.domain.contract.Contract;
+import com.bancoexemplo.custody.contracts.domain.contract.InstallmentNotPayableException;
 import java.time.LocalDate;
 import java.util.Optional;
 import java.util.UUID;
@@ -34,19 +34,20 @@ class MarkInstallmentPaidServiceTest {
     @Test
     void openInstallmentIsRecordedPaid() {
         Contract contract = ContractFixture.contract("CTR-0001");
-        when(repository.findById(contract.id())).thenReturn(Optional.of(contract));
+        when(repository.findById(contract.getId())).thenReturn(Optional.of(contract));
 
-        service.markPaid(contract.id(), 1, PAID_ON);
+        service.markPaid(contract.getId(), 1, PAID_ON);
 
-        verify(repository).markInstallmentPaid(contract.id(), 1, PAID_ON);
+        verify(repository).markInstallmentPaid(contract.getId(), 1, PAID_ON);
     }
 
     @Test
     void installmentTheContractRefusesIsNotRecorded() {
-        Contract contract = ContractFixture.contract("CTR-0001").payInstallment(1, PAID_ON);
-        when(repository.findById(contract.id())).thenReturn(Optional.of(contract));
+        Contract contract = ContractFixture.contract("CTR-0001");
+        contract.payInstallment(1, PAID_ON);
+        when(repository.findById(contract.getId())).thenReturn(Optional.of(contract));
 
-        assertThatThrownBy(() -> service.markPaid(contract.id(), 1, PAID_ON.plusDays(1)))
+        assertThatThrownBy(() -> service.markPaid(contract.getId(), 1, PAID_ON.plusDays(1)))
                 .isInstanceOf(InstallmentNotPayableException.class)
                 .hasMessage("Parcela 1 já está paga");
         verify(repository, never()).markInstallmentPaid(any(), anyInt(), any());

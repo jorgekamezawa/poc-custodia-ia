@@ -9,7 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.bancoexemplo.custody.TestcontainersConfiguration;
 import com.bancoexemplo.custody.contracts.ContractFixture;
 import com.bancoexemplo.custody.contracts.application.port.ContractRepository;
-import com.bancoexemplo.custody.contracts.domain.Contract;
+import com.bancoexemplo.custody.contracts.domain.contract.Contract;
 import jakarta.servlet.http.Cookie;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -65,9 +65,9 @@ class ContractQueryApiTest {
     void viewsContract() throws Exception {
         Contract contract = saved(prefix() + "-1", "12345678909", Instant.parse("2027-01-10T13:00:00Z"));
 
-        mvc.perform(get("/api/contracts/" + contract.id()).session(operatorSession()))
+        mvc.perform(get("/api/contracts/" + contract.getId()).session(operatorSession()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.number").value(contract.number().value()))
+                .andExpect(jsonPath("$.number").value(contract.getNumber().value()))
                 .andExpect(jsonPath("$.outstandingBalance").value(10000.00))
                 .andExpect(jsonPath("$.installments.length()").value(12))
                 .andExpect(jsonPath("$.installments[0].situation").value("OPEN"));
@@ -107,7 +107,7 @@ class ContractQueryApiTest {
 
         mvc.perform(get("/api/contracts").param("q", "529.982.247-25").session(operatorSession()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[?(@.number == '" + contract.number().value() + "')]")
+                .andExpect(jsonPath("$[?(@.number == '" + contract.getNumber().value() + "')]")
                         .exists());
     }
 

@@ -2,15 +2,18 @@ package com.bancoexemplo.custody.contracts.adapter.out.persistence;
 
 import com.bancoexemplo.custody.contracts.application.ContractSummary;
 import com.bancoexemplo.custody.contracts.application.port.ContractRepository;
-import com.bancoexemplo.custody.contracts.domain.AmortizationSystem;
-import com.bancoexemplo.custody.contracts.domain.ChassisNumber;
-import com.bancoexemplo.custody.contracts.domain.Contract;
-import com.bancoexemplo.custody.contracts.domain.ContractInstallment;
-import com.bancoexemplo.custody.contracts.domain.ContractNumber;
-import com.bancoexemplo.custody.contracts.domain.ContractStatus;
-import com.bancoexemplo.custody.contracts.domain.Cpf;
-import com.bancoexemplo.custody.contracts.domain.DuplicateContractNumberException;
-import com.bancoexemplo.custody.contracts.domain.InstallmentNotPayableException;
+import com.bancoexemplo.custody.contracts.domain.contract.AmortizationSystem;
+import com.bancoexemplo.custody.contracts.domain.contract.ChassisNumber;
+import com.bancoexemplo.custody.contracts.domain.contract.Contract;
+import com.bancoexemplo.custody.contracts.domain.contract.ContractInstallment;
+import com.bancoexemplo.custody.contracts.domain.contract.ContractNumber;
+import com.bancoexemplo.custody.contracts.domain.contract.ContractStatus;
+import com.bancoexemplo.custody.contracts.domain.contract.Cpf;
+import com.bancoexemplo.custody.contracts.domain.contract.CustomerName;
+import com.bancoexemplo.custody.contracts.domain.contract.DuplicateContractNumberException;
+import com.bancoexemplo.custody.contracts.domain.contract.FinancingTerms;
+import com.bancoexemplo.custody.contracts.domain.contract.InstallmentNotPayableException;
+import com.bancoexemplo.custody.contracts.domain.contract.VehicleDescription;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -60,40 +63,44 @@ class JdbcContractRepository implements ContractRepository {
                                 :amortizationSystem, :principal, :monthlyRatePercent, :termMonths, :releaseDate,
                                 :firstDueDate, :upfrontCosts, :annualCetPercent, :status, :registeredBy, :registeredAt)
                             """)
-                    .param("id", contract.id())
-                    .param("number", contract.number().value())
-                    .param("customerName", contract.customerName())
-                    .param("customerCpf", contract.customerCpf().digits())
-                    .param("chassisNumber", contract.chassisNumber().value())
-                    .param("vehicleDescription", contract.vehicleDescription())
-                    .param("amortizationSystem", contract.amortizationSystem().name())
-                    .param("principal", contract.principal())
-                    .param("monthlyRatePercent", contract.monthlyRatePercent())
-                    .param("termMonths", contract.termMonths())
-                    .param("releaseDate", contract.releaseDate())
-                    .param("firstDueDate", contract.firstDueDate())
-                    .param("upfrontCosts", contract.upfrontCosts())
-                    .param("annualCetPercent", contract.annualCetPercent())
-                    .param("status", contract.status().name())
-                    .param("registeredBy", contract.registeredBy())
-                    .param("registeredAt", Timestamp.from(contract.registeredAt()))
+                    .param("id", contract.getId())
+                    .param("number", contract.getNumber().value())
+                    .param("customerName", contract.getCustomerName().value())
+                    .param("customerCpf", contract.getCustomerCpf().digits())
+                    .param("chassisNumber", contract.getChassisNumber().value())
+                    .param(
+                            "vehicleDescription",
+                            contract.getVehicleDescription().value())
+                    .param(
+                            "amortizationSystem",
+                            contract.getTerms().amortizationSystem().name())
+                    .param("principal", contract.getTerms().principal())
+                    .param("monthlyRatePercent", contract.getTerms().monthlyRatePercent())
+                    .param("termMonths", contract.getTerms().termMonths())
+                    .param("releaseDate", contract.getTerms().releaseDate())
+                    .param("firstDueDate", contract.getTerms().firstDueDate())
+                    .param("upfrontCosts", contract.getTerms().upfrontCosts())
+                    .param("annualCetPercent", contract.getAnnualCetPercent())
+                    .param("status", contract.getStatus().name())
+                    .param("registeredBy", contract.getRegisteredBy())
+                    .param("registeredAt", Timestamp.from(contract.getRegisteredAt()))
                     .update();
         } catch (DuplicateKeyException e) {
             throw new DuplicateContractNumberException();
         }
-        for (ContractInstallment installment : contract.installments()) {
+        for (ContractInstallment installment : contract.getInstallments()) {
             jdbc.sql("""
                             INSERT INTO contract_installment (contract_id, number, due_date, amount, interest,
                                 amortization, balance_after)
                             VALUES (:contractId, :number, :dueDate, :amount, :interest, :amortization, :balanceAfter)
                             """)
-                    .param("contractId", contract.id())
-                    .param("number", installment.number())
-                    .param("dueDate", installment.dueDate())
-                    .param("amount", installment.amount())
-                    .param("interest", installment.interest())
-                    .param("amortization", installment.amortization())
-                    .param("balanceAfter", installment.balanceAfter())
+                    .param("contractId", contract.getId())
+                    .param("number", installment.getNumber())
+                    .param("dueDate", installment.getDueDate())
+                    .param("amount", installment.getAmount())
+                    .param("interest", installment.getInterest())
+                    .param("amortization", installment.getAmortization())
+                    .param("balanceAfter", installment.getBalanceAfter())
                     .update();
         }
     }
@@ -105,7 +112,7 @@ class JdbcContractRepository implements ContractRepository {
                         FROM contract_installment WHERE contract_id = :id ORDER BY number
                         """)
                 .param("id", id)
-                .query((row, index) -> new ContractInstallment(
+                .query((row, index) -> ContractInstallment.reconstruct(
                         row.getInt("number"),
                         row.getObject("due_date", LocalDate.class),
                         row.getBigDecimal("amount"),
@@ -174,20 +181,21 @@ class JdbcContractRepository implements ContractRepository {
     }
 
     private static Contract contract(ResultSet row, List<ContractInstallment> installments) throws SQLException {
-        return new Contract(
+        return Contract.reconstruct(
                 row.getObject("id", UUID.class),
                 new ContractNumber(row.getString("number")),
-                row.getString("customer_name"),
+                new CustomerName(row.getString("customer_name")),
                 new Cpf(row.getString("customer_cpf")),
                 new ChassisNumber(row.getString("chassis_number")),
-                row.getString("vehicle_description"),
-                AmortizationSystem.valueOf(row.getString("amortization_system")),
-                row.getBigDecimal("principal"),
-                row.getBigDecimal("monthly_rate_percent"),
-                row.getInt("term_months"),
-                row.getObject("release_date", LocalDate.class),
-                row.getObject("first_due_date", LocalDate.class),
-                row.getBigDecimal("upfront_costs"),
+                new VehicleDescription(row.getString("vehicle_description")),
+                new FinancingTerms(
+                        AmortizationSystem.valueOf(row.getString("amortization_system")),
+                        row.getBigDecimal("principal"),
+                        row.getBigDecimal("monthly_rate_percent"),
+                        row.getInt("term_months"),
+                        row.getObject("release_date", LocalDate.class),
+                        row.getObject("first_due_date", LocalDate.class),
+                        row.getBigDecimal("upfront_costs")),
                 row.getBigDecimal("annual_cet_percent"),
                 ContractStatus.valueOf(row.getString("status")),
                 row.getString("registered_by"),

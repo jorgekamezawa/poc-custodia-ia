@@ -6,15 +6,19 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import com.bancoexemplo.custody.TestcontainersConfiguration;
 import com.bancoexemplo.custody.contracts.application.ContractSummary;
 import com.bancoexemplo.custody.contracts.application.port.ContractRepository;
-import com.bancoexemplo.custody.contracts.domain.AmortizationSystem;
-import com.bancoexemplo.custody.contracts.domain.ChassisNumber;
-import com.bancoexemplo.custody.contracts.domain.Contract;
-import com.bancoexemplo.custody.contracts.domain.ContractInstallment;
-import com.bancoexemplo.custody.contracts.domain.ContractNumber;
-import com.bancoexemplo.custody.contracts.domain.ContractStatus;
-import com.bancoexemplo.custody.contracts.domain.Cpf;
-import com.bancoexemplo.custody.contracts.domain.DuplicateContractNumberException;
-import com.bancoexemplo.custody.contracts.domain.InstallmentNotPayableException;
+import com.bancoexemplo.custody.contracts.domain.contract.AmortizationSystem;
+import com.bancoexemplo.custody.contracts.domain.contract.CalculatedInstallment;
+import com.bancoexemplo.custody.contracts.domain.contract.ChassisNumber;
+import com.bancoexemplo.custody.contracts.domain.contract.Contract;
+import com.bancoexemplo.custody.contracts.domain.contract.ContractInstallment;
+import com.bancoexemplo.custody.contracts.domain.contract.ContractNumber;
+import com.bancoexemplo.custody.contracts.domain.contract.Cpf;
+import com.bancoexemplo.custody.contracts.domain.contract.CustomerName;
+import com.bancoexemplo.custody.contracts.domain.contract.DuplicateContractNumberException;
+import com.bancoexemplo.custody.contracts.domain.contract.Financing;
+import com.bancoexemplo.custody.contracts.domain.contract.FinancingTerms;
+import com.bancoexemplo.custody.contracts.domain.contract.InstallmentNotPayableException;
+import com.bancoexemplo.custody.contracts.domain.contract.VehicleDescription;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -43,32 +47,30 @@ class JdbcContractRepositoryTest {
     }
 
     private static Contract contract(String number, String cpf, Instant registeredAt) {
-        return new Contract(
-                UUID.randomUUID(),
+        return Contract.create(
                 new ContractNumber(number),
-                "Cliente Exemplo",
+                new CustomerName("Cliente Exemplo"),
                 new Cpf(cpf),
                 new ChassisNumber("9BWZZZ377VT004251"),
-                "Hatch 1.0 2026",
-                AmortizationSystem.PRICE,
-                new BigDecimal("10000.00"),
-                new BigDecimal("2.0000"),
-                12,
-                LocalDate.of(2027, 1, 10),
-                LocalDate.of(2027, 2, 10),
-                new BigDecimal("0.00"),
-                new BigDecimal("26.95"),
-                ContractStatus.ACTIVE,
+                new VehicleDescription("Hatch 1.0 2026"),
+                new FinancingTerms(
+                        AmortizationSystem.PRICE,
+                        new BigDecimal("10000.00"),
+                        new BigDecimal("2.0000"),
+                        12,
+                        LocalDate.of(2027, 1, 10),
+                        LocalDate.of(2027, 2, 10),
+                        new BigDecimal("0.00")),
+                new Financing(installmentsOfTheExample(), new BigDecimal("26.95")),
                 "operador",
-                registeredAt,
-                installmentsOfTheExample());
+                registeredAt);
     }
 
     /** The 12 installments of the spec example: 11 of R$ 945.60, the last of R$ 945.55, R$ 9,254.40 after the first. */
-    private static List<ContractInstallment> installmentsOfTheExample() {
-        List<ContractInstallment> installments = new ArrayList<>();
+    private static List<CalculatedInstallment> installmentsOfTheExample() {
+        List<CalculatedInstallment> installments = new ArrayList<>();
         for (int number = 1; number <= 12; number++) {
-            installments.add(new ContractInstallment(
+            installments.add(new CalculatedInstallment(
                     number,
                     LocalDate.of(2027, 2, 10).plusMonths(number - 1L),
                     new BigDecimal(number == 12 ? "945.55" : "945.60"),
@@ -103,12 +105,12 @@ class JdbcContractRepositoryTest {
 
     private static ContractSummary summaryOf(Contract contract) {
         return new ContractSummary(
-                contract.id(),
-                contract.number().value(),
-                contract.customerName(),
-                contract.customerCpf().digits(),
-                contract.principal(),
-                contract.registeredAt());
+                contract.getId(),
+                contract.getNumber().value(),
+                contract.getCustomerName().value(),
+                contract.getCustomerCpf().digits(),
+                contract.getTerms().principal(),
+                contract.getRegisteredAt());
     }
 
     @Test
@@ -117,15 +119,15 @@ class JdbcContractRepositoryTest {
         Contract saved = contract(uniqueNumber("CTR-REPO-"));
         repository.save(saved);
 
-        Contract loaded = repository.findById(saved.id()).orElseThrow();
+        Contract loaded = repository.findById(saved.getId()).orElseThrow();
 
-        assertThat(loaded).isEqualTo(saved);
-        assertThat(loaded.installments()).hasSize(12);
-        assertThat(loaded.installments().get(11).amount()).isEqualByComparingTo("945.55");
-        assertThat(loaded.installments())
-                .extracting(ContractInstallment::number)
+        assertThat(loaded).usingRecursiveComparison().isEqualTo(saved);
+        assertThat(loaded.getInstallments()).hasSize(12);
+        assertThat(loaded.getInstallments().get(11).getAmount()).isEqualByComparingTo("945.55");
+        assertThat(loaded.getInstallments())
+                .extracting(ContractInstallment::getNumber)
                 .isSorted();
-        assertThat(repository.existsByNumber(saved.number())).isTrue();
+        assertThat(repository.existsByNumber(saved.getNumber())).isTrue();
     }
 
     @Test
@@ -187,14 +189,14 @@ class JdbcContractRepositoryTest {
     void markedInstallmentComesBackPaidWithTheBalanceAfterIt() {
         Contract contract = contract(uniqueNumber("CTR-PAG-"));
         repository.save(contract);
-        assertThat(repository.findById(contract.id()).orElseThrow().outstandingBalance())
+        assertThat(repository.findById(contract.getId()).orElseThrow().outstandingBalance())
                 .isEqualByComparingTo("10000.00");
 
-        repository.markInstallmentPaid(contract.id(), 1, LocalDate.of(2026, 10, 24));
+        repository.markInstallmentPaid(contract.getId(), 1, LocalDate.of(2026, 10, 24));
 
-        Contract updated = repository.findById(contract.id()).orElseThrow();
-        assertThat(updated.installments().get(0).paidOn()).isEqualTo(LocalDate.of(2026, 10, 24));
-        assertThat(updated.installments().get(1).paidOn()).isNull();
+        Contract updated = repository.findById(contract.getId()).orElseThrow();
+        assertThat(updated.getInstallments().get(0).getPaidOn()).isEqualTo(LocalDate.of(2026, 10, 24));
+        assertThat(updated.getInstallments().get(1).getPaidOn()).isNull();
         assertThat(updated.outstandingBalance()).isEqualByComparingTo("9254.40");
     }
 
@@ -202,16 +204,16 @@ class JdbcContractRepositoryTest {
     void installmentAlreadyPaidKeepsItsDateAndIsRefused() {
         Contract contract = contract(uniqueNumber("CTR-PAG-"));
         repository.save(contract);
-        repository.markInstallmentPaid(contract.id(), 1, LocalDate.of(2026, 10, 24));
+        repository.markInstallmentPaid(contract.getId(), 1, LocalDate.of(2026, 10, 24));
 
-        assertThatThrownBy(() -> repository.markInstallmentPaid(contract.id(), 1, LocalDate.of(2026, 10, 25)))
+        assertThatThrownBy(() -> repository.markInstallmentPaid(contract.getId(), 1, LocalDate.of(2026, 10, 25)))
                 .isInstanceOf(InstallmentNotPayableException.class);
         assertThat(repository
-                        .findById(contract.id())
+                        .findById(contract.getId())
                         .orElseThrow()
-                        .installments()
+                        .getInstallments()
                         .get(0)
-                        .paidOn())
+                        .getPaidOn())
                 .isEqualTo(LocalDate.of(2026, 10, 24));
     }
 }

@@ -3,8 +3,8 @@ package com.bancoexemplo.custody.contracts.adapter.in.web;
 import com.bancoexemplo.custody.contracts.application.ContractQueryService;
 import com.bancoexemplo.custody.contracts.application.RegisterContractCommand;
 import com.bancoexemplo.custody.contracts.application.RegisterContractService;
-import com.bancoexemplo.custody.contracts.domain.Contract;
-import com.bancoexemplo.custody.contracts.domain.InvalidContractException;
+import com.bancoexemplo.custody.contracts.domain.contract.Contract;
+import jakarta.validation.Valid;
 import java.net.URI;
 import java.util.List;
 import java.util.UUID;
@@ -41,29 +41,23 @@ class ContractController {
     }
 
     @PostMapping
-    ResponseEntity<ContractResponse> register(@RequestBody RegisterContractRequest request, Authentication user) {
+    ResponseEntity<ContractResponse> register(
+            @RequestBody @Valid RegisterContractRequest request, Authentication user) {
         Contract contract = registerContract.register(new RegisterContractCommand(
                 request.number(),
                 request.customerName(),
                 request.customerCpf(),
                 request.chassisNumber(),
                 request.vehicleDescription(),
-                required(request.amortizationSystem(), "Sistema de amortização"),
-                required(request.principal(), "Valor financiado"),
-                required(request.monthlyRatePercent(), "Taxa ao mês"),
-                required(request.termMonths(), "Prazo"),
-                required(request.releaseDate(), "Data de liberação"),
-                required(request.firstDueDate(), "Primeiro vencimento"),
-                required(request.upfrontCosts(), "Custos pagos antecipadamente"),
+                request.amortizationSystem(),
+                request.principal(),
+                request.monthlyRatePercent(),
+                request.termMonths(),
+                request.releaseDate(),
+                request.firstDueDate(),
+                request.upfrontCosts(),
                 user.getName()));
-        return ResponseEntity.created(URI.create("/api/contracts/" + contract.id()))
+        return ResponseEntity.created(URI.create("/api/contracts/" + contract.getId()))
                 .body(ContractResponse.of(queries.viewOf(contract)));
-    }
-
-    private static <T> T required(T value, String label) {
-        if (value == null) {
-            throw new InvalidContractException(label + " é obrigatório");
-        }
-        return value;
     }
 }

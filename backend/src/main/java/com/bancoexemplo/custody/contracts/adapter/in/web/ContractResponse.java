@@ -1,7 +1,7 @@
 package com.bancoexemplo.custody.contracts.adapter.in.web;
 
 import com.bancoexemplo.custody.contracts.application.ContractView;
-import com.bancoexemplo.custody.contracts.domain.Contract;
+import com.bancoexemplo.custody.contracts.domain.contract.Contract;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -43,32 +43,32 @@ public record ContractResponse(
     static ContractResponse of(ContractView view) {
         Contract contract = view.contract();
         return new ContractResponse(
-                contract.id(),
-                contract.number().value(),
-                contract.customerName(),
-                contract.customerCpf().digits(),
-                contract.chassisNumber().value(),
-                contract.vehicleDescription(),
-                contract.amortizationSystem().name(),
-                contract.principal(),
-                contract.monthlyRatePercent(),
-                contract.termMonths(),
-                contract.releaseDate(),
-                contract.firstDueDate(),
-                contract.upfrontCosts(),
-                contract.annualCetPercent(),
-                contract.status().name(),
-                contract.registeredBy(),
-                contract.registeredAt(),
+                contract.getId(),
+                contract.getNumber().value(),
+                contract.getCustomerName().value(),
+                contract.getCustomerCpf().digits(),
+                contract.getChassisNumber().value(),
+                contract.getVehicleDescription().value(),
+                contract.getTerms().amortizationSystem().name(),
+                contract.getTerms().principal(),
+                contract.getTerms().monthlyRatePercent(),
+                contract.getTerms().termMonths(),
+                contract.getTerms().releaseDate(),
+                contract.getTerms().firstDueDate(),
+                contract.getTerms().upfrontCosts(),
+                contract.getAnnualCetPercent(),
+                contract.getStatus().name(),
+                contract.getRegisteredBy(),
+                contract.getRegisteredAt(),
                 view.outstandingBalance(),
                 view.installments().stream()
                         .map(item -> new InstallmentResponse(
-                                item.installment().number(),
-                                item.installment().dueDate(),
-                                item.installment().amount(),
-                                item.installment().interest(),
-                                item.installment().amortization(),
-                                item.installment().balanceAfter(),
+                                item.installment().getNumber(),
+                                item.installment().getDueDate(),
+                                item.installment().getAmount(),
+                                item.installment().getInterest(),
+                                item.installment().getAmortization(),
+                                item.installment().getBalanceAfter(),
                                 item.situation().name()))
                         .toList());
     }

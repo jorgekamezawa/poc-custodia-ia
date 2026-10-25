@@ -5,14 +5,18 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.bancoexemplo.custody.TestcontainersConfiguration;
 import com.bancoexemplo.custody.payments.application.port.PaymentRepository;
-import com.bancoexemplo.custody.payments.domain.InstallmentAlreadyPaidException;
-import com.bancoexemplo.custody.payments.domain.Payment;
+import com.bancoexemplo.custody.payments.domain.payment.ContractTerms;
+import com.bancoexemplo.custody.payments.domain.payment.InstallmentAlreadyPaidException;
+import com.bancoexemplo.custody.payments.domain.payment.InstallmentTerms;
+import com.bancoexemplo.custody.payments.domain.payment.Payment;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -29,16 +33,27 @@ class JdbcPaymentRepositoryTest {
     @Autowired
     private JdbcClient jdbc;
 
+    private static final LocalDate TODAY = LocalDate.of(2026, 10, 24);
+
+    /** Released on 10/09/2026, 12 installments of R$ 945.60 from 10/10/2026: the first is 14 days late today. */
+    private static final ContractTerms TERMS = new ContractTerms(
+            LocalDate.of(2026, 9, 10),
+            IntStream.rangeClosed(1, 12)
+                    .mapToObj(n -> new InstallmentTerms(
+                            n, LocalDate.of(2026, 10, 10).plusMonths(n - 1L), new BigDecimal("945.60")))
+                    .toList());
+
+    /** The installment paid today, with the ones before it already paid; only the first carries charges. */
     private static Payment payment(UUID contractId, int installmentNumber) {
-        return new Payment(
-                UUID.randomUUID(),
+        return Payment.create(
                 contractId,
+                TERMS,
+                IntStream.range(1, installmentNumber).boxed().collect(Collectors.toSet()),
                 installmentNumber,
-                LocalDate.of(2026, 10, 24),
-                new BigDecimal("968.92"),
-                new BigDecimal("18.91"),
-                new BigDecimal("4.41"),
+                TODAY,
+                new BigDecimal(installmentNumber == 1 ? "968.92" : "945.60"),
                 "operador",
+                TODAY,
                 Instant.parse("2026-10-24T15:00:00Z"));
     }
 
@@ -49,17 +64,17 @@ class JdbcPaymentRepositoryTest {
         repository.save(payment);
 
         Map<String, Object> row = jdbc.sql("SELECT * FROM payment WHERE id = :id")
-                .param("id", payment.id())
+                .param("id", payment.getId())
                 .query()
                 .singleRow();
-        assertThat(row.get("contract_id")).isEqualTo(payment.contractId());
+        assertThat(row.get("contract_id")).isEqualTo(payment.getContractId());
         assertThat(row.get("installment_number")).isEqualTo(1);
         assertThat(row.get("paid_on").toString()).isEqualTo("2026-10-24");
         assertThat((BigDecimal) row.get("amount")).isEqualByComparingTo("968.92");
         assertThat((BigDecimal) row.get("late_fee")).isEqualByComparingTo("18.91");
         assertThat((BigDecimal) row.get("default_interest")).isEqualByComparingTo("4.41");
         assertThat(row.get("registered_by")).isEqualTo("operador");
-        assertThat(((Timestamp) row.get("registered_at")).toInstant()).isEqualTo(payment.registeredAt());
+        assertThat(((Timestamp) row.get("registered_at")).toInstant()).isEqualTo(payment.getRegisteredAt());
     }
 
     @Test

@@ -21,10 +21,10 @@ public class ContractInstallmentsService implements ContractInstallments {
         return repository
                 .findById(contractId)
                 .map(contract -> new ContractSchedule(
-                        contract.releaseDate(),
-                        contract.installments().stream()
+                        contract.getTerms().releaseDate(),
+                        contract.getInstallments().stream()
                                 .map(installment -> new ContractSchedule.ScheduledInstallment(
-                                        installment.number(), installment.dueDate(), installment.amount()))
+                                        installment.getNumber(), installment.getDueDate(), installment.getAmount()))
                                 .toList()));
     }
 }
