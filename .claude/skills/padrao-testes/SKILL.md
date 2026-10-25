@@ -21,6 +21,7 @@ A mais barata que prova o critério.
 | Caso de uso | orquestração, com as portas mockadas (Mockito) | `<modulo>/application` | back |
 | Adaptador de saída | cada método da porta contra o real: banco, Kafka ou módulo vizinho | `<modulo>/adapter/out` | back |
 | API | contrato da spec: status, corpo, erros, perfil | `<modulo>/adapter/in` | back |
+| Contrato de evento | o que o adaptador real de quem publica grava é o que o ouvinte real de quem consome lê (campos e tópico) | `<consumidor>/adapter/in/messaging` | back |
 | Arquitetura | fronteira nova entre módulos ou camadas | `architecture/` | back |
 | Componente | o que a tela mostra e faz | `frontend/src/app/<modulo>/` | front |
 | Ponta a ponta | o caminho principal de cada critério com tela | `e2e/tests/` | qa |

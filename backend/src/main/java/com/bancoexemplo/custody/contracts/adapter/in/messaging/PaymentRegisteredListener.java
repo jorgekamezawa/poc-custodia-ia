@@ -13,6 +13,7 @@ import tools.jackson.databind.json.JsonMapper;
 @Component
 class PaymentRegisteredListener {
 
+    static final String TOPIC = "custody.payment-registered";
     static final String CONSUMER = "contracts";
 
     private final ProcessedEvents processedEvents;
@@ -28,7 +29,7 @@ class PaymentRegisteredListener {
 
     record PaymentRegistered(UUID eventId, UUID contractId, int installmentNumber, LocalDate paidOn) {}
 
-    @KafkaListener(topics = "custody.payment-registered", groupId = CONSUMER)
+    @KafkaListener(topics = TOPIC, groupId = CONSUMER)
     @Transactional
     public void on(String message) {
         PaymentRegistered event = json.readValue(message, PaymentRegistered.class);
