@@ -32,6 +32,7 @@ paths:
 - Dinheiro: `BigDecimal`, construído de texto, comparado com `compareTo`, arredondado HALF_EVEN só na fronteira ([ADR-0009](../../docs/adr/0009-dinheiro-em-decimal-exato.md)).
 - Data de negócio (vencimento, data-com) é `LocalDate`; instante do sistema é `Instant` em UTC.
 - Data e hora atuais vêm de um `Clock` injetado, nunca de `now()` sem argumento: o teste fixa o instante.
+- O `Clock` do projeto está no fuso de Brasília (`ClockConfig`): `LocalDate.now(clock)` já é o dia de negócio, e `Instant.now(clock)` continua universal. Nunca converta o fuso no código nem mude o fuso padrão da JVM; o `LocalDate.now()` sem argumento já quebra a compilação (Error Prone). O `Clock` de teste é fixado em `ZoneId.of("America/Sao_Paulo")`, como o de produção.
 
 ## Banco
 - Toda mudança de esquema é migração Flyway nova em `src/main/resources/db/migration`; nunca editar migração aplicada ([ADR-0007](../../docs/adr/0007-postgresql-com-flyway.md)).

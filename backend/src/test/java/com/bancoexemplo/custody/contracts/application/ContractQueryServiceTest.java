@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.ZoneOffset;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -35,7 +35,7 @@ class ContractQueryServiceTest {
     @BeforeEach
     void setUp() {
         service = new ContractQueryService(
-                repository, Clock.fixed(Instant.parse("2026-10-24T15:00:00Z"), ZoneOffset.UTC));
+                repository, Clock.fixed(Instant.parse("2026-10-24T15:00:00Z"), ZoneId.of("America/Sao_Paulo")));
     }
 
     private static List<ContractSummary> found(String number) {

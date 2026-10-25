@@ -11,15 +11,12 @@ import com.bancoexemplo.custody.payments.domain.payment.Payment;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class RegisterPaymentService {
-
-    private static final ZoneId BRASILIA = ZoneId.of("America/Sao_Paulo");
 
     private final ContractToPay contracts;
     private final PaymentRepository payments;
@@ -70,6 +67,6 @@ public class RegisterPaymentService {
     }
 
     private LocalDate today() {
-        return LocalDate.now(clock.withZone(BRASILIA));
+        return LocalDate.now(clock);
     }
 }

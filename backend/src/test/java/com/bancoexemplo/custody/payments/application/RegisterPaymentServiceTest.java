@@ -21,7 +21,7 @@ import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.ZoneOffset;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -62,7 +62,7 @@ class RegisterPaymentServiceTest {
 
     /** Service whose today, in Brasília, is the given date (15:00 UTC is midday there). */
     private RegisterPaymentService serviceOn(LocalDate today) {
-        Clock clock = Clock.fixed(Instant.parse(today + "T15:00:00Z"), ZoneOffset.UTC);
+        Clock clock = Clock.fixed(Instant.parse(today + "T15:00:00Z"), ZoneId.of("America/Sao_Paulo"));
         return new RegisterPaymentService(contracts, payments, events, clock);
     }
 
@@ -231,6 +231,17 @@ class RegisterPaymentServiceTest {
         onTimeContract();
 
         assertThatThrownBy(() -> serviceOn(TODAY).register(pay(1, "945.60", TODAY.plusDays(1))))
+                .isInstanceOf(InvalidPaymentException.class)
+                .hasMessage(DATE_RANGE_MESSAGE);
+    }
+
+    @Test
+    void atElevenAtNightInBrasiliaTomorrowIsStillTheFuture() {
+        onTimeContract();
+        Clock lateNight = Clock.fixed(Instant.parse("2026-10-25T02:00:00Z"), ZoneId.of("America/Sao_Paulo"));
+        RegisterPaymentService service = new RegisterPaymentService(contracts, payments, events, lateNight);
+
+        assertThatThrownBy(() -> service.register(pay(1, "945.60", LocalDate.of(2026, 10, 25))))
                 .isInstanceOf(InvalidPaymentException.class)
                 .hasMessage(DATE_RANGE_MESSAGE);
     }
