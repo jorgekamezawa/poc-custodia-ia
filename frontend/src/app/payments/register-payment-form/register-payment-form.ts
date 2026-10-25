@@ -8,12 +8,18 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { PaymentApiService, PaymentQuote } from '../payment-api.service';
 
-/** Today in the browser's time zone, as the yyyy-MM-dd a date input expects. */
+const BRASILIA_DATE = new Intl.DateTimeFormat('en-CA', {
+  timeZone: 'America/Sao_Paulo',
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+});
+
+/** Today in Brasília, as the yyyy-MM-dd a date input expects: the server refuses a date after its today there. */
 export function todayIso(): string {
-  const now = new Date();
-  const month = String(now.getMonth() + 1).padStart(2, '0');
-  const day = String(now.getDate()).padStart(2, '0');
-  return `${now.getFullYear()}-${month}-${day}`;
+  const parts = BRASILIA_DATE.formatToParts(new Date());
+  const part = (type: Intl.DateTimeFormatPartTypes) => parts.find((p) => p.type === type)?.value;
+  return `${part('year')}-${part('month')}-${part('day')}`;
 }
 
 function serverMessage(error: unknown, fallback: string): string {
