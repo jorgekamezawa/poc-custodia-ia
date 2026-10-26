@@ -13,13 +13,13 @@ import tools.jackson.databind.json.JsonMapper;
 import tools.jackson.databind.node.ObjectNode;
 
 @Component
-class JdbcEventPublisher implements EventPublisher {
+class EventPublisherJdbcImpl implements EventPublisher {
 
     private final JdbcClient jdbc;
     private final JsonMapper json;
     private final Clock clock;
 
-    JdbcEventPublisher(JdbcClient jdbc, JsonMapper json, Clock clock) {
+    EventPublisherJdbcImpl(JdbcClient jdbc, JsonMapper json, Clock clock) {
         this.jdbc = jdbc;
         this.json = json;
         this.clock = clock;

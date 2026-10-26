@@ -15,12 +15,12 @@ import org.springframework.stereotype.Component;
 
 /** Translates the contract's financing terms to the calculator module and its refusal back to the contract's. */
 @Component
-class CalculatorFinancingAdapter implements FinancingCalculator {
+class FinancingCalculatorApiImpl implements FinancingCalculator {
 
     private final ScheduleCalculator scheduleCalculator;
     private final EffectiveCostCalculator effectiveCostCalculator;
 
-    CalculatorFinancingAdapter(ScheduleCalculator scheduleCalculator, EffectiveCostCalculator effectiveCostCalculator) {
+    FinancingCalculatorApiImpl(ScheduleCalculator scheduleCalculator, EffectiveCostCalculator effectiveCostCalculator) {
         this.scheduleCalculator = scheduleCalculator;
         this.effectiveCostCalculator = effectiveCostCalculator;
     }

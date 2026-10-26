@@ -10,11 +10,11 @@ import org.springframework.stereotype.Component;
 
 /** Reads the contract terms through the contracts module api. */
 @Component
-class ContractsAdapter implements ContractToPay {
+class ContractToPayApiImpl implements ContractToPay {
 
     private final ContractInstallments contracts;
 
-    ContractsAdapter(ContractInstallments contracts) {
+    ContractToPayApiImpl(ContractInstallments contracts) {
         this.contracts = contracts;
     }
 

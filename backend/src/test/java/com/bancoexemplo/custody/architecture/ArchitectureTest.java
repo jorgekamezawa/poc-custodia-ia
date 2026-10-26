@@ -10,6 +10,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.bancoexemplo.custody.archfixture.ReachesIntoCalculatorDomain;
 import com.bancoexemplo.custody.archfixture.adapter.in.RefusesInTheController;
+import com.bancoexemplo.custody.archfixture.adapter.out.BadlyNamedRepository;
 import com.bancoexemplo.custody.archfixture.adapter.out.PartlyCoveredAdapter;
 import com.bancoexemplo.custody.archfixture.adapter.out.UntestedAdapter;
 import com.bancoexemplo.custody.archfixture.api.LogicInTheApi;
@@ -118,6 +119,20 @@ class ArchitectureTest {
                     return created.getPackageName().contains(".domain") && created.isAssignableTo(Throwable.class);
                 }
             });
+
+    /** An outbound adapter is named after the port it implements and its technology: PaymentRepositoryJpaImpl. */
+    @ArchTest
+    static final ArchRule outboundAdaptersAreNamedAfterTheirPort =
+            classes().that().resideInAPackage("..adapter.out..").should(beNamedAfterTheirPort());
+
+    @Test
+    void outboundAdapterNotNamedAfterItsPortBreaksTheRule() {
+        var violating = new ClassFileImporter().importClasses(BadlyNamedRepository.class);
+
+        assertThatThrownBy(() -> outboundAdaptersAreNamedAfterTheirPort.check(violating))
+                .isInstanceOf(AssertionError.class)
+                .hasMessageContaining("BadlyNamedRepository");
+    }
 
     /** A module api is a contract: what neighbours call and the types they pass, never the implementation. */
     @ArchTest
@@ -236,7 +251,9 @@ class ArchitectureTest {
     private static List<String> uncoveredAdapterMethods(JavaClasses production, JavaClasses tests) {
         List<String> uncovered = new ArrayList<>();
         for (JavaClass adapter : production) {
+            // Spring Data interfaces carry no code of ours; the adapter that uses them is the one under test.
             if (!adapter.getPackageName().contains(".adapter.out")
+                    || adapter.isInterface()
                     || adapter.isNestedClass()
                     || adapter.isAnnotatedWith(Configuration.class)) {
                 continue;
@@ -307,6 +324,26 @@ class ArchitectureTest {
         int dot = rest.indexOf('.');
         String first = dot < 0 ? rest : rest.substring(0, dot);
         return first.equals(SHARED) ? Optional.empty() : Optional.of(first);
+    }
+
+    private static ArchCondition<JavaClass> beNamedAfterTheirPort() {
+        return new ArchCondition<>("be named <Port><Technology>Impl after the port it implements") {
+            @Override
+            public void check(JavaClass adapter, ConditionEvents events) {
+                adapter.getRawInterfaces().stream()
+                        .filter(port -> port.getPackageName().contains(".application.port")
+                                || port.getPackageName().contains(".api"))
+                        .forEach(port -> {
+                            String name = adapter.getSimpleName();
+                            if (!name.startsWith(port.getSimpleName()) || !name.endsWith("Impl")) {
+                                events.add(SimpleConditionEvent.violated(
+                                        adapter,
+                                        adapter.getName() + " implements " + port.getSimpleName() + " but is not named "
+                                                + port.getSimpleName() + "<Technology>Impl"));
+                            }
+                        });
+            }
+        };
     }
 
     private static ArchCondition<JavaClass> beAContract() {

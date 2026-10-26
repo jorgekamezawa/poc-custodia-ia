@@ -25,7 +25,7 @@ import tools.jackson.databind.json.JsonMapper;
 
 @Import(TestcontainersConfiguration.class)
 @SpringBootTest
-class PaymentEventsAdapterTest {
+class PaymentEventsOutboxImplTest {
 
     @Autowired
     private PaymentEvents events;

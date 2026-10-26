@@ -11,12 +11,12 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component
-class JdbcProcessedEvents implements ProcessedEvents {
+class ProcessedEventsJdbcImpl implements ProcessedEvents {
 
     private final JdbcClient jdbc;
     private final Clock clock;
 
-    JdbcProcessedEvents(JdbcClient jdbc, Clock clock) {
+    ProcessedEventsJdbcImpl(JdbcClient jdbc, Clock clock) {
         this.jdbc = jdbc;
         this.clock = clock;
     }

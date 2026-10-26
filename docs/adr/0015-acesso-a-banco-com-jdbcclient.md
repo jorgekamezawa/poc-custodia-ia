@@ -1,6 +1,6 @@
 ---
-status: aceito
-atualizado: 2026-10-24
+status: substituído
+atualizado: 2026-10-25
 descricao: Os adaptadores de banco usam o JdbcClient do Spring com SQL escrito à mão, porque o esquema já é SQL das migrações e o domínio fica livre de mapeamento de banco.
 ---
 # ADR-0015: Acesso a banco com JdbcClient e SQL explícito
@@ -18,3 +18,6 @@ O cadastro de contrato é a primeira gravação de negócio. O [ADR-0002](0002-m
 - **Ganhos:** o SQL que roda é o que está no código, revisável ao lado da migração; nenhum carregamento escondido.
 - **Custos:** mapear linha para objeto é código do adaptador, escrito e testado à mão.
 - **Passa a ser obrigatório:** todo adaptador de banco tem teste de integração contra PostgreSQL real ([ADR-0008](0008-testes-de-banco-contra-postgres-real.md)).
+
+## Substitui / Substituído por (só quando houver)
+Substituído pelo [ADR-0018](0018-acesso-a-banco-com-spring-data-jpa.md).
